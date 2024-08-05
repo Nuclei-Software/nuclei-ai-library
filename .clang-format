@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+UseTab: Never
+BreakBeforeBraces: Linux
+AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: true
+ReflowComments: true
+ColumnLimit: 150
+SpacesBeforeTrailingComments: 1
+AllowShortEnumsOnASingleLine: false
