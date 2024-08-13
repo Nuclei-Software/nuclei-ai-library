@@ -1,8 +1,6 @@
-TARGET = onnx_operators
+TARGET = ailib_bench
 
-ifeq ($(NUCLEI_SDK_ROOT),)
-$(error "Please set correct NUCLEI_SDK_ROOT=/path/to/nuclei-sdk")
-endif
+NUCLEI_SDK_ROOT ?= ../../..
 
 SRCDIRS = . src test
 
@@ -18,4 +16,8 @@ LDLIBS ?= -lm
 
 COMMON_FLAGS := -O2
 
+ifneq ($(wildcard $(NUCLEI_SDK_ROOT)/Build/Makefile.base),)
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
+else
+$(error "Please set correct NUCLEI_SDK_ROOT=/path/to/nuclei-sdk")
+endif
