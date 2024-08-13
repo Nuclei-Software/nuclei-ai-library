@@ -14,6 +14,7 @@
  */
 
 #include "operators.h"
+#include "utils.h"
 
 struct operator_pdata_t {
 	union onnx_scalar_t min;
@@ -198,11 +199,7 @@ void Clamp_float32_rvv(struct onnx_node_t * n)
 
 void *GenerateClampParam(OnnxScalar min, OnnxScalar max)
 {
-    struct operator_pdata_t *pdat = (struct operator_pdata_t *)malloc(sizeof(struct operator_pdata_t));
-    if (pdat == NULL) {
-        fprintf(stderr, "Error: Memory allocation failed in %s at line %d\n", __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)MALLOC_ASSERT(sizeof(struct operator_pdata_t));
     pdat->min = min;
     pdat->max = max;
     return pdat;

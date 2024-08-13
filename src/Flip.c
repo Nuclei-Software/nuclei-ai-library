@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "operators.h"
+#include "utils.h"
 
 struct operator_pdata_t {
     int axis[2]; /*! axis[0] != 0 -> flip along axis 0, axis[1] != 0 -> flip along axis 1*/
@@ -431,11 +432,7 @@ void Flip_float32_rvv(struct onnx_node_t *node)
 
 void *GenerateFlipParam(int flip_axis0, int flip_axis1)
 {
-    struct operator_pdata_t *param = (struct operator_pdata_t *)malloc(sizeof(struct operator_pdata_t));
-    if (param == NULL) {
-        fprintf(stderr, "Error: Memory allocation failed in %s at line %d\n", __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+    struct operator_pdata_t *param = (struct operator_pdata_t *)MALLOC_ASSERT(sizeof(struct operator_pdata_t));
     param->axis[0] = flip_axis0;
     param->axis[1] = flip_axis1;
     return param;

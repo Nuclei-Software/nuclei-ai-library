@@ -15,6 +15,7 @@
  */
 
 #include "operators.h"
+#include "utils.h"
 
 struct operator_pdata_t {
     float epsilon;
@@ -182,11 +183,7 @@ void BatchNormalization_float32_rvv(struct onnx_node_t *n)
 
 void *GenerateBatchNormParam(float epsilon, float momentum)
 {
-    struct operator_pdata_t *pdat = (struct operator_pdata_t *)malloc(sizeof(struct operator_pdata_t));
-    if (pdat == NULL) {
-        fprintf(stderr, "Error: Memory allocation failed in %s at line %d\n", __FILE__, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)MALLOC_ASSERT(sizeof(struct operator_pdata_t));
     pdat->epsilon = epsilon;
     pdat->momentum = momentum;
     return pdat;
