@@ -123,6 +123,9 @@ int main(void)
     }
     if (!has_failed) {
         printf("All tests passed!\n");
+        return 0;
+    } else {
+        printf("Some tests failed!\n");
+        return -1;
     }
-    return 0;
 }
