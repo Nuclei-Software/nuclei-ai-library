@@ -1,6 +1,7 @@
 {
     "run_config": {
         "target" : "qemu",
+        "parsescript": "ci/parse.py",
         "hardware" : {
             "baudrate": 115200,
             "timeout": 60
