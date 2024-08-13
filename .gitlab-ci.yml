@@ -74,7 +74,7 @@ run_qemu:
     LOGDIR: logs/qemu
   script:
     # start to run on qemu
-    - ./configs/run_qemu.sh $LOGDIR
+    - ./ci/run_qemu.sh $LOGDIR
 
 run_hw:
   interruptible: true
@@ -106,7 +106,7 @@ run_hw:
     - echo "nuclei sdk $SDK_BRANCH branch, shortlog $(git -C ${NUCLEI_SDK_ROOT} log --oneline -1)"
     - echo "Show fpga and cycle model version used in this job!"
     - show_cycm_ver
-    - TMOUT=$TMOUT CONFIG=$CONFIG LOGDIR=$LOGDIR ./configs/run_onfpga.sh
+    - TMOUT=$TMOUT CONFIG=$CONFIG LOGDIR=$LOGDIR ./ci/run_onfpga.sh
 
 show_proc:
   stage: build
