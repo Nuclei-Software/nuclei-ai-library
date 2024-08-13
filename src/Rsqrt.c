@@ -1,5 +1,5 @@
 /**
- * @file Sqrt.c
+ * @file Rsqrt.c
  * @author qiujiandong (qiujiandong@nucleisys.com)
  * @brief
  * @version 0.1
@@ -10,13 +10,12 @@
  */
 
 /*
- * https://onnx.ai/onnx/operators/onnx__Sqrt.html#sqrt
- * https://github.com/xboot/libonnx/blob/master/src/default/Sqrt.c
+ * https://pytorch.org/docs/stable/generated/torch.rsqrt.html
  */
 
 #include "operators.h"
 
-void Sqrt_float16(struct onnx_node_t * n)
+void Rsqrt_float16(struct onnx_node_t * n)
 {
   struct onnx_tensor_t * x = n->inputs[0];
   struct onnx_tensor_t * y = n->outputs[0];
@@ -26,11 +25,11 @@ void Sqrt_float16(struct onnx_node_t * n)
 
   for(size_t i = 0, l = y->ndata; i < l; i++)
   {
-    py[i] = (float16_t)sqrtf((float32_t)px[i]);
+    py[i] = (float16_t)1.0 / (float16_t)sqrtf((float32_t)px[i]);
   }
 }
 
-void Sqrt_float16_rvv(struct onnx_node_t * n)
+void Rsqrt_float16_rvv(struct onnx_node_t * n)
 {
   struct onnx_tensor_t * x = n->inputs[0];
   struct onnx_tensor_t * y = n->outputs[0];
@@ -45,12 +44,14 @@ void Sqrt_float16_rvv(struct onnx_node_t * n)
     vx = __riscv_vle16_v_f16m8(px, vl);
     px += vl;
     vy =  __riscv_vfsqrt_v_f16m8(vx, vl);
+    // vy = __riscv_vfrec7_v_f16m8(vy, vl);
+    vy = __riscv_vfrdiv_vf_f16m8(vy, 1, vl);
     __riscv_vse16_v_f16m8(py, vy, vl);
     py += vl;
   }
 }
 
-void Sqrt_float32(struct onnx_node_t * n)
+void Rsqrt_float32(struct onnx_node_t * n)
 {
   struct onnx_tensor_t * x = n->inputs[0];
   struct onnx_tensor_t * y = n->outputs[0];
@@ -60,11 +61,11 @@ void Sqrt_float32(struct onnx_node_t * n)
 
   for(size_t i = 0, l = y->ndata; i < l; i++)
   {
-    py[i] = sqrtf(px[i]);
+    py[i] = 1.0 / sqrtf(px[i]);
   }
 }
 
-void Sqrt_float32_rvv(struct onnx_node_t * n)
+void Rsqrt_float32_rvv(struct onnx_node_t * n)
 {
   struct onnx_tensor_t * x = n->inputs[0];
   struct onnx_tensor_t * y = n->outputs[0];
@@ -79,6 +80,8 @@ void Sqrt_float32_rvv(struct onnx_node_t * n)
     vx = __riscv_vle32_v_f32m8(px, vl);
     px += vl;
     vy =  __riscv_vfsqrt_v_f32m8(vx, vl);
+    // vy = __riscv_vfrec7_v_f32m8(vy, vl);
+    vy = __riscv_vfrdiv_vf_f32m8(vy, 1, vl);
     __riscv_vse32_v_f32m8(py, vy, vl);
     py += vl;
   }

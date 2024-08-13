@@ -16,72 +16,72 @@ typedef struct {
     const char *name;
 } TestFunc;
 
-extern int test_softmax(void);
-extern int test_matmul(void);
-extern int test_batchnormalization(void);
-extern int test_layernormalization(void);
-extern int test_rmsnormalization(void);
-extern int test_topk(void);
-extern int test_add(void);
-extern int test_sub(void);
-extern int test_mul(void);
-extern int test_div(void);
-extern int test_pow(void);
 extern int test_abs(void);
-extern int test_negate(void);
-extern int test_reciprocal(void);
-extern int test_sqrt(void);
-extern int test_rsqrt(void);
-extern int test_exp(void);
-extern int test_log(void);
-extern int test_sin(void);
-extern int test_cos(void);
+extern int test_add(void);
+extern int test_batchnormalization(void);
 extern int test_clamp(void);
-extern int test_elu(void);
-extern int test_Relu(void);
-extern int test_silu(void);
 extern int test_concat(void);
-extern int test_pad(void);
+extern int test_cos(void);
+extern int test_div(void);
+extern int test_elu(void);
+extern int test_exp(void);
 extern int test_flip(void);
-extern int test_slice(void);
-extern int test_tile(void);
 extern int test_gatherelements(void);
-extern int test_scatterelements(void);
+extern int test_layernormalization(void);
+extern int test_log(void);
+extern int test_matmul(void);
+extern int test_mul(void);
+extern int test_negate(void);
+extern int test_pad(void);
+extern int test_pow(void);
+extern int test_reciprocal(void);
 extern int test_reduce(void);
+extern int test_Relu(void);
+extern int test_rmsnormalization(void);
+extern int test_rsqrt(void);
+extern int test_scatterelements(void);
+extern int test_silu(void);
+extern int test_sin(void);
+extern int test_slice(void);
+extern int test_softmax(void);
+extern int test_sqrt(void);
+extern int test_sub(void);
+extern int test_tile(void);
+extern int test_topk(void);
 
 TestFunc tests[] = {
-    {test_softmax, "test_softmax"},
-    {test_matmul, "test_matmul"},
-    {test_batchnormalization, "test_batchnormalization"},
-    {test_layernormalization, "test_layernormalization"},
-    {test_rmsnormalization, "test_rmsnormalization"},
-    {test_topk, "test_topk"},
-    {test_add, "test_add"},
-    {test_sub, "test_sub"},
-    {test_mul, "test_mul"},
-    {test_div, "test_div"},
-    {test_pow, "test_pow"},
     {test_abs, "test_abs"},
-    {test_negate, "test_negate"},
-    {test_exp, "test_exp"},
-    {test_log, "test_log"},
-    {test_reciprocal, "test_reciprocal"},
-    {test_sqrt, "test_sqrt"},
-    {test_rsqrt, "test_rsqrt"},
-    {test_sin, "test_sin"},
-    {test_cos, "test_cos"},
+    {test_add, "test_add"},
+    {test_batchnormalization, "test_batchnormalization"},
     {test_clamp, "test_clamp"},
-    {test_elu, "test_elu"},
-    {test_Relu, "test_Relu"},
-    {test_silu, "test_silu"},
     {test_concat, "test_concat"},
-    {test_pad, "test_pad"},
+    {test_cos, "test_cos"},
+    {test_div, "test_div"},
+    {test_elu, "test_elu"},
+    {test_exp, "test_exp"},
     {test_flip, "test_flip"},
-    {test_slice, "test_slice"},
-    {test_tile, "test_tile"},
     {test_gatherelements, "test_gatherelements"},
-    {test_scatterelements, "test_scatterelements"},
+    {test_layernormalization, "test_layernormalization"},
+    {test_log, "test_log"},
+    {test_matmul, "test_matmul"},
+    {test_mul, "test_mul"},
+    {test_negate, "test_negate"},
+    {test_pad, "test_pad"},
+    {test_pow, "test_pow"},
+    {test_reciprocal, "test_reciprocal"},
     {test_reduce, "test_reduce"},
+    {test_Relu, "test_Relu"},
+    {test_rmsnormalization, "test_rmsnormalization"},
+    {test_rsqrt, "test_rsqrt"},
+    {test_scatterelements, "test_scatterelements"},
+    {test_silu, "test_silu"},
+    {test_sin, "test_sin"},
+    {test_slice, "test_slice"},
+    {test_softmax, "test_softmax"},
+    {test_sqrt, "test_sqrt"},
+    {test_sub, "test_sub"},
+    {test_tile, "test_tile"},
+    {test_topk, "test_topk"},
 };
 
 int main(void)

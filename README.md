@@ -12,21 +12,46 @@ We also provided test code to evaluate the ONNX operators implemention, which ca
 > Some operator implementation may only support subset of the ONNX operator.
 
 
-| Operator        | FP32 | FP16 | BF16 | FP8 | INT32 | INT8 | INT4 | Boolean |
-| --              | --   | --   | --   | --  | --    | --   | --   | --      |
-| Concat          | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Pad             | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Flip            | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Slice           | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Tile            | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| GatherElements  | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ScatterElements | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceAll       | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
-| ReduceAny       | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
-| ReduceMax       | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceMin       | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceProd      | √    | √    | ×    | ×   |       |      | ×    |   |
-| ReduceSum       | √    | √    | ×    | ×   |       |      | ×    |   |
+| Operator           | FP32 | FP16 | BF16 | FP8 | INT32 | INT8 | INT4 | Boolean |
+| --                 | --   | --   | --   | --  | --    | --   | --   | --      |
+| Abs                | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Add                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| BatchNormalization | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Clamp              | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Concat             | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Cos                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Div                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Elu                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Erf                | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
+| Flip               | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| GatherElements     | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Gelu               | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
+| LayerNormalization | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Log                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| MatMul             | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| Mul                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| Negate             | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Pad                | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Power              | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Reciprocal         | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| ReduceAll          | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
+| ReduceAny          | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
+| ReduceMax          | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| ReduceMin          | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| ReduceProd         | √    | √    | ×    | ×   |       |      | ×    |   |
+| ReduceSum          | √    | √    | ×    | ×   |       |      | ×    |   |
+| Relu               | √    | √    | ×    | ×   |       |      | ×    |   |
+| RMSNormalization   | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Rsqrt              | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| ScatterElements    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Silu               | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Sin                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Slice              | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Softmax            | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Sqrt               | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Sub                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| Tile               | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| TopK               | ×    | ×    | ×    | ×   | √     |  ×   | ×    |   |
 
 ## How to use
 
