@@ -110,6 +110,19 @@ int test_scatterelements_int8()
     // verify result with axis = 1
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs[1]->datas);
+    free(node->inputs[1]->dims);
+    free(node->inputs[1]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
+
     return ret;
 }
 
@@ -204,6 +217,19 @@ int test_scatterelements_int32()
 
     // verify result with axis = 1
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs[1]->datas);
+    free(node->inputs[1]->dims);
+    free(node->inputs[1]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
 
     return ret;
 }
@@ -300,6 +326,19 @@ int test_scatterelements_float16()
     // verify result with axis = 1
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs[1]->datas);
+    free(node->inputs[1]->dims);
+    free(node->inputs[1]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
+
     return ret;
 }
 
@@ -394,6 +433,19 @@ int test_scatterelements_float32()
 
     // verify result with axis = 1
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs[1]->datas);
+    free(node->inputs[1]->dims);
+    free(node->inputs[1]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
 
     return ret;
 }

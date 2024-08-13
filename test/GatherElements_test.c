@@ -136,9 +136,6 @@ int test_gatherelements_int32(void)
     node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->strides = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
-    node->inputs[0]->strides[0] = 1;
-    node->inputs[0]->strides[1] = SIZE;
     node->inputs[0]->datas = malloc(sizeof(int32_t) * node->inputs[0]->ndata);
     p = (int32_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
@@ -152,9 +149,6 @@ int test_gatherelements_int32(void)
     node->inputs[1]->dims = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->strides = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
-    node->inputs[1]->strides[0] = 1;
-    node->inputs[1]->strides[1] = SIZE;
     node->inputs[1]->datas = malloc(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
@@ -169,9 +163,6 @@ int test_gatherelements_int32(void)
     node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->strides = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
-    node->outputs[0]->strides[0] = 1;
-    node->outputs[0]->strides[1] = SIZE;
     node->outputs[0]->datas = malloc(sizeof(int32_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
@@ -244,9 +235,6 @@ int test_gatherelements_float16(void)
     node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->strides = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
-    node->inputs[0]->strides[0] = 1;
-    node->inputs[0]->strides[1] = SIZE;
     node->inputs[0]->datas = malloc(sizeof(float16_t) * node->inputs[0]->ndata);
     p = (float16_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
@@ -260,9 +248,6 @@ int test_gatherelements_float16(void)
     node->inputs[1]->dims = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->strides = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
-    node->inputs[1]->strides[0] = 1;
-    node->inputs[1]->strides[1] = SIZE;
     node->inputs[1]->datas = malloc(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
@@ -277,9 +262,6 @@ int test_gatherelements_float16(void)
     node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->strides = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
-    node->outputs[0]->strides[0] = 1;
-    node->outputs[0]->strides[1] = SIZE;
     node->outputs[0]->datas = malloc(sizeof(float16_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
@@ -352,9 +334,6 @@ int test_gatherelements_float32(void)
     node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->strides = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
-    node->inputs[0]->strides[0] = 1;
-    node->inputs[0]->strides[1] = SIZE;
     node->inputs[0]->datas = malloc(sizeof(float32_t) * node->inputs[0]->ndata);
     p = (float32_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
@@ -368,9 +347,6 @@ int test_gatherelements_float32(void)
     node->inputs[1]->dims = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->strides = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
-    node->inputs[1]->strides[0] = 1;
-    node->inputs[1]->strides[1] = SIZE;
     node->inputs[1]->datas = malloc(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
@@ -385,9 +361,6 @@ int test_gatherelements_float32(void)
     node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->strides = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
-    node->outputs[0]->strides[0] = 1;
-    node->outputs[0]->strides[1] = SIZE;
     node->outputs[0]->datas = malloc(sizeof(float32_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
