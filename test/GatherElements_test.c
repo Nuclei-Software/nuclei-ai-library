@@ -26,45 +26,45 @@ int test_gatherelements_int8(void)
     int axis = 0;
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 2;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
     // origin tensor
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(int8_t) * node->inputs[0]->ndata);
     p = (int8_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
         p[j] = rand();
     }
 
     // indices tensor
-    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = SIZE * SIZE;
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(uint8_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
         pidx[j] = rand() % SIZE;
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = SIZE * SIZE;
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(int8_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
     // golden test with axis = 0
@@ -125,45 +125,45 @@ int test_gatherelements_int32(void)
     int axis = 0;
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 2;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
     // origin tensor
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(int32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(int32_t) * node->inputs[0]->ndata);
     p = (int32_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
         p[j] = rand();
     }
 
     // indices tensor
-    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = SIZE * SIZE;
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(uint8_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
         pidx[j] = rand() % SIZE;
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = SIZE * SIZE;
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(int32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(int32_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
     // golden test with axis = 0
@@ -224,45 +224,45 @@ int test_gatherelements_float16(void)
     int axis = 0;
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 2;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
     // origin tensor
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[0]->ndata);
     p = (float16_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
         p[j] = rand() * 1.0f;
     }
 
     // indices tensor
-    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = SIZE * SIZE;
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(uint8_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
         pidx[j] = rand() % SIZE;
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = SIZE * SIZE;
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
     // golden test with axis = 0
@@ -323,45 +323,45 @@ int test_gatherelements_float32(void)
     int axis = 0;
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 2;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
     // origin tensor
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[0]->ndata);
     p = (float32_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
         p[j] = rand() * 1.0f;
     }
 
     // indices tensor
-    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = SIZE * SIZE;
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = SIZE;
     node->inputs[1]->dims[1] = SIZE;
-    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(uint8_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(uint8_t) * node->inputs[1]->ndata);
     pidx = (uint8_t *)node->inputs[1]->datas;
     for (int j = 0; j < node->inputs[1]->ndata; j++) {
         pidx[j] = rand() % SIZE;
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = SIZE * SIZE;
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE;
     node->outputs[0]->dims[1] = SIZE;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->outputs[0]->ndata);
     node->priv = &axis;
 
     // golden test with axis = 0

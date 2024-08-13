@@ -39,9 +39,9 @@ static inline int csrr_vlenb()
     return a;
 }
 
-#define MALLOC_CHECKED(size) malloc_checked(size, __FILE__, __LINE__)
+#define MALLOC_ASSERT(size) malloc_assert(size, __FILE__, __LINE__)
 
-static inline void *malloc_checked(size_t size, const char *file, int line)
+static inline void *malloc_assert(size_t size, const char *file, int line)
 {
     void *ptr = malloc(size);
     if (ptr == NULL) {

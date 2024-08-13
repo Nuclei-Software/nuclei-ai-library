@@ -24,48 +24,48 @@ int test_batchnormalization_f32(void)
     float32_t opt[DIM0 * DIM1 * DIM2 * DIM3];
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->priv = GenerateBatchNormParam(1e-05f, 0.9f);
 
     node->ninput = 5;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndim = 4;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = DIM0;
     node->inputs[0]->dims[1] = DIM1;
     node->inputs[0]->dims[2] = DIM2;
     node->inputs[0]->dims[3] = DIM3;
     node->inputs[0]->ndata = node->inputs[0]->dims[0] * node->inputs[0]->dims[1] * node->inputs[0]->dims[2] * node->inputs[0]->dims[3];
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[0]->ndata);
 
-    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndim = 1;
-    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = DIM1;
     node->inputs[1]->ndata = node->inputs[1]->dims[0];
-    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[1]->ndata);
 
-    node->inputs[2] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[2] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[2]->ndim = 1;
-    node->inputs[2]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[2]->ndim);
+    node->inputs[2]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[2]->ndim);
     node->inputs[2]->dims[0] = DIM1;
     node->inputs[2]->ndata = node->inputs[2]->dims[0];
-    node->inputs[2]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[2]->ndata);
+    node->inputs[2]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[2]->ndata);
 
-    node->inputs[3] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[3] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[3]->ndim = 1;
-    node->inputs[3]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[3]->ndim);
+    node->inputs[3]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[3]->ndim);
     node->inputs[3]->dims[0] = DIM1;
     node->inputs[3]->ndata = node->inputs[3]->dims[0];
-    node->inputs[3]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[3]->ndata);
+    node->inputs[3]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[3]->ndata);
 
-    node->inputs[4] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[4] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[4]->ndim = 1;
-    node->inputs[4]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[4]->ndim);
+    node->inputs[4]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[4]->ndim);
     node->inputs[4]->dims[0] = DIM1;
     node->inputs[4]->ndata = node->inputs[4]->dims[0];
-    node->inputs[4]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[4]->ndata);
+    node->inputs[4]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[4]->ndata);
 
     float32_t *p = (float32_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
@@ -89,10 +89,10 @@ int test_batchnormalization_f32(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = DIM0 * DIM1 * DIM2 * DIM3;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->outputs[0]->ndata);
 
     BENCH_START(BatchNormalization_float32);
     BatchNormalization_float32(node);
@@ -140,48 +140,48 @@ int test_batchnormalization_f16(void)
     float16_t opt[DIM0 * DIM1 * DIM2 * DIM3];
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->priv = GenerateBatchNormParam(1e-05f, 0.9f);
 
     node->ninput = 5;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndim = 4;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = DIM0;
     node->inputs[0]->dims[1] = DIM1;
     node->inputs[0]->dims[2] = DIM2;
     node->inputs[0]->dims[3] = DIM3;
     node->inputs[0]->ndata = node->inputs[0]->dims[0] * node->inputs[0]->dims[1] * node->inputs[0]->dims[2] * node->inputs[0]->dims[3];
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[0]->ndata);
 
-    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndim = 1;
-    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = DIM1;
     node->inputs[1]->ndata = node->inputs[1]->dims[0];
-    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[1]->ndata);
 
-    node->inputs[2] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[2] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[2]->ndim = 1;
-    node->inputs[2]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[2]->ndim);
+    node->inputs[2]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[2]->ndim);
     node->inputs[2]->dims[0] = DIM1;
     node->inputs[2]->ndata = node->inputs[2]->dims[0];
-    node->inputs[2]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[2]->ndata);
+    node->inputs[2]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[2]->ndata);
 
-    node->inputs[3] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[3] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[3]->ndim = 1;
-    node->inputs[3]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[3]->ndim);
+    node->inputs[3]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[3]->ndim);
     node->inputs[3]->dims[0] = DIM1;
     node->inputs[3]->ndata = node->inputs[3]->dims[0];
-    node->inputs[3]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[3]->ndata);
+    node->inputs[3]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[3]->ndata);
 
-    node->inputs[4] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[4] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[4]->ndim = 1;
-    node->inputs[4]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[4]->ndim);
+    node->inputs[4]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[4]->ndim);
     node->inputs[4]->dims[0] = DIM1;
     node->inputs[4]->ndata = node->inputs[4]->dims[0];
-    node->inputs[4]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[4]->ndata);
+    node->inputs[4]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[4]->ndata);
 
     float16_t *p = (float16_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
@@ -205,10 +205,10 @@ int test_batchnormalization_f16(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = DIM0 * DIM1 * DIM2 * DIM3;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->outputs[0]->ndata);
 
     BENCH_START(BatchNormalization_float16);
     BatchNormalization_float16(node);

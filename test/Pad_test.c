@@ -27,31 +27,31 @@ int test_pad_int8()
     const OnnxScalar pad_const = {.v_uint8 = 0x55};
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(int8_t) * node->inputs[0]->ndata);
     p = (int8_t *)node->inputs[0]->datas;
     for (int i = 0; i < SIZE * SIZE; i++) {
         p[i] = rand();
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = (SIZE + PAD_TOP + PAD_BOTTOM) * (SIZE + PAD_LEFT + PAD_RIGHT);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE + PAD_LEFT + PAD_RIGHT;
     node->outputs[0]->dims[1] = SIZE + PAD_TOP + PAD_BOTTOM;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(int8_t) * node->outputs[0]->ndata);
 
     node->priv = GeneratePadParam(pad_const, PAD_TOP, PAD_BOTTOM, PAD_LEFT, PAD_RIGHT);
 
@@ -92,37 +92,37 @@ int test_pad_int32()
     const OnnxScalar pad_const = {.v_int32 = 0x55555555};
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->strides[0] = 1;
     node->inputs[0]->strides[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(int32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(int32_t) * node->inputs[0]->ndata);
     p = (int32_t *)node->inputs[0]->datas;
     for (int i = 0; i < SIZE * SIZE; i++) {
         p[i] = rand();
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = (SIZE + PAD_TOP + PAD_BOTTOM) * (SIZE + PAD_LEFT + PAD_RIGHT);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE + PAD_LEFT + PAD_RIGHT;
     node->outputs[0]->dims[1] = SIZE + PAD_TOP + PAD_BOTTOM;
-    node->outputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->strides[0] = 1;
     node->outputs[0]->strides[1] = SIZE + PAD_LEFT + PAD_RIGHT;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(int32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(int32_t) * node->outputs[0]->ndata);
 
     node->priv = GeneratePadParam(pad_const, PAD_TOP, PAD_BOTTOM, PAD_LEFT, PAD_RIGHT);
 
@@ -165,37 +165,37 @@ int test_pad_float16()
     const OnnxScalar pad_const = {.v_float16 = 0.5f};
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->strides[0] = 1;
     node->inputs[0]->strides[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[0]->ndata);
     p = (float16_t *)node->inputs[0]->datas;
     for (int i = 0; i < SIZE * SIZE; i++) {
         p[i] = rand() * 1.0f;
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = (SIZE + PAD_TOP + PAD_BOTTOM) * (SIZE + PAD_LEFT + PAD_RIGHT);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE + PAD_LEFT + PAD_RIGHT;
     node->outputs[0]->dims[1] = SIZE + PAD_TOP + PAD_BOTTOM;
-    node->outputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->strides[0] = 1;
     node->outputs[0]->strides[1] = SIZE + PAD_LEFT + PAD_RIGHT;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->outputs[0]->ndata);
 
     node->priv = GeneratePadParam(pad_const, PAD_TOP, PAD_BOTTOM, PAD_LEFT, PAD_RIGHT);
 
@@ -238,37 +238,37 @@ int test_pad_float32()
     const OnnxScalar pad_const = {.v_float32 = 0.5f};
     int ret = 0;
 
-    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
 
-    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = SIZE * SIZE;
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = SIZE;
     node->inputs[0]->dims[1] = SIZE;
-    node->inputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->strides[0] = 1;
     node->inputs[0]->strides[1] = SIZE;
-    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[0]->ndata);
     p = (float32_t *)node->inputs[0]->datas;
     for (int i = 0; i < SIZE * SIZE; i++) {
         p[i] = rand() * 1.0f;
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = (SIZE + PAD_TOP + PAD_BOTTOM) * (SIZE + PAD_LEFT + PAD_RIGHT);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = SIZE + PAD_LEFT + PAD_RIGHT;
     node->outputs[0]->dims[1] = SIZE + PAD_TOP + PAD_BOTTOM;
-    node->outputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->strides[0] = 1;
     node->outputs[0]->strides[1] = SIZE + PAD_LEFT + PAD_RIGHT;
-    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->outputs[0]->ndata);
 
     node->priv = GeneratePadParam(pad_const, PAD_TOP, PAD_BOTTOM, PAD_LEFT, PAD_RIGHT);
 
