@@ -1,0 +1,21 @@
+{
+    "run_config": {
+        "target" : "qemu",
+        "hardware" : {
+            "baudrate": 115200,
+            "timeout": 60
+        },
+        "qemu": {
+            "qemu32": "qemu-system-riscv32",
+            "qemu64": "qemu-system-riscv64",
+            "timeout": 60
+        }
+    },
+    "build_config": {
+        "SIMU": "qemu"
+    },
+    "build_configs": {
+        "rv64imafdcv" : {"CORE": "nx900fd", "ARCH_EXT": "v_zfh_zvfh"},
+        "rv32imafdcv" : {"CORE": "n900fd", "ARCH_EXT": "_zve32f_zfh_zvfh"}
+    }
+}

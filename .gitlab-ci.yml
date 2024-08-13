@@ -1,0 +1,146 @@
+variables:
+  NUCLEI_SDK_SSH: git@gito:software/library/nuclei-sdk.git
+  NUCLEI_SDK_HTTPS: https://gito.corp.nucleisys.com/software/baremetal/nuclei-sdk.git
+  SDK_BRANCH: develop
+  SHAREENVLOC: /home/share/devtools
+  ENVSH: /home/share/devtools/env.sh
+  IMAGE: rego.corp.nucleisys.com/software/sdkbuild
+  IMAGE_TAG: "2024.06"
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /draft|wip|stash/i
+      when: never
+    - if: $CI_COMMIT_BRANCH =~ /master|develop/
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /master|develop/ && $CI_PIPELINE_SOURCE == "merge_request_event"
+
+default:
+  tags:
+    - env::docker
+    - net::outside
+  image: $IMAGE:$IMAGE_TAG
+
+stages:
+  - build
+  - deploy
+
+## Job template
+.build_job_template: &build_job_template_default
+  image: $IMAGE:$IMAGE_TAG
+  interruptible: true
+  #when: manual
+  stage: build
+  before_script:
+    - free -g
+    - uname -a
+    - lscpu
+    # prepare for docker ssh environment
+    ## https://docs.gitlab.com/ee/ci/ssh_keys/#ssh-keys-when-using-the-docker-executor
+    - apt update
+    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # important: need to avoid git ssh asking yes/no when clone
+    # https://serverfault.com/questions/469052/ssh-failing-from-script-working-on-command-line-git
+    - ssh-keyscan gito > ~/.ssh/known_hosts
+    - apt install -y python3 python3-pip
+    - pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    - python3 -m pip install --upgrade pip
+    - pip3 install prettytable==2.1.0 psutil==5.8.0 pyserial==3.5 markdown
+    - export SDK_COPY_OBJECTS="elf,map"
+    - apt install -y python3 make python3-pip
+    - pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    - python3 -m pip install --upgrade pip
+    - which riscv-nuclei-elf-gcc && riscv-nuclei-elf-gcc --version
+    - which make && make --version
+    - which python3 && python3 --version
+    # prepare nuclei_sdk and set environment variable NUCLEI_SDK_ROOT
+    - git clone -b $SDK_BRANCH --depth 2 $NUCLEI_SDK_SSH nuclei_sdk
+    - export NUCLEI_SDK_ROOT=$(readlink -f nuclei_sdk)
+    - echo "nuclei sdk $SDK_BRANCH branch, shortlog $(git -C ${NUCLEI_SDK_ROOT} log --oneline -1)"
+    - pip3 install -r $NUCLEI_SDK_ROOT/tools/scripts/requirements.txt
+  artifacts:
+    when: always
+    name: "nuclei-ai-library_logs-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - logs
+    expire_in: 2 day
+
+run_qemu:
+  <<: *build_job_template_default
+  variables:
+    LOGDIR: logs/qemu
+  script:
+    # start to run on qemu
+    - ./configs/run_qemu.sh $LOGDIR
+
+run_hw:
+  interruptible: true
+  when: manual
+  stage: build
+  variables:
+    LOGDIR: logs
+    TMOUT: 30
+  parallel:
+    matrix:
+      - CONFIG: ["ux900"]
+  artifacts:
+    when: always
+    name: "nuclei_ailib_test_logs_hw-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - logs
+    expire_in: 2 day
+  tags:
+    - env::shell
+    - host::whss3
+    - net::outside
+  script:
+    - source ${SHAREENVLOC}/env.sh
+    - activate_swdev
+    - echo "Start to run on fpga for $CONFIG in 30s"
+    - sleep 30
+    - git clone -b $SDK_BRANCH --depth 2 $NUCLEI_SDK_HTTPS nuclei_sdk
+    - export NUCLEI_SDK_ROOT=$(readlink -f nuclei_sdk)
+    - echo "nuclei sdk $SDK_BRANCH branch, shortlog $(git -C ${NUCLEI_SDK_ROOT} log --oneline -1)"
+    - echo "Show fpga and cycle model version used in this job!"
+    - show_cycm_ver
+    - TMOUT=$TMOUT CONFIG=$CONFIG LOGDIR=$LOGDIR ./configs/run_onfpga.sh
+
+show_proc:
+  stage: build
+  when: manual
+  parallel:
+      matrix:
+        - OP: ["pipeshow"]
+  before_script:
+    - source $ENVSH
+    - activate_swdev
+  script:
+    - freeboard.sh $OP
+  tags:
+    - env::shell
+    - host::whss3
+    - net::outside
+
+clean_proc:
+  stage: build
+  when: manual
+  allow_failure: true
+  parallel:
+      matrix:
+        - OP: ["pipefree"]
+  before_script:
+    - source $ENVSH
+    - activate_swdev
+    # wait 60s to avoid mis-operation to allow cancel time
+    - echo "Start to cleanup free operation $OP in 60s!"
+    - sleep 60
+    - ([ "x$OP" == "xfree" ]) && echo "CAUTION :Sleep extra 120s for $OP operation" && sleep 120
+  script:
+    - freeboard.sh $OP
+  tags:
+    - env::shell
+    - host::whss3
+    - net::outside
