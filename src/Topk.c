@@ -128,6 +128,10 @@ void Topk_int32_rvv(struct onnx_node_t *n)
 void *GenerateTopkParam(uint32_t k)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)malloc(sizeof(struct operator_pdata_t));
+    if (pdat == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed in %s at line %d\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     pdat->k = k;
     return pdat;
 }

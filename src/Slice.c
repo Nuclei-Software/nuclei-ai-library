@@ -346,6 +346,10 @@ void Slice_float32_rvv(struct onnx_node_t *node)
 void *GenerateSliceParam(int naxes, int *axes, int *start, int *end, int *step)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)malloc(sizeof(struct operator_pdata_t));
+    if (pdat == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed in %s at line %d\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     pdat->start[0] = 0;
     pdat->start[1] = 0;
     pdat->end[0] = 0;

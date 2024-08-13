@@ -23,16 +23,16 @@ int test_matmul_int8(void)
     int8_t opt[M * N];
     int ret = 0;
 
-    node = (struct onnx_node_t *)malloc(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
     node->priv = NULL;
     node->ninput = 2;
 
-    node->inputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = M * K;
-    node->inputs[0]->datas = malloc(sizeof(int8_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->inputs[0]->ndata);
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = K;
     node->inputs[0]->dims[1] = M;
     int8_t *p = (int8_t *)node->inputs[0]->datas;
@@ -40,11 +40,11 @@ int test_matmul_int8(void)
         p[i] = rand();
     }
 
-    node->inputs[1] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = K * N;
-    node->inputs[1]->datas = malloc(sizeof(int8_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->inputs[1]->ndata);
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = N;
     node->inputs[1]->dims[1] = K;
     p = (int8_t *)node->inputs[1]->datas;
@@ -53,12 +53,12 @@ int test_matmul_int8(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = M * N;
-    node->outputs[0]->datas = malloc(sizeof(int8_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(int8_t) * node->outputs[0]->ndata);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = N;
     node->outputs[0]->dims[1] = M;
 
@@ -99,16 +99,16 @@ int test_matmul_f16(void)
     float16_t opt[M * N];
     int ret = 0;
 
-    node = (struct onnx_node_t *)malloc(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
     node->priv = NULL;
     node->ninput = 2;
 
-    node->inputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = M * K;
-    node->inputs[0]->datas = malloc(sizeof(float16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[0]->ndata);
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = K;
     node->inputs[0]->dims[1] = M;
     float16_t *p = (float16_t *)node->inputs[0]->datas;
@@ -116,11 +116,11 @@ int test_matmul_f16(void)
         p[i] = rand() * 1.0 / RAND_MAX;
     }
 
-    node->inputs[1] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = K * N;
-    node->inputs[1]->datas = malloc(sizeof(float16_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[1]->ndata);
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = N;
     node->inputs[1]->dims[1] = K;
     p = (float16_t *)node->inputs[1]->datas;
@@ -129,12 +129,12 @@ int test_matmul_f16(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = M * N;
-    node->outputs[0]->datas = malloc(sizeof(float16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->outputs[0]->ndata);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = N;
     node->outputs[0]->dims[1] = M;
 
@@ -174,15 +174,15 @@ int test_matmul_f32(void)
     float32_t opt[M * N];
     int ret = 0;
 
-    node = (struct onnx_node_t *)malloc(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
     node->ninput = 2;
 
-    node->inputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = M * K;
-    node->inputs[0]->datas = malloc(sizeof(float32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[0]->ndata);
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = K;
     node->inputs[0]->dims[1] = M;
     float32_t *p = (float32_t *)node->inputs[0]->datas;
@@ -190,11 +190,11 @@ int test_matmul_f32(void)
         p[i] = rand() * 1.0 / RAND_MAX;
     }
 
-    node->inputs[1] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[1]->ndata = K * N;
-    node->inputs[1]->datas = malloc(sizeof(float32_t) * node->inputs[1]->ndata);
+    node->inputs[1]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[1]->ndata);
     node->inputs[1]->ndim = 2;
-    node->inputs[1]->dims = (int *)malloc(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[1]->ndim);
     node->inputs[1]->dims[0] = N;
     node->inputs[1]->dims[1] = K;
     p = (float32_t *)node->inputs[1]->datas;
@@ -203,12 +203,12 @@ int test_matmul_f32(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = M * N;
-    node->outputs[0]->datas = malloc(sizeof(float32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->outputs[0]->ndata);
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = N;
     node->outputs[0]->dims[1] = M;
 

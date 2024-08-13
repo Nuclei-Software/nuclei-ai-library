@@ -21,19 +21,19 @@ int test_topk_int32(void)
     int32_t opt[TEST_DATA_LEN];
     int ret = 0;
 
-    node = (struct onnx_node_t *)malloc(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
     node->ninput = 1;
     uint32_t k = 32;
     node->priv = GenerateTopkParam(k);
 
-    node->inputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndata = TEST_DATA_LEN;
-    node->inputs[0]->datas = malloc(sizeof(int32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(int32_t) * node->inputs[0]->ndata);
     node->inputs[0]->ndim = 1;
-    node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = TEST_DATA_LEN;
-    node->inputs[0]->strides = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->strides[0] = 1;
 
     int32_t *p = (int32_t *)node->inputs[0]->datas;
@@ -44,14 +44,14 @@ int test_topk_int32(void)
     // show_tensor_int32(node->inputs[0], "input");
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndata = k;
-    node->outputs[0]->datas = malloc(sizeof(int32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(int32_t) * node->outputs[0]->ndata);
     node->outputs[0]->ndim = 1;
-    node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = k;
-    node->outputs[0]->strides = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->strides[0] = 1;
 
     BENCH_START(Topk_int32);

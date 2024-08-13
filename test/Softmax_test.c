@@ -22,17 +22,17 @@ int test_softmax_f32(void)
     float32_t opt[NUM_ROWS * NUM_COLS];
     int ret = 0;
 
-    node = (struct onnx_node_t *)malloc(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
     node->priv = NULL;
     node->ninput = 1;
-    node->inputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = NUM_COLS;
     node->inputs[0]->dims[1] = NUM_ROWS;
     node->inputs[0]->ndata = NUM_ROWS * NUM_COLS;
-    node->inputs[0]->datas = malloc(sizeof(float32_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->inputs[0]->ndata);
 
     float32_t *p = (float32_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
@@ -40,14 +40,14 @@ int test_softmax_f32(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = NUM_COLS;
     node->outputs[0]->dims[1] = NUM_ROWS;
     node->outputs[0]->ndata = NUM_ROWS * NUM_COLS;
-    node->outputs[0]->datas = malloc(sizeof(float32_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float32_t) * node->outputs[0]->ndata);
 
     BENCH_START(Softmax_float32);
     Softmax_float32(node);
@@ -83,17 +83,17 @@ int test_softmax_f16(void)
     float16_t opt[NUM_ROWS * NUM_COLS];
     int ret = 0;
 
-    node = (struct onnx_node_t *)malloc(sizeof(struct onnx_node_t));
+    node = (struct onnx_node_t *)MALLOC_CHECKED(sizeof(struct onnx_node_t));
     node->priv = NULL;
     node->ninput = 1;
-    node->inputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->ninput);
-    node->inputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->inputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->inputs[0]->ndim = 2;
-    node->inputs[0]->dims = (int *)malloc(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->inputs[0]->ndim);
     node->inputs[0]->dims[0] = NUM_COLS;
     node->inputs[0]->dims[1] = NUM_ROWS;
     node->inputs[0]->ndata = NUM_COLS * NUM_ROWS;
-    node->inputs[0]->datas = malloc(sizeof(float16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->inputs[0]->ndata);
 
     float16_t *p = (float16_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
@@ -101,14 +101,14 @@ int test_softmax_f16(void)
     }
 
     node->noutput = 1;
-    node->outputs = (struct onnx_tensor_t **)malloc(sizeof(struct onnx_tensor_t *) * node->noutput);
-    node->outputs[0] = (struct onnx_tensor_t *)malloc(sizeof(struct onnx_tensor_t));
+    node->outputs = (struct onnx_tensor_t **)MALLOC_CHECKED(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_CHECKED(sizeof(struct onnx_tensor_t));
     node->outputs[0]->ndim = 2;
-    node->outputs[0]->dims = (int *)malloc(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims = (int *)MALLOC_CHECKED(sizeof(int) * node->outputs[0]->ndim);
     node->outputs[0]->dims[0] = NUM_COLS;
     node->outputs[0]->dims[1] = NUM_ROWS;
     node->outputs[0]->ndata = NUM_COLS * NUM_ROWS;
-    node->outputs[0]->datas = malloc(sizeof(float16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->datas = MALLOC_CHECKED(sizeof(float16_t) * node->outputs[0]->ndata);
 
     BENCH_START(Softmax_float16);
     Softmax_float16(node);
