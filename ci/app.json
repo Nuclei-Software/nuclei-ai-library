@@ -23,6 +23,8 @@
         "."
     ],
     "appdirs_ignore": [
+        "nuclei_sdk",
+        "nuclei-sdk"
     ],
     "appconfig": {
     }
