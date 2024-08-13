@@ -8,7 +8,11 @@ SRCDIRS = . src test
 
 INCDIRS = . src inc
 
+CORE ?= nx900fd
+
 ARCH_EXT ?= v_zfh_zvfh
+
+LINKER_SCRIPT := evalsoc.ld
 
 LDLIBS ?= -lm
 
