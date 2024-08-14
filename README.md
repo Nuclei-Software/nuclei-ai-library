@@ -109,7 +109,7 @@ To build the test program for rv64, run the following command:
 
 ```shell
 cd /path/to/nuclei-ai-library
-make all
+make CORE=nx900fd ARCH_EXT=v_zfh_zvfh all
 ```
 
 When not specify `CORE` and `ARCH_EXT`，the `CORE=nx900fd` and `ARCH_EXT=v_zfh_zvfh` will be used as default.
@@ -129,10 +129,13 @@ After make, the binary file `ailib_bench.elf` will be generated in the root dire
 To run the test program with QEMU, run the following command:
 
 ```shell
-make SIMU=qemu clean all run_qemu
+# run test on qemu for rv64
+make CORE=nx900fd ARCH_EXT=v_zfh_zvfh SIMU=qemu clean all run_qemu
+# run test on qemu for rv32
+make CORE=n900f ARCH_EXT=_zve32f_zfh_zvfh SIMU=qemu clean all run_qemu
 ```
 
-This command will rebuild the test program with `SIMU=qemu`，and run the test program on QEMU after build. When `SIMU=qemu` is specified, QEMU will automatically terminate upon the completion of the test. In other cases, you will need to press `CTRL+C` to manually exit QEMU once the test is completed.
+These command will rebuild the test program with `SIMU=qemu`，and run the test program on QEMU after build. When `SIMU=qemu` is specified, QEMU will automatically terminate upon the completion of the test. In other cases, you will need to press `CTRL+C` to manually exit QEMU once the test is completed.
 
 #### Test on Hardware
 
