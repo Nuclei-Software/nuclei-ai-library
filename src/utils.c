@@ -28,11 +28,6 @@ int verify_results_int8(int8_t *ref, int8_t *opt, int length)
             break;
         }
     }
-    if (flag == 0) {
-        printf("pass!\r\n");
-    } else {
-        printf("fail!\r\n");
-    }
 
     return flag;
 }
@@ -47,11 +42,6 @@ int verify_results_int32(int32_t *ref, int32_t *opt, int length)
             flag = 1;
             break;
         }
-    }
-    if (flag == 0) {
-        printf("pass!\r\n");
-    } else {
-        printf("fail!\r\n");
     }
 
     return flag;
@@ -73,12 +63,6 @@ int verify_results_f16(float16_t *ref, float16_t *opt, int length)
         }
     }
 
-    if (flag == 0) {
-        printf("pass!\r\n");
-    } else {
-        printf("fail!\r\n");
-    }
-
     return flag;
 }
 
@@ -92,12 +76,6 @@ int verify_results_f32(float32_t *ref, float32_t *opt, int length)
             flag = 1;
             break;
         }
-    }
-
-    if (flag == 0) {
-        printf("pass!\r\n");
-    } else {
-        printf("fail!\r\n");
     }
 
     return flag;

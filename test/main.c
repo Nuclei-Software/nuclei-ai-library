@@ -109,7 +109,6 @@ int main(void)
 #endif
 
     for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-        printf("start test %d\r\n", i);
         results[i] = tests[i].func();
     }
 
