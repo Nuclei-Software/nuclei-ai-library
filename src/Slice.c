@@ -1,13 +1,5 @@
-/**
- * @file Slice.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief references:
- *        https://onnx.ai/onnx/operators/onnx__Slice.html
- * @version 0.1
- * @date 2024-07-11
- *
- * @copyright Copyright (c) 2024
- *
+/*
+ * https://onnx.ai/onnx/operators/onnx__Slice.html
  */
 
 #include "operators.h"

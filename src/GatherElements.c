@@ -1,14 +1,6 @@
-/**
- * @file GatherElements.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief references:
- *        https://onnx.ai/onnx/operators/onnx__ScatterElements.html
- *        https://pytorch.org/docs/stable/generated/torch.gather.html#torch-gather
- * @version 0.1
- * @date 2024-07-11
- *
- * @copyright Copyright (c) 2024
- *
+/*
+ * https://onnx.ai/onnx/operators/onnx__ScatterElements.html
+ * https://pytorch.org/docs/stable/generated/torch.gather.html#torch-gather
  */
 
 #include "operators.h"

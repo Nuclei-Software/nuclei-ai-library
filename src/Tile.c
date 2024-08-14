@@ -1,14 +1,6 @@
-/**
- * @file Tile.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief references:
- *        https://onnx.ai/onnx/operators/onnx__Tile.html
- *        https://numpy.org/doc/stable/reference/generated/numpy.tile.html#numpy.tile
- * @version 0.1
- * @date 2024-07-11
- *
- * @copyright Copyright (c) 2024
- *
+/*
+ * https://onnx.ai/onnx/operators/onnx__Tile.html
+ * https://numpy.org/doc/stable/reference/generated/numpy.tile.html#numpy.tile
  */
 
 #include <string.h>

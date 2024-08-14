@@ -1,14 +1,3 @@
-/**
- * @file Topk.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief
- * @version 0.1
- * @date 2024-07-05
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -61,7 +50,7 @@ void Topk_int32(struct onnx_node_t *n)
     int32_t *py = (int32_t *)y->datas;
 
     // assert(pdat->k <= len);
-    
+
     memcpy(py, px, sizeof(int32_t) * pdat->k);
     for (int i = pdat->k / 2 - 1; i >= 0; --i) {
         Heapify(py, pdat->k, i);
@@ -86,7 +75,7 @@ void Topk_int32_rvv(struct onnx_node_t *n)
     vint32m1_t acc;
     vbool4_t vb;
     TopkState state;
-    
+
     // assert(pdat->k <= maxvl);
 
     // init vx

@@ -1,14 +1,3 @@
-/**
- * @file onnx.h
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief The origin header file: https://github.com/xboot/libonnx/blob/master/src/onnx.h
- * @version 0.1
- * @date 2024-07-05
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 #ifndef __ONNX_H__
 #define __ONNX_H__
 

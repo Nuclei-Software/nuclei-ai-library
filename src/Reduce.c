@@ -1,13 +1,5 @@
-/**
- * @file Reduce.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief references:
- *        https://www.tensorflow.org/api_docs/python/tf/math
- * @version 0.1
- * @date 2024-07-12
- *
- * @copyright Copyright (c) 2024
- *
+/*
+ * https://www.tensorflow.org/api_docs/python/tf/math
  */
 
 #include <float.h>

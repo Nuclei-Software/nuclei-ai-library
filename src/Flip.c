@@ -1,13 +1,5 @@
-/**
- * @file Flip.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief references:
- *        https://pytorch.org/docs/stable/generated/torch.flip.html
- * @version 0.1
- * @date 2024-07-10
- *
- * @copyright Copyright (c) 2024
- *
+/*
+ * https://pytorch.org/docs/stable/generated/torch.flip.html
  */
 
 #include <string.h>

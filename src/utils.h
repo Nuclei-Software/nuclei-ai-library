@@ -1,14 +1,3 @@
-/**
- * @file utils.h
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief
- * @version 0.1
- * @date 2024-07-05
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 #ifndef __UTILS_H__
 #define __UTILS_H__
 

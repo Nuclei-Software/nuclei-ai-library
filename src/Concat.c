@@ -1,16 +1,7 @@
-/**
- * @file Concat.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief references:
- *        https://onnx.ai/onnx/operators/onnx__Concat.html#
- *        https://pytorch.org/docs/stable/generated/torch.cat.html#torch.cat
- * @version 0.1
- * @date 2024-07-08
- *
- * @copyright Copyright (c) 2024
- *
+/*
+ * https://onnx.ai/onnx/operators/onnx__Concat.html#
+ * https://pytorch.org/docs/stable/generated/torch.cat.html#torch.cat
  */
-
 #include <string.h>
 
 #include "operators.h"

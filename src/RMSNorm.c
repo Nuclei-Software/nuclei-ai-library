@@ -1,14 +1,3 @@
-/**
- * @file RMSNormalization.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief
- * @version 0.1
- * @date 2024-07-05
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 #include "operators.h"
 #include "utils.h"
 
@@ -157,7 +146,8 @@ void *GenerateRMSNormParam(float epsilon, float momentum)
     return pdat;
 }
 
-void FreeRMSNormParam(void **pdat) {
+void FreeRMSNormParam(void **pdat)
+{
     free(*pdat);
     *pdat = NULL;
 }

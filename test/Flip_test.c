@@ -1,14 +1,3 @@
-/**
- * @file Flip_test.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief
- * @version 0.1
- * @date 2024-07-10
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 #include "utils.h"
 
 #define SIZE 32

@@ -1,14 +1,3 @@
-/**
- * @file Mul.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief
- * @version 0.1
- * @date 2024-07-05
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 /*
  * https://onnx.ai/onnx/operators/onnx__Mul.html#mul
  * https://github.com/xboot/libonnx/blob/master/src/default/Mul.c

@@ -1,14 +1,3 @@
-/**
- * @file Softmax.c
- * @author qiujiandong (qiujiandong@nucleisys.com)
- * @brief
- * @version 0.1
- * @date 2024-07-07
- *
- * @copyright Copyright (c) 2024
- *
- */
-
 /*
  * https://onnx.ai/onnx/operators/onnx__Softmax.html#softmax
  * https://github.com/shin-mashita/uonnx/blob/main/src/ops/Softmax.c
