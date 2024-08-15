@@ -30,7 +30,7 @@ We also provided test code to evaluate the ONNX operators implemention, which ca
 | Mul                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
 | Negate             | √    | √    | ×    | ×   | √     |  √   | ×    |   |
 | Pad                | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Power              | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Pow                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
 | Reciprocal         | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
 | ReduceAll          | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
 | ReduceAny          | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
