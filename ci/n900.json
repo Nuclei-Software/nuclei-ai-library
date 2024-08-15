@@ -12,7 +12,7 @@
         }
     },
     "build_configs": {
-        "rv32imafdcv" : {"CORE": "n900fd", "ARCH_EXT": "_zve32f_zfh_zvfh"}
+        "rv32imafdcv" : {"CORE": "n900fd", "ARCH_EXT": "_zfh_zvfh_zve32f"}
     },
     "expecteds" : {
     }

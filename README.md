@@ -117,7 +117,7 @@ When not specify `CORE` and `ARCH_EXT`，the `CORE=nx900fd` and `ARCH_EXT=v_zfh_
 If you want to specify `CORE` and `ARCH_EXT` to build for rv32，you can run the following command:
 
 ```shell
-make CORE=n900f ARCH_EXT=_zve32f_zfh_zvfh all
+make CORE=n900f ARCH_EXT=_zfh_zvfh_zve32f all
 ```
 
 After make, the binary file `ailib_bench.elf` will be generated in the root directory of this project.
@@ -132,7 +132,7 @@ To run the test program with QEMU, run the following command:
 # run test on qemu for rv64
 make CORE=nx900fd ARCH_EXT=v_zfh_zvfh SIMU=qemu clean all run_qemu
 # run test on qemu for rv32
-make CORE=n900f ARCH_EXT=_zve32f_zfh_zvfh SIMU=qemu clean all run_qemu
+make CORE=n900f ARCH_EXT=_zfh_zvfh_zve32f SIMU=qemu clean all run_qemu
 ```
 
 These command will rebuild the test program with `SIMU=qemu`，and run the test program on QEMU after build. When `SIMU=qemu` is specified, QEMU will automatically terminate upon the completion of the test. In other cases, you will need to press `CTRL+C` to manually exit QEMU once the test is completed.
@@ -154,7 +154,7 @@ When the hardware has connected to your host locally, you can run the following 
 # when the hardware is rv64
 make CORE=nx900fd ARCH_EXT=v_zfh_zvfh clean all upload
 # when the hardware is rv32
-make CORE=n900f ARCH_EXT=_zve32f_zfh_zvfh clean all upload
+make CORE=n900f ARCH_EXT=_zfh_zvfh_zve32f clean all upload
 ```
 
 To lean more details about run applications on hardware please refer to [Build, Run and Debug Sample Application](https://doc.nucleisys.com/nuclei_sdk/quickstart.html#build-run-and-debug-sample-application) section in Nuclei SDK documentation.
