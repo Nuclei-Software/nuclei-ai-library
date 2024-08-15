@@ -55,16 +55,16 @@ int test_reduce_all()
         p[j] = true;
     }
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_allaxes_true);
+    BENCH_START(ReduceAll_boolean_allaxes_true);
     ReduceAll(node);
-    BENCH_END(ReduceAll_allaxes_true);
+    BENCH_END(ReduceAll_boolean_allaxes_true);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes true
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_allaxes_true_rvv);
+    BENCH_START(ReduceAll_boolean_rvv_allaxes_true);
     ReduceAll_rvv(node);
-    BENCH_END(ReduceAll_allaxes_true_rvv);
+    BENCH_END(ReduceAll_boolean_rvv_allaxes_true);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -75,16 +75,16 @@ int test_reduce_all()
         p[j] = rand() % 2;
     }
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_allaxes_rand);
+    BENCH_START(ReduceAll_boolean_allaxes_rand);
     ReduceAll(node);
-    BENCH_END(ReduceAll_allaxes_rand);
+    BENCH_END(ReduceAll_boolean_allaxes_rand);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes rand
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_allaxes_rand_rvv);
+    BENCH_START(ReduceAll_boolean_rvv_allaxes_rand);
     ReduceAll_rvv(node);
-    BENCH_END(ReduceAll_allaxes_rand_rvv);
+    BENCH_END(ReduceAll_boolean_rvv_allaxes_rand);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -92,45 +92,45 @@ int test_reduce_all()
     node->priv = &axis;
     axis = 0;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_axis0);
+    BENCH_START(ReduceAll_boolean_axis0);
     ReduceAll(node);
-    BENCH_END(ReduceAll_axis0);
+    BENCH_END(ReduceAll_boolean_axis0);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_axis0_rvv);
+    BENCH_START(ReduceAll_boolean_rvv_axis0);
     ReduceAll_rvv(node);
-    BENCH_END(ReduceAll_axis0_rvv);
+    BENCH_END(ReduceAll_boolean_rvv_axis0);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 1;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_axis1);
+    BENCH_START(ReduceAll_boolean_axis1);
     ReduceAll(node);
-    BENCH_END(ReduceAll_axis1);
+    BENCH_END(ReduceAll_boolean_axis1);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_axis1_rvv);
+    BENCH_START(ReduceAll_boolean_rvv_axis1);
     ReduceAll_rvv(node);
-    BENCH_END(ReduceAll_axis1_rvv);
+    BENCH_END(ReduceAll_boolean_rvv_axis1);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_axis2);
+    BENCH_START(ReduceAll_boolean_axis2);
     ReduceAll(node);
-    BENCH_END(ReduceAll_axis2);
+    BENCH_END(ReduceAll_boolean_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAll_axis2_rvv);
+    BENCH_START(ReduceAll_boolean_rvv_axis2);
     ReduceAll_rvv(node);
-    BENCH_END(ReduceAll_axis2_rvv);
+    BENCH_END(ReduceAll_boolean_rvv_axis2);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -195,16 +195,16 @@ int test_reduce_any()
         p[j] = false;
     }
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_allaxes_false);
+    BENCH_START(ReduceAny_boolean_allaxes_false);
     ReduceAny(node);
-    BENCH_END(ReduceAny_allaxes_false);
+    BENCH_END(ReduceAny_boolean_allaxes_false);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes false
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_allaxes_false_rvv);
+    BENCH_START(ReduceAny_boolean_rvv_allaxes_false);
     ReduceAny_rvv(node);
-    BENCH_END(ReduceAny_allaxes_false_rvv);
+    BENCH_END(ReduceAny_boolean_rvv_allaxes_false);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -215,16 +215,16 @@ int test_reduce_any()
         p[j] = rand() % 2;
     }
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_allaxes_rand);
+    BENCH_START(ReduceAny_boolean_allaxes_rand);
     ReduceAny(node);
-    BENCH_END(ReduceAny_allaxes_rand);
+    BENCH_END(ReduceAny_boolean_allaxes_rand);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes rand
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_allaxes_rand_rvv);
+    BENCH_START(ReduceAny_boolean_rvv_allaxes_rand);
     ReduceAny_rvv(node);
-    BENCH_END(ReduceAny_allaxes_rand_rvv);
+    BENCH_END(ReduceAny_boolean_rvv_allaxes_rand);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -232,45 +232,45 @@ int test_reduce_any()
     node->priv = &axis;
     axis = 0;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_axis0);
+    BENCH_START(ReduceAny_boolean_axis0);
     ReduceAny(node);
-    BENCH_END(ReduceAny_axis0);
+    BENCH_END(ReduceAny_boolean_axis0);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_axis0_rvv);
+    BENCH_START(ReduceAny_boolean_rvv_axis0);
     ReduceAny_rvv(node);
-    BENCH_END(ReduceAny_axis0_rvv);
+    BENCH_END(ReduceAny_boolean_rvv_axis0);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 1;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_axis1);
+    BENCH_START(ReduceAny_boolean_axis1);
     ReduceAny(node);
-    BENCH_END(ReduceAny_axis1);
+    BENCH_END(ReduceAny_boolean_axis1);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_axis1_rvv);
+    BENCH_START(ReduceAny_boolean_rvv_axis1);
     ReduceAny_rvv(node);
-    BENCH_END(ReduceAny_axis1_rvv);
+    BENCH_END(ReduceAny_boolean_rvv_axis1);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_axis1);
+    BENCH_START(ReduceAny_boolean_axis2);
     ReduceAny(node);
-    BENCH_END(ReduceAny_axis2);
+    BENCH_END(ReduceAny_boolean_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceAny_axis2_rvv);
+    BENCH_START(ReduceAny_boolean_rvv_axis2);
     ReduceAny_rvv(node);
-    BENCH_END(ReduceAny_axis2_rvv);
+    BENCH_END(ReduceAny_boolean_rvv_axis2);
 
     // verify result
     ret |= verify_results_int8((int8_t *)golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -342,9 +342,9 @@ int test_reduce_max_int8()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int8_allaxes_rvv);
+    BENCH_START(ReduceMax_int8_rvv_allaxes);
     ReduceMax_int8_rvv(node);
-    BENCH_END(ReduceMax_int8_allaxes_rvv);
+    BENCH_END(ReduceMax_int8_rvv_allaxes);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -358,9 +358,9 @@ int test_reduce_max_int8()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int8_axis0_rvv);
+    BENCH_START(ReduceMax_int8_rvv_axis0);
     ReduceMax_int8_rvv(node);
-    BENCH_END(ReduceMax_int8_axis0_rvv);
+    BENCH_END(ReduceMax_int8_rvv_axis0);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -373,24 +373,24 @@ int test_reduce_max_int8()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int8_axis1_rvv);
+    BENCH_START(ReduceMax_int8_rvv_axis1);
     ReduceMax_int8_rvv(node);
-    BENCH_END(ReduceMax_int8_axis1_rvv);
+    BENCH_END(ReduceMax_int8_rvv_axis1);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int8_axis1);
+    BENCH_START(ReduceMax_int8_axis2);
     ReduceMax_int8(node);
     BENCH_END(ReduceMax_int8_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int8_axis2_rvv);
+    BENCH_START(ReduceMax_int8_rvv_axis2);
     ReduceMax_int8_rvv(node);
-    BENCH_END(ReduceMax_int8_axis2_rvv);
+    BENCH_END(ReduceMax_int8_rvv_axis2);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -462,9 +462,9 @@ int test_reduce_max_float16()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float16_allaxes_rvv);
+    BENCH_START(ReduceMax_float16_rvv_allaxes);
     ReduceMax_float16_rvv(node);
-    BENCH_END(ReduceMax_float16_allaxes_rvv);
+    BENCH_END(ReduceMax_float16_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -478,9 +478,9 @@ int test_reduce_max_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float16_axis0_rvv);
+    BENCH_START(ReduceMax_float16_rvv_axis0);
     ReduceMax_float16_rvv(node);
-    BENCH_END(ReduceMax_float16_axis0_rvv);
+    BENCH_END(ReduceMax_float16_rvv_axis0);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -493,24 +493,24 @@ int test_reduce_max_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float16_axis1_rvv);
+    BENCH_START(ReduceMax_float16_rvv_axis1);
     ReduceMax_float16_rvv(node);
-    BENCH_END(ReduceMax_float16_axis1_rvv);
+    BENCH_END(ReduceMax_float16_rvv_axis1);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float16_axis1);
+    BENCH_START(ReduceMax_float16_axis2);
     ReduceMax_float16(node);
     BENCH_END(ReduceMax_float16_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float16_axis2_rvv);
+    BENCH_START(ReduceMax_float16_rvv_axis2);
     ReduceMax_float16_rvv(node);
-    BENCH_END(ReduceMax_float16_axis2_rvv);
+    BENCH_END(ReduceMax_float16_rvv_axis2);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -582,9 +582,9 @@ int test_reduce_max_float32()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float32_allaxes_rvv);
+    BENCH_START(ReduceMax_float32_rvv_allaxes);
     ReduceMax_float32_rvv(node);
-    BENCH_END(ReduceMax_float32_allaxes_rvv);
+    BENCH_END(ReduceMax_float32_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -598,9 +598,9 @@ int test_reduce_max_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float32_axis0_rvv);
+    BENCH_START(ReduceMax_float32_rvv_axis0);
     ReduceMax_float32_rvv(node);
-    BENCH_END(ReduceMax_float32_axis0_rvv);
+    BENCH_END(ReduceMax_float32_rvv_axis0);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -613,24 +613,24 @@ int test_reduce_max_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float32_axis1_rvv);
+    BENCH_START(ReduceMax_float32_rvv_axis1);
     ReduceMax_float32_rvv(node);
-    BENCH_END(ReduceMax_float32_axis1_rvv);
+    BENCH_END(ReduceMax_float32_rvv_axis1);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float32_axis1);
+    BENCH_START(ReduceMax_float32_axis2);
     ReduceMax_float32(node);
     BENCH_END(ReduceMax_float32_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_float32_axis2_rvv);
+    BENCH_START(ReduceMax_float32_rvv_axis2);
     ReduceMax_float32_rvv(node);
-    BENCH_END(ReduceMax_float32_axis2_rvv);
+    BENCH_END(ReduceMax_float32_rvv_axis2);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -702,9 +702,9 @@ int test_reduce_max_int32()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int32_allaxes_rvv);
+    BENCH_START(ReduceMax_int32_rvv_allaxes);
     ReduceMax_int32_rvv(node);
-    BENCH_END(ReduceMax_int32_allaxes_rvv);
+    BENCH_END(ReduceMax_int32_rvv_allaxes);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -718,9 +718,9 @@ int test_reduce_max_int32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int32_axis0_rvv);
+    BENCH_START(ReduceMax_int32_rvv_axis0);
     ReduceMax_int32_rvv(node);
-    BENCH_END(ReduceMax_int32_axis0_rvv);
+    BENCH_END(ReduceMax_int32_rvv_axis0);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -733,24 +733,24 @@ int test_reduce_max_int32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int32_axis1_rvv);
+    BENCH_START(ReduceMax_int32_rvv_axis1);
     ReduceMax_int32_rvv(node);
-    BENCH_END(ReduceMax_int32_axis1_rvv);
+    BENCH_END(ReduceMax_int32_rvv_axis1);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int32_axis1);
+    BENCH_START(ReduceMax_int32_axis2);
     ReduceMax_int32(node);
     BENCH_END(ReduceMax_int32_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMax_int32_axis2_rvv);
+    BENCH_START(ReduceMax_int32_rvv_axis2);
     ReduceMax_int32_rvv(node);
-    BENCH_END(ReduceMax_int32_axis2_rvv);
+    BENCH_END(ReduceMax_int32_rvv_axis2);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -822,9 +822,9 @@ int test_reduce_min_int8()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int8_allaxes_rvv);
+    BENCH_START(ReduceMin_int8_rvv_allaxes);
     ReduceMin_int8_rvv(node);
-    BENCH_END(ReduceMin_int8_allaxes_rvv);
+    BENCH_END(ReduceMin_int8_rvv_allaxes);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -838,9 +838,9 @@ int test_reduce_min_int8()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int8_axis0_rvv);
+    BENCH_START(ReduceMin_int8_rvv_axis0);
     ReduceMin_int8_rvv(node);
-    BENCH_END(ReduceMin_int8_axis0_rvv);
+    BENCH_END(ReduceMin_int8_rvv_axis0);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -853,24 +853,24 @@ int test_reduce_min_int8()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int8_axis1_rvv);
+    BENCH_START(ReduceMin_int8_rvv_axis1);
     ReduceMin_int8_rvv(node);
-    BENCH_END(ReduceMin_int8_axis1_rvv);
+    BENCH_END(ReduceMin_int8_rvv_axis1);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int8_axis1);
+    BENCH_START(ReduceMin_int8_axis2);
     ReduceMin_int8(node);
     BENCH_END(ReduceMin_int8_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int8_axis2_rvv);
+    BENCH_START(ReduceMin_int8_rvv_axis2);
     ReduceMin_int8_rvv(node);
-    BENCH_END(ReduceMin_int8_axis2_rvv);
+    BENCH_END(ReduceMin_int8_rvv_axis2);
 
     // verify result
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -942,9 +942,9 @@ int test_reduce_min_float16()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float16_allaxes_rvv);
+    BENCH_START(ReduceMin_float16_rvv_allaxes);
     ReduceMin_float16_rvv(node);
-    BENCH_END(ReduceMin_float16_allaxes_rvv);
+    BENCH_END(ReduceMin_float16_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -958,9 +958,9 @@ int test_reduce_min_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float16_axis0_rvv);
+    BENCH_START(ReduceMin_float16_rvv_axis0);
     ReduceMin_float16_rvv(node);
-    BENCH_END(ReduceMin_float16_axis0_rvv);
+    BENCH_END(ReduceMin_float16_rvv_axis0);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -973,24 +973,24 @@ int test_reduce_min_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float16_axis1_rvv);
+    BENCH_START(ReduceMin_float16_rvv_axis1);
     ReduceMin_float16_rvv(node);
-    BENCH_END(ReduceMin_float16_axis1_rvv);
+    BENCH_END(ReduceMin_float16_rvv_axis1);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float16_axis1);
+    BENCH_START(ReduceMin_float16_axis2);
     ReduceMin_float16(node);
     BENCH_END(ReduceMin_float16_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float16_axis2_rvv);
+    BENCH_START(ReduceMin_float16_rvv_axis2);
     ReduceMin_float16_rvv(node);
-    BENCH_END(ReduceMin_float16_axis2_rvv);
+    BENCH_END(ReduceMin_float16_rvv_axis2);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1062,9 +1062,9 @@ int test_reduce_min_float32()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float32_allaxes_rvv);
+    BENCH_START(ReduceMin_float32_rvv_allaxes);
     ReduceMin_float32_rvv(node);
-    BENCH_END(ReduceMin_float32_allaxes_rvv);
+    BENCH_END(ReduceMin_float32_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1078,9 +1078,9 @@ int test_reduce_min_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float32_axis0_rvv);
+    BENCH_START(ReduceMin_float32_rvv_axis0);
     ReduceMin_float32_rvv(node);
-    BENCH_END(ReduceMin_float32_axis0_rvv);
+    BENCH_END(ReduceMin_float32_rvv_axis0);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1093,9 +1093,9 @@ int test_reduce_min_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float32_axis1_rvv);
+    BENCH_START(ReduceMin_float32_rvv_axis1);
     ReduceMin_float32_rvv(node);
-    BENCH_END(ReduceMin_float32_axis1_rvv);
+    BENCH_END(ReduceMin_float32_rvv_axis1);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1108,9 +1108,9 @@ int test_reduce_min_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_float32_axis2_rvv);
+    BENCH_START(ReduceMin_float32_rvv_axis2);
     ReduceMin_float32_rvv(node);
-    BENCH_END(ReduceMin_float32_axis2_rvv);
+    BENCH_END(ReduceMin_float32_rvv_axis2);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1182,9 +1182,9 @@ int test_reduce_min_int32()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int32_allaxes_rvv);
+    BENCH_START(ReduceMin_int32_rvv_allaxes);
     ReduceMin_int32_rvv(node);
-    BENCH_END(ReduceMin_int32_allaxes_rvv);
+    BENCH_END(ReduceMin_int32_rvv_allaxes);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1198,9 +1198,9 @@ int test_reduce_min_int32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int32_axis0_rvv);
+    BENCH_START(ReduceMin_int32_rvv_axis0);
     ReduceMin_int32_rvv(node);
-    BENCH_END(ReduceMin_int32_axis0_rvv);
+    BENCH_END(ReduceMin_int32_rvv_axis0);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1213,24 +1213,24 @@ int test_reduce_min_int32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int32_axis1_rvv);
+    BENCH_START(ReduceMin_int32_rvv_axis1);
     ReduceMin_int32_rvv(node);
-    BENCH_END(ReduceMin_int32_axis1_rvv);
+    BENCH_END(ReduceMin_int32_rvv_axis1);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int32_axis1);
+    BENCH_START(ReduceMin_int32_axis2);
     ReduceMin_int32(node);
     BENCH_END(ReduceMin_int32_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceMin_int32_axis2_rvv);
+    BENCH_START(ReduceMin_int32_rvv_axis2);
     ReduceMin_int32_rvv(node);
-    BENCH_END(ReduceMin_int32_axis2_rvv);
+    BENCH_END(ReduceMin_int32_rvv_axis2);
 
     // verify result
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1302,9 +1302,9 @@ int test_reduce_sum_float16()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float16_allaxes_rvv);
+    BENCH_START(ReduceSum_float16_rvv_allaxes);
     ReduceSum_float16_rvv(node);
-    BENCH_END(ReduceSum_float16_allaxes_rvv);
+    BENCH_END(ReduceSum_float16_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1318,9 +1318,9 @@ int test_reduce_sum_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float16_axis0_rvv);
+    BENCH_START(ReduceSum_float16_rvv_axis0);
     ReduceSum_float16_rvv(node);
-    BENCH_END(ReduceSum_float16_axis0_rvv);
+    BENCH_END(ReduceSum_float16_rvv_axis0);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1333,24 +1333,24 @@ int test_reduce_sum_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float16_axis1_rvv);
+    BENCH_START(ReduceSum_float16_rvv_axis1);
     ReduceSum_float16_rvv(node);
-    BENCH_END(ReduceSum_float16_axis1_rvv);
+    BENCH_END(ReduceSum_float16_rvv_axis1);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float16_axis1);
+    BENCH_START(ReduceSum_float16_axis2);
     ReduceSum_float16(node);
     BENCH_END(ReduceSum_float16_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float16_axis2_rvv);
+    BENCH_START(ReduceSum_float16_rvv_axis2);
     ReduceSum_float16_rvv(node);
-    BENCH_END(ReduceSum_float16_axis2_rvv);
+    BENCH_END(ReduceSum_float16_rvv_axis2);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1422,9 +1422,9 @@ int test_reduce_sum_float32()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float32_allaxes_rvv);
+    BENCH_START(ReduceSum_float32_rvv_allaxes);
     ReduceSum_float32_rvv(node);
-    BENCH_END(ReduceSum_float32_allaxes_rvv);
+    BENCH_END(ReduceSum_float32_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1438,9 +1438,9 @@ int test_reduce_sum_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float32_axis0_rvv);
+    BENCH_START(ReduceSum_float32_rvv_axis0);
     ReduceSum_float32_rvv(node);
-    BENCH_END(ReduceSum_float32_axis0_rvv);
+    BENCH_END(ReduceSum_float32_rvv_axis0);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1453,24 +1453,24 @@ int test_reduce_sum_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float32_axis1_rvv);
+    BENCH_START(ReduceSum_float32_rvv_axis1);
     ReduceSum_float32_rvv(node);
-    BENCH_END(ReduceSum_float32_axis1_rvv);
+    BENCH_END(ReduceSum_float32_rvv_axis1);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float32_axis1);
+    BENCH_START(ReduceSum_float32_axis2);
     ReduceSum_float32(node);
     BENCH_END(ReduceSum_float32_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceSum_float32_axis2_rvv);
+    BENCH_START(ReduceSum_float32_rvv_axis2);
     ReduceSum_float32_rvv(node);
-    BENCH_END(ReduceSum_float32_axis2_rvv);
+    BENCH_END(ReduceSum_float32_rvv_axis2);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1542,9 +1542,9 @@ int test_reduce_prod_float16()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float16_allaxes_rvv);
+    BENCH_START(ReduceProd_float16_rvv_allaxes);
     ReduceProd_float16_rvv(node);
-    BENCH_END(ReduceProd_float16_allaxes_rvv);
+    BENCH_END(ReduceProd_float16_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1558,9 +1558,9 @@ int test_reduce_prod_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float16_axis0_rvv);
+    BENCH_START(ReduceProd_float16_rvv_axis0);
     ReduceProd_float16_rvv(node);
-    BENCH_END(ReduceProd_float16_axis0_rvv);
+    BENCH_END(ReduceProd_float16_rvv_axis0);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1573,24 +1573,24 @@ int test_reduce_prod_float16()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float16_axis1_rvv);
+    BENCH_START(ReduceProd_float16_rvv_axis1);
     ReduceProd_float16_rvv(node);
-    BENCH_END(ReduceProd_float16_axis1_rvv);
+    BENCH_END(ReduceProd_float16_rvv_axis1);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float16_axis1);
+    BENCH_START(ReduceProd_float16_axis2);
     ReduceProd_float16(node);
     BENCH_END(ReduceProd_float16_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float16_axis2_rvv);
+    BENCH_START(ReduceProd_float16_rvv_axis2);
     ReduceProd_float16_rvv(node);
-    BENCH_END(ReduceProd_float16_axis2_rvv);
+    BENCH_END(ReduceProd_float16_rvv_axis2);
 
     // verify result
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1662,9 +1662,9 @@ int test_reduce_prod_float32()
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float32_allaxes_rvv);
+    BENCH_START(ReduceProd_float32_rvv_allaxes);
     ReduceProd_float32_rvv(node);
-    BENCH_END(ReduceProd_float32_allaxes_rvv);
+    BENCH_END(ReduceProd_float32_rvv_allaxes);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1678,9 +1678,9 @@ int test_reduce_prod_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float32_axis0_rvv);
+    BENCH_START(ReduceProd_float32_rvv_axis0);
     ReduceProd_float32_rvv(node);
-    BENCH_END(ReduceProd_float32_axis0_rvv);
+    BENCH_END(ReduceProd_float32_rvv_axis0);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -1693,24 +1693,24 @@ int test_reduce_prod_float32()
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float32_axis1_rvv);
+    BENCH_START(ReduceProd_float32_rvv_axis1);
     ReduceProd_float32_rvv(node);
-    BENCH_END(ReduceProd_float32_axis1_rvv);
+    BENCH_END(ReduceProd_float32_rvv_axis1);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     axis = 2;
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float32_axis1);
+    BENCH_START(ReduceProd_float32_axis2);
     ReduceProd_float32(node);
     BENCH_END(ReduceProd_float32_axis2);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ReduceProd_float32_axis2_rvv);
+    BENCH_START(ReduceProd_float32_rvv_axis2);
     ReduceProd_float32_rvv(node);
-    BENCH_END(ReduceProd_float32_axis2_rvv);
+    BENCH_END(ReduceProd_float32_rvv_axis2);
 
     // verify result
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);

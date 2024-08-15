@@ -85,9 +85,9 @@ int test_scatterelements_int8()
         }
     }
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(ScatterElements_int8_axis0);
+    BENCH_START(ScatterElements_int8_axis1);
     ScatterElements_int8(node);
-    BENCH_END(ScatterElements_int8_axis0);
+    BENCH_END(ScatterElements_int8_axis1);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with axis = 1
@@ -193,9 +193,9 @@ int test_scatterelements_int32()
         }
     }
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(ScatterElements_int32_axis0);
+    BENCH_START(ScatterElements_int32_axis1);
     ScatterElements_int32(node);
-    BENCH_END(ScatterElements_int32_axis0);
+    BENCH_END(ScatterElements_int32_axis1);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // rvv optimization test with axis = 1
@@ -301,9 +301,9 @@ int test_scatterelements_float16()
         }
     }
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(ScatterElements_float16_axis0);
+    BENCH_START(ScatterElements_float16_axis1);
     ScatterElements_float16(node);
-    BENCH_END(ScatterElements_float16_axis0);
+    BENCH_END(ScatterElements_float16_axis1);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with axis = 1
@@ -409,9 +409,9 @@ int test_scatterelements_float32()
         }
     }
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(ScatterElements_float32_axis0);
+    BENCH_START(ScatterElements_float32_axis1);
     ScatterElements_float32(node);
-    BENCH_END(ScatterElements_float32_axis0);
+    BENCH_END(ScatterElements_float32_axis1);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with axis = 1

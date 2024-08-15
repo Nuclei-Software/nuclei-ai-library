@@ -72,22 +72,22 @@ int test_flip_int8()
     // verify result with axis = 1
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
-    // golden test with both axis
+    // golden test with both axes
     FreeFlipParam(&node->priv);
     node->priv = GenerateFlipParam(1, 1);
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int8_t));
-    BENCH_START(Flip_int8_bothaxis);
+    BENCH_START(Flip_int8_bothaxes);
     Flip_int8(node);
-    BENCH_END(Flip_int8_bothaxis);
+    BENCH_END(Flip_int8_bothaxes);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
-    // rvv optimization test with both axis
+    // rvv optimization test with both axes
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int8_t));
-    BENCH_START(Flip_int8_rvv_bothaxis);
+    BENCH_START(Flip_int8_rvv_bothaxes);
     Flip_int8_rvv(node);
-    BENCH_END(Flip_int8_rvv_bothaxis);
+    BENCH_END(Flip_int8_rvv_bothaxes);
 
-    // verify result with both axis
+    // verify result with both axes
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     free(node->inputs[0]->datas);
@@ -172,22 +172,22 @@ int test_flip_int32()
     // verify result with axis = 1
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
-    // golden test with both axis
+    // golden test with both axes
     FreeFlipParam(&node->priv);
     node->priv = GenerateFlipParam(1, 1);
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int32_t));
-    BENCH_START(Flip_int32_bothaxis);
+    BENCH_START(Flip_int32_bothaxes);
     Flip_int32(node);
-    BENCH_END(Flip_int32_bothaxis);
+    BENCH_END(Flip_int32_bothaxes);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
-    // rvv optimization test with both axis
+    // rvv optimization test with both axes
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int32_t));
-    BENCH_START(Flip_int32_rvv_bothaxis);
+    BENCH_START(Flip_int32_rvv_bothaxes);
     Flip_int32_rvv(node);
-    BENCH_END(Flip_int32_rvv_bothaxis);
+    BENCH_END(Flip_int32_rvv_bothaxes);
 
-    // verify result with both axis
+    // verify result with both axes
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     free(node->inputs[0]->datas);
@@ -272,22 +272,22 @@ int test_flip_float32()
     // verify result with axis = 1
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
-    // golden test with both axis
+    // golden test with both axes
     FreeFlipParam(&node->priv);
     node->priv = GenerateFlipParam(1, 1);
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float32_t));
-    BENCH_START(Flip_float32_bothaxis);
+    BENCH_START(Flip_float32_bothaxes);
     Flip_float32(node);
-    BENCH_END(Flip_float32_bothaxis);
+    BENCH_END(Flip_float32_bothaxes);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
-    // rvv optimization test with both axis
+    // rvv optimization test with both axes
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float32_t));
-    BENCH_START(Flip_float32_rvv_bothaxis);
+    BENCH_START(Flip_float32_rvv_bothaxes);
     Flip_float32_rvv(node);
-    BENCH_END(Flip_float32_rvv_bothaxis);
+    BENCH_END(Flip_float32_rvv_bothaxes);
 
-    // verify result with both axis
+    // verify result with both axes
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     free(node->inputs[0]->datas);
@@ -372,22 +372,22 @@ int test_flip_float16()
     // verify result with axis = 1
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
-    // golden test with both axis
+    // golden test with both axes
     FreeFlipParam(&node->priv);
     node->priv = GenerateFlipParam(1, 1);
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
-    BENCH_START(Flip_float16_bothaxis);
+    BENCH_START(Flip_float16_bothaxes);
     Flip_float16(node);
-    BENCH_END(Flip_float16_bothaxis);
+    BENCH_END(Flip_float16_bothaxes);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
-    // rvv optimization test with both axis
+    // rvv optimization test with both axes
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
-    BENCH_START(Flip_float16_rvv_bothaxis);
+    BENCH_START(Flip_float16_rvv_bothaxes);
     Flip_float16_rvv(node);
-    BENCH_END(Flip_float16_rvv_bothaxis);
+    BENCH_END(Flip_float16_rvv_bothaxes);
 
-    // verify result with both axis
+    // verify result with both axes
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
 
     free(node->inputs[0]->datas);

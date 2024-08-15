@@ -1,5 +1,5 @@
 /*
- * https://onnx.ai/onnx/operators/onnx__ScatterElements.html
+ * https://onnx.ai/onnx/operators/onnx__GatherElements.html
  * https://pytorch.org/docs/stable/generated/torch.gather.html#torch-gather
  */
 

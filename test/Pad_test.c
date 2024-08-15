@@ -53,9 +53,9 @@ int test_pad_int8()
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
-    BENCH_START(Pad_int8_opt);
+    BENCH_START(Pad_int8_rvv);
     Pad_int8_rvv(node);
-    BENCH_END(Pad_int8_opt);
+    BENCH_END(Pad_int8_rvv);
 
     // verify results
     ret |= verify_results_int8(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -124,9 +124,9 @@ int test_pad_int32()
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
-    BENCH_START(Pad_int32_opt);
+    BENCH_START(Pad_int32_rvv);
     Pad_int32_rvv(node);
-    BENCH_END(Pad_int32_opt);
+    BENCH_END(Pad_int32_rvv);
 
     // verify results
     ret |= verify_results_int32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -197,9 +197,9 @@ int test_pad_float16()
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
-    BENCH_START(Pad_float16_opt);
+    BENCH_START(Pad_float16_rvv);
     Pad_float16_rvv(node);
-    BENCH_END(Pad_float16_opt);
+    BENCH_END(Pad_float16_rvv);
 
     // verify results
     ret |= verify_results_f16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
@@ -270,9 +270,9 @@ int test_pad_float32()
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
-    BENCH_START(Pad_float32_opt);
+    BENCH_START(Pad_float32_rvv);
     Pad_float32_rvv(node);
-    BENCH_END(Pad_float32_opt);
+    BENCH_END(Pad_float32_rvv);
 
     // verify results
     ret |= verify_results_f32(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
