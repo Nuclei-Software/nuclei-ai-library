@@ -13,7 +13,7 @@ We also provided test code to evaluate the ONNX operators implemention, which ca
 **VPU Lite**: VPU Lite is a lightweight VPU implementation, which **don't support** following features in whole or in part:
 
 - segment load/store
-- vslide/vshuffle
+- vslide/vgather/vcompress
 - ELEN=64
 
 In the chart below, `VPU Lite Compatibility` illustrates the degree to which each operator is compatible with VPU Lite. The symbol `√` indicates that the operator is fully compatible with VPU Lite. In instances where compatibility is not achieved, the chart will illustrates the reasons why the operator is not compatible.
