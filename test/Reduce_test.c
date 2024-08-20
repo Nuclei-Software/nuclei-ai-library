@@ -1276,7 +1276,7 @@ int test_reduce_sum_float16()
     node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float16_t) * node->inputs[0]->ndata);
     p = (float16_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
-        p[j] = rand() * 1.0 / rand();
+        p[j] = rand() * 1.0 / RAND_MAX;
     }
 
     node->noutput = 1;
@@ -1396,7 +1396,7 @@ int test_reduce_sum_float32()
     node->inputs[0]->datas = MALLOC_ASSERT(sizeof(float32_t) * node->inputs[0]->ndata);
     p = (float32_t *)node->inputs[0]->datas;
     for (int j = 0; j < node->inputs[0]->ndata; j++) {
-        p[j] = rand() * 1.0 / rand();
+        p[j] = rand() * 1.0 / RAND_MAX;
     }
 
     node->noutput = 1;

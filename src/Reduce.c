@@ -1742,7 +1742,7 @@ void ReduceSum_float16_rvv(struct onnx_node_t *n)
                 for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
                     vx = __riscv_vlse16_v_f16m8(pxxx, sizeof(float16_t) * stride, vl);
                     pxxx += vl * stride;
-                    acc = __riscv_vfredosum_vs_f16m8_f16m1(vx, acc, vl);
+                    acc = __riscv_vfredusum_vs_f16m8_f16m1(vx, acc, vl);
                 }
                 pxx++;
                 *pyy++ = __riscv_vfmv_f_s_f16m1_f16(acc);
@@ -1840,7 +1840,7 @@ void ReduceSum_float32_rvv(struct onnx_node_t *n)
         for (; (vl = __riscv_vsetvl_e32m8(avl)) > 0; avl -= vl) {
             vx = __riscv_vle32_v_f32m8(px, vl);
             px += vl;
-            acc = __riscv_vfredosum_vs_f32m8_f32m1(vx, acc, vl);
+            acc = __riscv_vfredusum_vs_f32m8_f32m1(vx, acc, vl);
         }
         py[0] = __riscv_vfmv_f_s_f32m1_f32(acc);
         y->ndata = 1;
@@ -1865,7 +1865,7 @@ void ReduceSum_float32_rvv(struct onnx_node_t *n)
                 for (; (vl = __riscv_vsetvl_e32m8(avl)) > 0; avl -= vl) {
                     vx = __riscv_vlse32_v_f32m8(pxxx, sizeof(float32_t) * stride, vl);
                     pxxx += vl * stride;
-                    acc = __riscv_vfredosum_vs_f32m8_f32m1(vx, acc, vl);
+                    acc = __riscv_vfredusum_vs_f32m8_f32m1(vx, acc, vl);
                 }
                 pxx++;
                 *pyy++ = __riscv_vfmv_f_s_f32m1_f32(acc);
