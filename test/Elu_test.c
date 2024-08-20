@@ -21,7 +21,7 @@ int test_elu_f32(void)
 
     float32_t *p = (float32_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
-        p[i] = rand() * 1.0 / RAND_MAX * 10;
+        p[i] = (rand() * 1.0 / RAND_MAX - 0.5) * 10;
     }
 
     node->noutput = 1;
@@ -74,7 +74,7 @@ int test_elu_f16(void)
 
     float16_t *p = (float16_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
-        p[i] = rand() * 1.0 / RAND_MAX * 10;
+        p[i] = (rand() * 1.0 / RAND_MAX - 0.5) * 10;
     }
 
     node->noutput = 1;
