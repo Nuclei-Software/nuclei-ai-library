@@ -10,46 +10,54 @@ We also provided test code to evaluate the ONNX operators implemention, which ca
 
 > Some operator implementation may only support subset of the ONNX operator.
 
-| Operator           | FP32 | FP16 | BF16 | FP8 | INT32 | INT8 | INT4 | Boolean |
-| --                 | --   | --   | --   | --  | --    | --   | --   | --      |
-| Abs                | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Add                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| BatchNormalization | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Clamp              | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Concat             | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Cos                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Div                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Elu                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Erf                | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
-| Flip               | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| GatherElements     | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Gelu               | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
-| LayerNormalization | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Log                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| MatMul             | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| Mul                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| Negate             | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Pad                | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Pow                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Reciprocal         | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| ReduceAll          | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
-| ReduceAny          | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
-| ReduceMax          | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceMin          | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceProd         | √    | √    | ×    | ×   |       |      | ×    |   |
-| ReduceSum          | √    | √    | ×    | ×   |       |      | ×    |   |
-| Relu               | √    | √    | ×    | ×   |       |      | ×    |   |
-| RMSNormalization   | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Rsqrt              | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| ScatterElements    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Silu               | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Sin                | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Slice              | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Softmax            | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Sqrt               | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Sub                | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| Tile               | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| TopK               | ×    | ×    | ×    | ×   | √     |  ×   | ×    |   |
+**VPU Lite**: VPU Lite is a lightweight VPU implementation, which **don't support** following features in whole or in part:
+
+- segment load/store
+- vslide/vshuffle
+- ELEN=64
+
+In the chart below, `VPU Lite Compatibility` illustrates the degree to which each operator is compatible with VPU Lite. The symbol `√` indicates that the operator is fully compatible with VPU Lite. In instances where compatibility is not achieved, the chart will illustrates the reasons why the operator is not compatible.
+
+| Operator           | VPU Lite compatibility | FP32 | FP16 | BF16 | FP8 | INT32 | INT8 | INT4 | Boolean |
+| --                 | --   | --   | --   | --   | --  | --    | --   | --   | --      |
+| Abs                | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Add                | √    | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| BatchNormalization | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Clamp              | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Concat             | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Cos                | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Div                | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Elu                | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Erf                |      | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
+| Flip               | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| GatherElements     | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Gelu               |      | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
+| LayerNormalization | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Log                | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| MatMul             | √    | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| Mul                | √    | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| Negate             | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Pad                | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Pow                | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Reciprocal         | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| ReduceAll          | √    | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
+| ReduceAny          | √    | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
+| ReduceMax          | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| ReduceMin          | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| ReduceProd         | invoke vslide | √    | √    | ×    | ×   |       |      | ×    |   |
+| ReduceSum          | √    | √    | √    | ×    | ×   |       |      | ×    |   |
+| Relu               | √    | √    | √    | ×    | ×   |       |      | ×    |   |
+| RMSNormalization   | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Rsqrt              | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| ScatterElements    | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Silu               | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Sin                | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Slice              | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| Softmax            | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Sqrt               | √    | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
+| Sub                | √    | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
+| Tile               | √    | √    | √    | ×    | ×   | √     |  √   | ×    |   |
+| TopK               | invoke vslide | ×    | ×    | ×    | ×   | √     |  ×   | ×    |   |
 
 ## File Structure
 
