@@ -499,7 +499,7 @@ int ConvInteger(struct onnx_node_t *n)
     return 0;
 }
 
-static int convolve_3x3_s8_wg23_pad_input(const int32_t *input_dims, int32_t pad_w, int32_t pad_h, int8_t input_offset, const int8_t *input_data,
+static int convolve_3x3_s8_wg23_pad_input(const int *input_dims, int32_t pad_w, int32_t pad_h, int8_t input_offset, const int8_t *input_data,
                                           const Tile *output_shape, int8_t *in_pad)
 {
     const int32_t in_w = input_dims[1];
@@ -567,7 +567,7 @@ static int convolve_3x3_s8_wg23_pad_input(const int32_t *input_dims, int32_t pad
     return 0;
 }
 
-static int convolve_3x3_s8_wg23_trans_kernel(const int32_t *kernel_dims, const int8_t *kernel_data, int16_t *kernel_tm)
+static int convolve_3x3_s8_wg23_trans_kernel(const int *kernel_dims, const int8_t *kernel_data, int16_t *kernel_tm)
 {
     if (kernel_dims[2] != 3 || kernel_dims[1] != 3) {
         return -1;
@@ -777,7 +777,7 @@ static int32_t convolve_3x3_s8_wg23_trans_input(const int32_t *input_dims, const
 }
 
 static int32_t riscv_convolve_3x3_s8_wg23_dot(const int32_t *in_tm_dims, const int16_t *in_tm, const int32_t *kernel_tm_dims,
-                                              const int16_t *kernel_tm, const int32_t *dot_dims, int32_t *dot)
+                                              const int16_t *kernel_tm, const int *dot_dims, int32_t *dot)
 {
     // shape of in_tm is [N, H, W, C] = [1, tiles, C_IN, 16]
     // shape of kernel_tm is [N, H, W, C] = [1, C_OUT, C_IN, 16]
@@ -846,11 +846,11 @@ static int32_t riscv_convolve_3x3_s8_wg23_dot(const int32_t *in_tm_dims, const i
 
     for (; out_idx + 1 < ouput_cnt; out_idx += 2) {
         {
-            vuint32mf2_t vidx = __riscv_vadd_vx_u32mf2(__riscv_vid_v_u32mf2(2), out_idx, 2);
-            vuint32mf2_t outch_vidx = __riscv_vremu_vx_u32mf2(vidx, out_ch, 2);
-            __riscv_vse32_v_u32mf2(outch_idx, outch_vidx, 2);
-            vuint32mf2_t tile_vidx = __riscv_vdivu_vx_u32mf2(vidx, out_ch, 2);
-            __riscv_vse32_v_u32mf2(tile_idx, tile_vidx, 4);
+            vuint32m1_t vidx = __riscv_vadd_vx_u32m1(__riscv_vid_v_u32m1(2), out_idx, 2);
+            vuint32m1_t outch_vidx = __riscv_vremu_vx_u32m1(vidx, out_ch, 2);
+            __riscv_vse32_v_u32m1(outch_idx, outch_vidx, 2);
+            vuint32m1_t tile_vidx = __riscv_vdivu_vx_u32m1(vidx, out_ch, 2);
+            __riscv_vse32_v_u32m1(tile_idx, tile_vidx, 4);
         }
 
         vint32m4_t sum0 = __riscv_vmv_v_x_i32m4(0, 16);
@@ -972,11 +972,11 @@ static void trans_output_row_op(int32_t tiles, int32_t out_ch, const int32_t *do
 
     for (; out_idx + 1 < ouput_cnt; out_idx += 2) {
         {
-            vuint32mf2_t vidx = __riscv_vadd_vx_u32mf2(__riscv_vid_v_u32mf2(2), out_idx, 2);
-            vuint32mf2_t outch_vidx = __riscv_vremu_vx_u32mf2(vidx, out_ch, 2);
-            __riscv_vse32_v_u32mf2(outch_idx, outch_vidx, 2);
-            vuint32mf2_t tile_vidx = __riscv_vdivu_vx_u32mf2(vidx, out_ch, 2);
-            __riscv_vse32_v_u32mf2(tile_idx, tile_vidx, 4);
+            vuint32m1_t vidx = __riscv_vadd_vx_u32m1(__riscv_vid_v_u32m1(2), out_idx, 2);
+            vuint32m1_t outch_vidx = __riscv_vremu_vx_u32m1(vidx, out_ch, 2);
+            __riscv_vse32_v_u32m1(outch_idx, outch_vidx, 2);
+            vuint32m1_t tile_vidx = __riscv_vdivu_vx_u32m1(vidx, out_ch, 2);
+            __riscv_vse32_v_u32m1(tile_idx, tile_vidx, 4);
         }
 
         const int32_t *mat0 = dot + out_idx * 16;
@@ -1059,9 +1059,9 @@ static void trans_output_col_op(int32_t tiles, int32_t out_ch, const int32_t *bu
 }
 
 static int32_t convolve_3x3_s8_wg23_trans_output(const Tile *output_shape, const int32_t out_offset, const int32_t out_activation_min,
-                                                 const int32_t out_activation_max, const int32_t *dot_dims, const int32_t *dot,
-                                                 const int32_t *output_mult_ptr, const int32_t *output_shift_ptr, const int32_t *bias_dims,
-                                                 const int32_t *bias_data, const int32_t *output_dims, int32_t *buffer, int8_t *output_data)
+                                                 const int32_t out_activation_max, const int *dot_dims, const int32_t *dot,
+                                                 const int32_t *output_mult_ptr, const int32_t *output_shift_ptr, const int *bias_dims,
+                                                 const int32_t *bias_data, const int *output_dims, int32_t *buffer, int8_t *output_data)
 {
     // output_dims->n is not used and assumed to be 1
     // shape of dot is [N, H, W, C] = [1, tiles, C_OUT, 16]
@@ -1201,9 +1201,9 @@ int ConvInteger_rvv(struct onnx_node_t *n)
     const int32_t in_ch = input->dims[0];
     const int32_t out_ch = output->dims[0];
     const int8_t *input_data = (int8_t *)input->datas;
-    const int32_t *input_dims = input->dims;
+    const int *input_dims = input->dims;
     int8_t *output_data = (int8_t *)output->datas;
-    const int32_t *output_dims = output->dims;
+    const int *output_dims = output->dims;
     Tile output_shape = {out_inner_w, out_inner_h};
 
     int32_t in_preprocess_dims[4] = {in_ch, out_inner_w + 2, out_inner_h + 2, 1};
@@ -1262,7 +1262,7 @@ int ConvInteger_rvv(struct onnx_node_t *n)
         // dot_dims.h = tiles;
         // dot_dims.w = out_ch;
         // dot_dims.c = 16;
-        const int32_t dot_dims[4] = {16, out_ch, tiles, 1};
+        const int dot_dims[4] = {16, out_ch, tiles, 1};
         status = riscv_convolve_3x3_s8_wg23_dot(in_tm_dims, in_tm, kernel_tm_dims, kernel_tm, dot_dims, dot);
         if (status != 0) {
             return status;
