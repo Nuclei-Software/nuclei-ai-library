@@ -19,8 +19,8 @@ typedef double float64_t;
 
 #define PI (3.14159265358979f)
 
-#define MIN(a, b) ({typeof(a) _amin = (a); typeof(b) _bmin = (b); (void)(&_amin == &_bmin); _amin < _bmin ? _amin : _bmin;})
-#define MAX(a, b) ({typeof(a) _amax = (a); typeof(b) _bmax = (b); (void)(&_amax == &_bmax); _amax > _bmax ? _amax : _bmax;})
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
+#define MIN(A, B) ((A) < (B) ? (A) : (B))
 
 enum onnx_tensor_type_t {
     ONNX_TENSOR_TYPE_UNDEFINED = 0,

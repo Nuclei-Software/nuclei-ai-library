@@ -41,15 +41,39 @@ void FreeFlipParam(void **pdat);
 /**
  * @brief only support 2-D tensor. start[i] == end[i] == 0 is not allowed.
  *
- * @param naxes - [in] slice axes number. The length of other inputs should be equal to naxes.
- * @param axes - [in] only support 0 or 1
- * @param start - [in] element start index (included)
- * @param end - [in] element end index (excluded)
- * @param step - [in] element step
+ * @param[in] naxes - slice axes number. The length of other inputs should be equal to naxes.
+ * @param[in] axes - only support 0 or 1
+ * @param[in] start - element start index (included)
+ * @param[in] end - element end index (excluded)
+ * @param[in] step - element step
  * @return void*
  */
 void *GenerateSliceParam(int naxes, int *axes, int *start, int *end, int *step);
 void FreeSliceParam(void **pdat);
+
+/**
+ * @brief 
+ * 
+ * @param[in] in_offset - The negative of the zero value for the input tensor
+ * @param[in] out_offset - The negative of the zero value for the output tensor
+ * @param[in] stride_w - kernel stride w
+ * @param[in] stride_h - kernel stride h
+ * @param[in] dilation_w - kernel dilation w
+ * @param[in] dilation_h - kernel dilation h
+ * @param[in] pad_w - kernel padding w
+ * @param[in] pad_h - kernel padding h
+ * @param[in] activation_min - min value
+ * @param[in] activation_max - max value
+ * @param[in] input - input tensor
+ * @param[in] filter - input filter
+ * @param[in] output - output tensor
+ * @param[in] rvv - whether use rvv, the buffer size is different with or without rvv
+ * @return void* ConvInteger private parameters
+ */
+void *GenerateConvIntegerParam(int32_t in_offset, int32_t out_offset, int32_t stride_w, int32_t stride_h, int32_t dilation_w, int32_t dilation_h,
+                               int32_t pad_w, int32_t pad_h, int32_t activation_min, int32_t activation_max, const struct onnx_tensor_t *input,
+                               const struct onnx_tensor_t *filter, const struct onnx_tensor_t *output, _Bool rvv);
+void FreeConvIntegerParam(void **pdat);
 
 /* ---------------- end of helper function ----------------- */
 
@@ -279,7 +303,7 @@ void ReduceMin_int32_rvv(struct onnx_node_t *node);
 void ReduceMin_float32(struct onnx_node_t *n);
 void ReduceMin_float32_rvv(struct onnx_node_t *n);
 
-/* NOTE: Due to the accuracy of float type, multiplying float numbers 
+/* NOTE: Due to the accuracy of float type, multiplying float numbers
    not in order may lead to large deviations in the results */
 void ReduceProd_float16(struct onnx_node_t *node);
 void ReduceProd_float16_rvv(struct onnx_node_t *node);
@@ -290,6 +314,9 @@ void ReduceSum_float16(struct onnx_node_t *node);
 void ReduceSum_float16_rvv(struct onnx_node_t *node);
 void ReduceSum_float32(struct onnx_node_t *n);
 void ReduceSum_float32_rvv(struct onnx_node_t *n);
+
+int ConvInteger(struct onnx_node_t *n);
+int ConvInteger_rvv(struct onnx_node_t *n);
 /* ---------------- end of operators ----------------- */
 
 #endif

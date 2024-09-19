@@ -10,6 +10,7 @@ extern int test_add(void);
 extern int test_batchnormalization(void);
 extern int test_clamp(void);
 extern int test_concat(void);
+extern int test_convinteger(void);
 extern int test_cos(void);
 extern int test_div(void);
 extern int test_elu(void);
@@ -44,6 +45,7 @@ TestFunc tests[] = {
     {test_batchnormalization, "test_batchnormalization"},
     {test_clamp, "test_clamp"},
     {test_concat, "test_concat"},
+    {test_convinteger, "test_convinteger"},
     {test_cos, "test_cos"},
     {test_div, "test_div"},
     {test_elu, "test_elu"},
