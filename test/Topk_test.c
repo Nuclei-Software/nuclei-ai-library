@@ -12,7 +12,11 @@ int test_topk_int32(void)
 
     node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    uint32_t k = 17;
+
+    uint32_t k = 32;
+#ifdef __riscv_vector
+    k = __riscv_vlenb() / sizeof(int32_t) * 8;
+#endif
     node->priv = GenerateTopkParam(k);
 
     node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
@@ -49,17 +53,16 @@ int test_topk_int32(void)
     HeapSort_int32((int32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
-    show_tensor_int32(node->outputs[0], "Topk_int32");
+    // show_tensor_int32(node->outputs[0], "Topk_int32");
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int32_t));
     BENCH_START(Topk_int32_rvv);
-    Topk_int32_rvv_v2(node);
+    Topk_int32_rvv(node);
     BENCH_END(Topk_int32_rvv);
-    show_tensor_int32(node->outputs[0], "Topk_int32_rvv");
     HeapSort_int32((int32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
     memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
-    
+    // show_tensor_int32(node->outputs[0], "Topk_int32_rvv");
 
     ret |= verify_results_int32(golden, opt, node->outputs[0]->ndata);
 
@@ -89,6 +92,9 @@ int test_topk_float16(void)
     node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
     uint32_t k = 64;
+#ifdef __riscv_vector
+    k = __riscv_vlenb() / sizeof(float16_t) * 8;
+#endif
     node->priv = GenerateTopkParam(k);
 
     node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
@@ -103,7 +109,7 @@ int test_topk_float16(void)
 
     float16_t *p = (float16_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
-        p[i] = rand() % 65536 - 32768;
+        p[i] = (rand() % 65536 - 32768) * 1.0 / 1024;
     }
 
     node->noutput = 1;
@@ -157,7 +163,10 @@ int test_topk_float32(void)
 
     node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    uint32_t k = 128;
+    uint32_t k = 32;
+#ifdef __riscv_vector
+    k = __riscv_vlenb() / sizeof(float32_t) * 8;
+#endif
     node->priv = GenerateTopkParam(k);
 
     node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
@@ -172,7 +181,7 @@ int test_topk_float32(void)
 
     float32_t *p = (float32_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
-        p[i] = rand() % 65536 - 32768;
+        p[i] = (rand() % 65536 - 32768) * 1.0 / 1024;
     }
 
     node->noutput = 1;
@@ -221,7 +230,7 @@ int test_topk(void)
 {
     int ret = 0;
     ret |= test_topk_int32();
-    // ret |= test_topk_float16();
-    // ret |= test_topk_float32();
+    ret |= test_topk_float16();
+    ret |= test_topk_float32();
     return ret;
 }

@@ -101,7 +101,6 @@ void Softmax_float32_rvv(struct onnx_node_t *node);
 
 void Topk_int32(struct onnx_node_t *n);
 void Topk_int32_rvv(struct onnx_node_t *n);
-void Topk_int32_rvv_v2(struct onnx_node_t *n);
 void Topk_float16(struct onnx_node_t *n);
 void Topk_float16_rvv(struct onnx_node_t *n);
 void Topk_float32(struct onnx_node_t *n);

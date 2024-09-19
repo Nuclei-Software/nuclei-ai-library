@@ -83,52 +83,31 @@ void Topk_int32_rvv(struct onnx_node_t *n)
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
     struct onnx_tensor_t *x = n->inputs[0];
     struct onnx_tensor_t *y = n->outputs[0];
-    int32_t *px = (int32_t *)x->datas, *pxx;
-    int32_t *py = (int32_t *)y->datas, *pyy;
+    int32_t *px = (int32_t *)x->datas;
+    int32_t *py = (int32_t *)y->datas;
     size_t vl;
-    vint32m8_t vx, candidate;
-    vint32m1_t acc;
-    vbool4_t vb;
-    TopkStateI32 state;
+    vint32m8_t vx;
+    vbool4_t mask;
+    unsigned long idx;
+    int32_t min;
 
-    // assert(pdat->k <= max_k);
-    const int32_t max_k = __riscv_vlenb() / sizeof(int32_t) * 8;
-    if (pdat->k > max_k) {
-        return;
+    vl = pdat->k;
+    vx = __riscv_vmv_v_x_i32m8(INT32_MIN, vl);
+
+    for (int i = 0; i < vl; i++) {
+        mask = __riscv_vmslt_vx_i32m8_b4(vx, px[i], vl);
+        idx = __riscv_vcpop_m_b4(mask, vl);
+        vx = __riscv_vslide1down_vx_i32m8(vx, px[i], idx);
     }
 
-    // init vx
-    vl = pdat->k;
-    vx = __riscv_vle32_v_i32m8(px, vl);
-
-    // find min
-    acc = __riscv_vmv_s_x_i32m1(INT32_MAX, 1);
-    acc = __riscv_vredmin_vs_i32m8_i32m1(vx, acc, vl);
-    state.min = __riscv_vmv_x_s_i32m1_i32(acc);
-    vb = __riscv_vmseq_vx_i32m8_b4(vx, state.min, vl);
-    state.min_cnt = __riscv_vcpop_m_b4(vb, vl);
-    state.min_fidx = __riscv_vfirst_m_b4(vb, vl);
+    min = __riscv_vmv_x_s_i32m8_i32(vx);
 
     for (int i = pdat->k; i < x->ndata; ++i) {
-        if (px[i] > state.min) {
-            // replace
-            candidate = __riscv_vmv_s_x_i32m8(px[i], 1);
-            vx = __riscv_vslideup_vx_i32m8_tu(vx, candidate, state.min_fidx, state.min_fidx + 1);
-            // update state
-            state.min_cnt--;
-            if (state.min_cnt == 0) {
-                // find min
-                acc = __riscv_vmv_s_x_i32m1(INT32_MAX, 1);
-                acc = __riscv_vredmin_vs_i32m8_i32m1(vx, acc, vl);
-                state.min = __riscv_vmv_x_s_i32m1_i32(acc);
-                vb = __riscv_vmseq_vx_i32m8_b4(vx, state.min, vl);
-                state.min_cnt = __riscv_vcpop_m_b4(vb, vl);
-                state.min_fidx = __riscv_vfirst_m_b4(vb, vl);
-            } else {
-                // update fidx
-                vb = __riscv_vmseq_vx_i32m8_b4(vx, state.min, vl);
-                state.min_fidx = __riscv_vfirst_m_b4(vb, vl);
-            }
+        if (px[i] > min) {
+            mask = __riscv_vmslt_vx_i32m8_b4(vx, px[i], vl);
+            idx = __riscv_vcpop_m_b4(mask, vl);
+            vx = __riscv_vslide1down_vx_i32m8(vx, px[i], idx);
+            min = __riscv_vmv_x_s_i32m8_i32(vx);
         }
     }
     __riscv_vse32_v_i32m8(py, vx, vl);
@@ -165,52 +144,31 @@ void Topk_float16_rvv(struct onnx_node_t *n)
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
     struct onnx_tensor_t *x = n->inputs[0];
     struct onnx_tensor_t *y = n->outputs[0];
-    float16_t *px = (float16_t *)x->datas, *pxx;
-    float16_t *py = (float16_t *)y->datas, *pyy;
+    float16_t *px = (float16_t *)x->datas;
+    float16_t *py = (float16_t *)y->datas;
     size_t vl;
-    vfloat16m8_t vx, candidate;
-    vfloat16m1_t acc;
-    vbool2_t vb;
-    TopkStateF16 state;
+    vfloat16m8_t vx;
+    vbool2_t mask;
+    unsigned long idx;
+    float16_t min;
 
-    // assert(pdat->k <= max_k);
-    const int32_t max_k = __riscv_vlenb() / sizeof(float16_t) * 8;
-    if (pdat->k > max_k) {
-        return;
+    vl = pdat->k;
+    vx = __riscv_vfmv_v_f_f16m8(FLT16_MIN, vl);
+
+    for (int i = 0; i < vl; i++) {
+        mask = __riscv_vmflt_vf_f16m8_b2(vx, px[i], vl);
+        idx = __riscv_vcpop_m_b2(mask, vl);
+        vx = __riscv_vfslide1down_vf_f16m8(vx, px[i], idx);
     }
 
-    // init vx
-    vl = pdat->k;
-    vx = __riscv_vle16_v_f16m8(px, vl);
-
-    // find min
-    acc = __riscv_vfmv_s_f_f16m1(FLT16_MAX, 1);
-    acc = __riscv_vfredmin_vs_f16m8_f16m1(vx, acc, vl);
-    state.min = __riscv_vfmv_f_s_f16m1_f16(acc);
-    vb = __riscv_vmfeq_vf_f16m8_b2(vx, state.min, vl);
-    state.min_cnt = __riscv_vcpop_m_b2(vb, vl);
-    state.min_fidx = __riscv_vfirst_m_b2(vb, vl);
+    min = __riscv_vfmv_f_s_f16m8_f16(vx);
 
     for (int i = pdat->k; i < x->ndata; ++i) {
-        if (px[i] > state.min) {
-            // replace
-            candidate = __riscv_vfmv_s_f_f16m8(px[i], 1);
-            vx = __riscv_vslideup_vx_f16m8_tu(vx, candidate, state.min_fidx, state.min_fidx + 1);
-            // update state
-            state.min_cnt--;
-            if (state.min_cnt == 0) {
-                // find min
-                acc = __riscv_vfmv_s_f_f16m1(INT32_MAX, 1);
-                acc = __riscv_vfredmin_vs_f16m8_f16m1(vx, acc, vl);
-                state.min = __riscv_vfmv_f_s_f16m1_f16(acc);
-                vb = __riscv_vmfeq_vf_f16m8_b2(vx, state.min, vl);
-                state.min_cnt = __riscv_vcpop_m_b2(vb, vl);
-                state.min_fidx = __riscv_vfirst_m_b2(vb, vl);
-            } else {
-                // update fidx
-                vb = __riscv_vmfeq_vf_f16m8_b2(vx, state.min, vl);
-                state.min_fidx = __riscv_vfirst_m_b2(vb, vl);
-            }
+        if (px[i] > min) {
+            mask = __riscv_vmflt_vf_f16m8_b2(vx, px[i], vl);
+            idx = __riscv_vcpop_m_b2(mask, vl);
+            vx = __riscv_vfslide1down_vf_f16m8(vx, px[i], idx);
+            min = __riscv_vfmv_f_s_f16m8_f16(vx);
         }
     }
     __riscv_vse16_v_f16m8(py, vx, vl);
@@ -267,90 +225,34 @@ void Topk_float32_rvv(struct onnx_node_t *n)
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
     struct onnx_tensor_t *x = n->inputs[0];
     struct onnx_tensor_t *y = n->outputs[0];
-    float32_t *px = (float32_t *)x->datas, *pxx;
-    float32_t *py = (float32_t *)y->datas, *pyy;
+    float32_t *px = (float32_t *)x->datas;
+    float32_t *py = (float32_t *)y->datas;
     size_t vl;
-    vfloat32m8_t vx, candidate;
-    vfloat32m1_t acc;
-    vbool4_t vb;
-    TopkStateF32 state;
-
-    // assert(pdat->k <= max_k);
-    const int32_t max_k = __riscv_vlenb() / sizeof(float32_t) * 8;
-    if (pdat->k > max_k) {
-        return;
-    }
-
-    // init vx
-    vl = pdat->k;
-    vx = __riscv_vle32_v_f32m8(px, vl);
-
-    // find min
-    acc = __riscv_vfmv_s_f_f32m1(FLT_MAX, 1);
-    acc = __riscv_vfredmin_vs_f32m8_f32m1(vx, acc, vl);
-    state.min = __riscv_vfmv_f_s_f32m1_f32(acc);
-    vb = __riscv_vmfeq_vf_f32m8_b4(vx, state.min, vl);
-    state.min_cnt = __riscv_vcpop_m_b4(vb, vl);
-    state.min_fidx = __riscv_vfirst_m_b4(vb, vl);
-
-    for (int i = pdat->k; i < x->ndata; ++i) {
-        if (px[i] > state.min) {
-            // replace
-            candidate = __riscv_vfmv_s_f_f32m8(px[i], 1);
-            vx = __riscv_vslideup_vx_f32m8_tu(vx, candidate, state.min_fidx, state.min_fidx + 1);
-            // update state
-            state.min_cnt--;
-            if (state.min_cnt == 0) {
-                // find min
-                acc = __riscv_vfmv_s_f_f32m1(INT32_MAX, 1);
-                acc = __riscv_vfredmin_vs_f32m8_f32m1(vx, acc, vl);
-                state.min = __riscv_vfmv_f_s_f32m1_f32(acc);
-                vb = __riscv_vmfeq_vf_f32m8_b4(vx, state.min, vl);
-                state.min_cnt = __riscv_vcpop_m_b4(vb, vl);
-                state.min_fidx = __riscv_vfirst_m_b4(vb, vl);
-            } else {
-                // update fidx
-                vb = __riscv_vmfeq_vf_f32m8_b4(vx, state.min, vl);
-                state.min_fidx = __riscv_vfirst_m_b4(vb, vl);
-            }
-        }
-    }
-    __riscv_vse32_v_f32m8(py, vx, vl);
-}
-
-void Topk_int32_rvv_v2(struct onnx_node_t *n)
-{
-    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
-    struct onnx_tensor_t *x = n->inputs[0];
-    struct onnx_tensor_t *y = n->outputs[0];
-    int32_t *px = (int32_t *)x->datas;
-    int32_t *py = (int32_t *)y->datas;
-    size_t vl;
-    vint32m8_t vx;
+    vfloat32m8_t vx;
     vbool4_t mask;
     unsigned long idx;
-    int32_t min;
+    float32_t min;
 
     vl = pdat->k;
-    vx = __riscv_vmv_s_x_i32m8(INT32_MIN, vl);
+    vx = __riscv_vfmv_v_f_f32m8(FLT_MIN, vl);
 
     for (int i = 0; i < vl; i++) {
-        mask = __riscv_vmslt_vx_i32m8_b4 (vx, px[i], vl);
+        mask = __riscv_vmflt_vf_f32m8_b4(vx, px[i], vl);
         idx = __riscv_vcpop_m_b4(mask, vl);
-        vx = __riscv_vslide1down_vx_i32m8(vx, px[i], idx);
+        vx = __riscv_vfslide1down_vf_f32m8(vx, px[i], idx);
     }
 
-    min = __riscv_vmv_x_s_i32m8_i32(vx);
+    min = __riscv_vfmv_f_s_f32m8_f32(vx);
 
     for (int i = pdat->k; i < x->ndata; ++i) {
         if (px[i] > min) {
-            mask = __riscv_vmslt_vx_i32m8_b4 (vx, px[i], vl);
+            mask = __riscv_vmflt_vf_f32m8_b4(vx, px[i], vl);
             idx = __riscv_vcpop_m_b4(mask, vl);
-            vx = __riscv_vslide1down_vx_i32m8(vx, px[i], idx);
-            min = __riscv_vmv_x_s_i32m8_i32(vx);
+            vx = __riscv_vfslide1down_vf_f32m8(vx, px[i], idx);
+            min = __riscv_vfmv_f_s_f32m8_f32(vx);
         }
     }
-    __riscv_vse32_v_i32m8(py, vx, vl);
+    __riscv_vse32_v_f32m8(py, vx, vl);
 }
 
 void Topk_float32(struct onnx_node_t *n)
