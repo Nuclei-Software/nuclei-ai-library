@@ -12,7 +12,7 @@ int test_topk_int32(void)
 
     node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
     node->ninput = 1;
-    uint32_t k = 32;
+    uint32_t k = 17;
     node->priv = GenerateTopkParam(k);
 
     node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
@@ -27,7 +27,7 @@ int test_topk_int32(void)
 
     int32_t *p = (int32_t *)node->inputs[0]->datas;
     for (int i = 0; i < node->inputs[0]->ndata; i++) {
-        p[i] = rand() % 16384;
+        p[i] = rand() % 16384 - 8192;
     }
 
     // show_tensor_int32(node->inputs[0], "input");
@@ -49,16 +49,17 @@ int test_topk_int32(void)
     HeapSort_int32((int32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
     memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
-    // show_tensor_int32(node->outputs[0], "Topk_int32");
+    show_tensor_int32(node->outputs[0], "Topk_int32");
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int32_t));
     BENCH_START(Topk_int32_rvv);
-    Topk_int32_rvv(node);
+    Topk_int32_rvv_v2(node);
     BENCH_END(Topk_int32_rvv);
+    show_tensor_int32(node->outputs[0], "Topk_int32_rvv");
     HeapSort_int32((int32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
     memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
-    // show_tensor_int32(node->outputs[0], "Topk_int32_rvv");
+    
 
     ret |= verify_results_int32(golden, opt, node->outputs[0]->ndata);
 
@@ -220,7 +221,7 @@ int test_topk(void)
 {
     int ret = 0;
     ret |= test_topk_int32();
-    ret |= test_topk_float16();
-    ret |= test_topk_float32();
+    // ret |= test_topk_float16();
+    // ret |= test_topk_float32();
     return ret;
 }

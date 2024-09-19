@@ -318,6 +318,41 @@ void Topk_float32_rvv(struct onnx_node_t *n)
     __riscv_vse32_v_f32m8(py, vx, vl);
 }
 
+void Topk_int32_rvv_v2(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    int32_t *px = (int32_t *)x->datas;
+    int32_t *py = (int32_t *)y->datas;
+    size_t vl;
+    vint32m8_t vx;
+    vbool4_t mask;
+    unsigned long idx;
+    int32_t min;
+
+    vl = pdat->k;
+    vx = __riscv_vmv_s_x_i32m8(INT32_MIN, vl);
+
+    for (int i = 0; i < vl; i++) {
+        mask = __riscv_vmslt_vx_i32m8_b4 (vx, px[i], vl);
+        idx = __riscv_vcpop_m_b4(mask, vl);
+        vx = __riscv_vslide1down_vx_i32m8(vx, px[i], idx);
+    }
+
+    min = __riscv_vmv_x_s_i32m8_i32(vx);
+
+    for (int i = pdat->k; i < x->ndata; ++i) {
+        if (px[i] > min) {
+            mask = __riscv_vmslt_vx_i32m8_b4 (vx, px[i], vl);
+            idx = __riscv_vcpop_m_b4(mask, vl);
+            vx = __riscv_vslide1down_vx_i32m8(vx, px[i], idx);
+            min = __riscv_vmv_x_s_i32m8_i32(vx);
+        }
+    }
+    __riscv_vse32_v_i32m8(py, vx, vl);
+}
+
 void Topk_float32(struct onnx_node_t *n)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
