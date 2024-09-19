@@ -19,7 +19,9 @@ void show_tensor_f16(struct onnx_tensor_t *t, const char *name);
 void show_tensor_f32(struct onnx_tensor_t *t, const char *name);
 void show_tensor_int32(struct onnx_tensor_t *t, const char *name);
 
-void HeapSort(int32_t *a, int32_t n);
+void HeapSort_int32(int32_t *a, int32_t n);
+void HeapSort_f16(float16_t *a, int32_t n);
+void HeapSort_f32(float32_t *a, int32_t n);
 
 static inline int csrr_vlenb()
 {

@@ -98,9 +98,9 @@ int test_convinteger(void)
     node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
     node->outputs[0] = output_ref;
 
-    BENCH_START(ConvInteger_Int8);
+    BENCH_START(ConvInteger_int8);
     ConvInteger(node);
-    BENCH_END(ConvInteger_Int8);
+    BENCH_END(ConvInteger_int8);
     FreeConvIntegerParam(&node->priv);
 
     // allocate new buffer for rvv test
@@ -119,9 +119,9 @@ int test_convinteger(void)
     node->priv = GenerateConvIntegerParam(0, 0, 1, 1, 1, 1, 1, 1, -128, 127, input, filter, output_rvv, 1);
 
     // run rvv test
-    BENCH_START(ConvInteger_Int8_rvv);
+    BENCH_START(ConvInteger_int8_rvv);
     ConvInteger_rvv(node);
-    BENCH_END(ConvInteger_Int8_rvv);
+    BENCH_END(ConvInteger_int8_rvv);
     FreeConvIntegerParam(&node->priv);
 
     // verify result

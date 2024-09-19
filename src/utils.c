@@ -177,7 +177,7 @@ void show_tensor_f32(struct onnx_tensor_t *t, const char *name)
     show_tensor_int32_impl(t, 0, t->ndim - 1);
 }
 
-static void Swap(int32_t *a, int32_t *b)
+static void Swap_int32(int32_t *a, int32_t *b)
 {
     int32_t tmp;
     tmp = *a;
@@ -185,7 +185,7 @@ static void Swap(int32_t *a, int32_t *b)
     *b = tmp;
 }
 
-static void Heapify(int32_t arr[], int len, int idx)
+static void Heapify_int32(int32_t arr[], int len, int idx)
 {
     int child = idx * 2 + 1;
     while (child < len) {
@@ -194,7 +194,7 @@ static void Heapify(int32_t arr[], int len, int idx)
         }
 
         if (arr[child] < arr[idx]) {
-            Swap(&arr[child], &arr[idx]);
+            Swap_int32(&arr[child], &arr[idx]);
             idx = child;
             child = idx * 2 + 1;
         } else {
@@ -203,13 +203,87 @@ static void Heapify(int32_t arr[], int len, int idx)
     }
 }
 
-void HeapSort(int32_t *a, int32_t n)
+void HeapSort_int32(int32_t *a, int32_t n)
 {
     for (int32_t i = (n - 1 - 1) / 2; i >= 0; --i) {
-        Heapify(a, n, i);
+        Heapify_int32(a, n, i);
     }
     for (int32_t j = n; j > 0; --j) {
-        Swap(&a[0], &a[j - 1]);
-        Heapify(a, j - 1, 0);
+        Swap_int32(&a[0], &a[j - 1]);
+        Heapify_int32(a, j - 1, 0);
+    }
+}
+
+static void Swap_f16(float16_t *a, float16_t *b)
+{
+    float16_t tmp;
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void Heapify_f16(float16_t arr[], int len, int idx)
+{
+    int child = idx * 2 + 1;
+    while (child < len) {
+        if (child + 1 < len && arr[child + 1] < arr[child]) {
+            ++child;
+        }
+
+        if (arr[child] < arr[idx]) {
+            Swap_f16(&arr[child], &arr[idx]);
+            idx = child;
+            child = idx * 2 + 1;
+        } else {
+            break;
+        }
+    }
+}
+
+void HeapSort_f16(float16_t *a, int32_t n)
+{
+    for (int32_t i = (n - 1 - 1) / 2; i >= 0; --i) {
+        Heapify_f16(a, n, i);
+    }
+    for (int32_t j = n; j > 0; --j) {
+        Swap_f16(&a[0], &a[j - 1]);
+        Heapify_f16(a, j - 1, 0);
+    }
+}
+
+static void Swap_f32(float32_t *a, float32_t *b)
+{
+    float32_t tmp;
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void Heapify_f32(float32_t arr[], int len, int idx)
+{
+    int child = idx * 2 + 1;
+    while (child < len) {
+        if (child + 1 < len && arr[child + 1] < arr[child]) {
+            ++child;
+        }
+
+        if (arr[child] < arr[idx]) {
+            Swap_f32(&arr[child], &arr[idx]);
+            idx = child;
+            child = idx * 2 + 1;
+        } else {
+            break;
+        }
+    }
+}
+
+void HeapSort_f32(float32_t *a, int32_t n)
+{
+    for (int32_t i = (n - 1 - 1) / 2; i >= 0; --i) {
+        Heapify_f32(a, n, i);
+    }
+    for (int32_t j = n; j > 0; --j) {
+        Swap_f32(&a[0], &a[j - 1]);
+        Heapify_f32(a, j - 1, 0);
     }
 }
