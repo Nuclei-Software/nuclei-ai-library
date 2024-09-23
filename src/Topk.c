@@ -12,24 +12,6 @@ struct operator_pdata_t {
     uint32_t k;
 };
 
-typedef struct {
-    int32_t min;
-    int32_t min_cnt;
-    size_t min_fidx;
-} TopkStateI32;
-
-typedef struct {
-    float16_t min;
-    int32_t min_cnt;
-    size_t min_fidx;
-} TopkStateF16;
-
-typedef struct {
-    float32_t min;
-    int32_t min_cnt;
-    size_t min_fidx;
-} TopkStateF32;
-
 static void Swap_int32(int32_t *a, int32_t *b)
 {
     int32_t tmp;
