@@ -46,8 +46,6 @@ void Topk_int32(struct onnx_node_t *n)
     int32_t *px = (int32_t *)x->datas;
     int32_t *py = (int32_t *)y->datas;
 
-    // assert(pdat->k <= len);
-
     memcpy(py, px, sizeof(int32_t) * pdat->k);
     for (int i = pdat->k / 2 - 1; i >= 0; --i) {
         Heapify_int32(py, pdat->k, i);

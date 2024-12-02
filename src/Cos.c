@@ -42,10 +42,10 @@ void Cos_float16_rvv(struct onnx_node_t *n)
         vx = __riscv_vfmul_vf_f32m8(vx, 2 * PI, vl);
 
         mask = __riscv_vmfgt_vf_f32m8_b4(vx, PI, vl);
-        vx = __riscv_vfadd_vf_f32m8_mu(mask, vx, vx, -2 * PI, vl);
+        vx = __riscv_vfadd_vf_f32m8_tumu(mask, vx, vx, -2 * PI, vl);
 
         mask = __riscv_vmflt_vf_f32m8_b4(vx, -PI, vl);
-        vx = __riscv_vfadd_vf_f32m8_mu(mask, vx, vx, 2 * PI, vl);
+        vx = __riscv_vfadd_vf_f32m8_tumu(mask, vx, vx, 2 * PI, vl);
 
         vy = __riscv_vfmul_vv_f32m8(vx, vx, vl);
         vz = __riscv_vfmul_vf_f32m8(vy, -1.0 / 3628800, vl);                              // 1/10!
@@ -96,10 +96,10 @@ void Cos_float32_rvv(struct onnx_node_t *n)
         vx = __riscv_vfmul_vf_f32m8(vx, 2 * PI, vl);
 
         mask = __riscv_vmfgt_vf_f32m8_b4(vx, PI, vl);
-        vx = __riscv_vfadd_vf_f32m8_mu(mask, vx, vx, -2 * PI, vl);
+        vx = __riscv_vfadd_vf_f32m8_tumu(mask, vx, vx, -2 * PI, vl);
 
         mask = __riscv_vmflt_vf_f32m8_b4(vx, -PI, vl);
-        vx = __riscv_vfadd_vf_f32m8_mu(mask, vx, vx, 2 * PI, vl);
+        vx = __riscv_vfadd_vf_f32m8_tumu(mask, vx, vx, 2 * PI, vl);
 
         vy = __riscv_vfmul_vv_f32m8(vx, vx, vl);
         vz = __riscv_vfmul_vf_f32m8(vy, -1.0 / 3628800, vl);                              // 1/10!

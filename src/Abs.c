@@ -31,7 +31,7 @@ void Abs_int8_rvv(struct onnx_node_t *n)
         vx = __riscv_vle8_v_i8m8(px, vl);
         px += vl;
         vbool1_t mask = __riscv_vmslt_vx_i8m8_b1(vx, 0, vl);
-        vy = __riscv_vrsub_vx_i8m8_m(mask, vx, 0, vl);
+        vy = __riscv_vrsub_vx_i8m8_tumu(mask, vx, vx, 0, vl);
         __riscv_vse8_v_i8m8(py, vy, vl);
         py += vl;
     }
@@ -63,7 +63,7 @@ void Abs_int32_rvv(struct onnx_node_t *n)
         vx = __riscv_vle32_v_i32m8(px, vl);
         px += vl;
         vbool4_t mask = __riscv_vmslt_vx_i32m8_b4(vx, 0, vl);
-        vy = __riscv_vrsub_vx_i32m8_m(mask, vx, 0, vl);
+        vy = __riscv_vrsub_vx_i32m8_tumu(mask, vx, vx, 0, vl);
         __riscv_vse32_v_i32m8(py, vy, vl);
         py += vl;
     }
