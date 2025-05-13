@@ -14,6 +14,7 @@ extern int test_convinteger(void);
 extern int test_cos(void);
 extern int test_div(void);
 extern int test_elu(void);
+extern int test_erf(void);
 extern int test_exp(void);
 extern int test_flip(void);
 extern int test_gatherelements(void);
@@ -49,6 +50,7 @@ TestFunc tests[] = {
     {test_cos, "test_cos"},
     {test_div, "test_div"},
     {test_elu, "test_elu"},
+    {test_erf, "test_erf"},
     {test_exp, "test_exp"},
     {test_flip, "test_flip"},
     {test_gatherelements, "test_gatherelements"},

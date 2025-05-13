@@ -162,6 +162,11 @@ void Negate_float16_rvv(struct onnx_node_t *node);
 void Negate_float32(struct onnx_node_t *node);
 void Negate_float32_rvv(struct onnx_node_t *node);
 
+void Erf_float16(struct onnx_node_t *node);
+void Erf_float16_rvv(struct onnx_node_t *node);
+void Erf_float32(struct onnx_node_t *node);
+void Erf_float32_rvv(struct onnx_node_t *node);
+
 void Exp_float16(struct onnx_node_t *node);
 void Exp_float16_rvv(struct onnx_node_t *node);
 void Exp_float32(struct onnx_node_t *node);

@@ -65,6 +65,7 @@ int verify_results_f32(float32_t *ref, float32_t *opt, int length)
             flag = 1;
             break;
         }
+        // printf("f32 Output mismatch at %d, expected %f, actual %f\r\n", i, ref[i], opt[i]);
     }
 
     return flag;
