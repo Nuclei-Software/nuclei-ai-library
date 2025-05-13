@@ -14,7 +14,8 @@ LINKER_SCRIPT := evalsoc.ld
 
 LDLIBS ?= -lm
 
-COMMON_FLAGS := -O2
+# Disable rvv vectorization for gcc, this config works at gcc13/gcc14
+COMMON_FLAGS := -fno-tree-vectorize -O2
 
 ifneq ($(wildcard $(NUCLEI_SDK_ROOT)/Build/Makefile.base),)
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
