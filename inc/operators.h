@@ -38,6 +38,8 @@ void *GeneratePowParam(OnnxScalar exponent);
 void FreePowParam(void **pdat);
 void *GenerateFlipParam(int flip_axis0, int flip_axis1);
 void FreeFlipParam(void **pdat);
+void *GenerateGaussParam(float32_t alpha);
+void FreeGaussParam(void **pdat);
 /**
  * @brief only support 2-D tensor. start[i] == end[i] == 0 is not allowed.
  *
@@ -225,6 +227,11 @@ void Elu_float16_rvv(struct onnx_node_t *node);
 void Elu_float32(struct onnx_node_t *node);
 void Elu_float32_rvv(struct onnx_node_t *node);
 
+
+void Gauss_filter_float16(struct onnx_node_t *node);
+void Gauss_filter_float16_rvv(struct onnx_node_t *node);
+void Gauss_filter_float32(struct onnx_node_t *node);
+void Gauss_filter_float32_rvv(struct onnx_node_t *node);
 void Relu_float16(struct onnx_node_t *node);
 void Relu_float16_rvv(struct onnx_node_t *node);
 void Relu_float32(struct onnx_node_t *node);

@@ -18,6 +18,7 @@ extern int test_erf(void);
 extern int test_exp(void);
 extern int test_flip(void);
 extern int test_gatherelements(void);
+extern int test_gauss_filter(void);
 extern int test_layernormalization(void);
 extern int test_log(void);
 extern int test_matmul(void);
@@ -54,6 +55,7 @@ TestFunc tests[] = {
     {test_exp, "test_exp"},
     {test_flip, "test_flip"},
     {test_gatherelements, "test_gatherelements"},
+    {test_gauss_filter, "test_gauss_filter"},
     {test_layernormalization, "test_layernormalization"},
     {test_log, "test_log"},
     {test_matmul, "test_matmul"},
