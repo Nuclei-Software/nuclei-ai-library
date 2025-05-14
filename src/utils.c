@@ -11,8 +11,23 @@ int verify_results_int8(int8_t *ref, int8_t *opt, int length)
     int flag = 0;
 
     for (int i = 0; i < length; i++) {
-        if (abs(ref[i] - opt[i]) > DELTAINT8) {
+        if (abs((int)(ref[i] - opt[i])) > DELTAINT8) {
             printf("INT8 Output mismatch at %d, expected %d, actual %d\r\n", i, ref[i], opt[i]);
+            flag = 1;
+            break;
+        }
+    }
+
+    return flag;
+}
+
+int verify_results_uint8(uint8_t *ref, uint8_t *opt, int length)
+{
+    int flag = 0;
+
+    for (int i = 0; i < length; i++) {
+        if (abs(ref[i] - opt[i]) > DELTAINT8) {
+            printf("UINT8 Output mismatch at %d, expected %u, actual %u\r\n", i, ref[i], opt[i]);
             flag = 1;
             break;
         }

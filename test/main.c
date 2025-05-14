@@ -8,6 +8,7 @@ typedef struct {
 extern int test_abs(void);
 extern int test_add(void);
 extern int test_batchnormalization(void);
+extern int test_bilinear_interpolation(void);
 extern int test_clamp(void);
 extern int test_concat(void);
 extern int test_convinteger(void);
@@ -43,8 +44,10 @@ extern int test_topk(void);
 
 TestFunc tests[] = {
     {test_abs, "test_abs"},
+
     {test_add, "test_add"},
     {test_batchnormalization, "test_batchnormalization"},
+    {test_bilinear_interpolation, "test_bilinear_interpolation"},
     {test_clamp, "test_clamp"},
     {test_concat, "test_concat"},
     {test_convinteger, "test_convinteger"},

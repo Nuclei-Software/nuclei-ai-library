@@ -91,6 +91,11 @@ void LayerNormalization_float16_rvv(struct onnx_node_t *node);
 void LayerNormalization_float32(struct onnx_node_t *node);
 void LayerNormalization_float32_rvv(struct onnx_node_t *node);
 
+void BilinearInterpolation_float16(struct onnx_node_t *n);
+void BilinearInterpolation_float16_rvv(struct onnx_node_t *n);
+void BilinearInterpolation_float32(struct onnx_node_t *n);
+void BilinearInterpolation_float32_rvv(struct onnx_node_t *n);
+
 void RMSNormalization_float16(struct onnx_node_t *node);
 void RMSNormalization_float16_rvv(struct onnx_node_t *node);
 void RMSNormalization_float32(struct onnx_node_t *node);

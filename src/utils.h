@@ -9,6 +9,7 @@
 #include <string.h>
 
 int verify_results_int8(int8_t *ref, int8_t *opt, int length);
+int verify_results_uint8(uint8_t *ref, uint8_t *opt, int length);
 int verify_results_int32(int32_t *ref, int32_t *opt, int length);
 int verify_results_f16(float16_t *ref, float16_t *opt, int length);
 int verify_results_f32(float32_t *ref, float32_t *opt, int length);
