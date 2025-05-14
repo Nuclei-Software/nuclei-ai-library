@@ -19,46 +19,47 @@ We also provided test code to evaluate the ONNX operators implemention, which ca
 In the chart below, `VPU Lite Compatibility` illustrates the degree to which each operator is compatible with VPU Lite. The symbol `√` indicates that the operator is fully compatible with VPU Lite. In instances where compatibility is not achieved, the chart will illustrates the reasons why the operator is not compatible.
 
 | Operator           | VPU Lite compatibility | FP32 | FP16 | BF16 | FP8 | INT32 | INT8 | INT4 | Boolean |
-| --                 | --                     | --   | --   | --   | --  | --    | --   | --   | --      |
-| Abs                | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Add                | √                      | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| BatchNormalization | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Clamp              | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Concat             | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ConvInteger        | invoke segment load    | ×    | ×    | ×    | ×   | ×     |  √   | ×    |   |
-| Cos                | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Div                | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Elu                | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Erf                |                        | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
-| Flip               | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| GatherElements     | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Gelu               |                        | ×    | ×    | ×    | ×   | ×     |  ×   | ×    |   |
-| LayerNormalization | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Log                | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| MatMul             | √                      | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| Mul                | √                      | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| Negate             | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Pad                | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Pow                | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Reciprocal         | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| ReduceAll          | √                      | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
-| ReduceAny          | √                      | ×    | ×    | ×    | ×   | ×     |  ×   | ×    | √ |
-| ReduceMax          | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceMin          | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| ReduceProd         | invoke vslide          | √    | √    | ×    | ×   |       |      | ×    |   |
-| ReduceSum          | √                      | √    | √    | ×    | ×   |       |      | ×    |   |
-| Relu               | √                      | √    | √    | ×    | ×   |       |      | ×    |   |
-| RMSNormalization   | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Rsqrt              | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| ScatterElements    | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Silu               | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Sin                | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Slice              | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| Softmax            | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Sqrt               | √                      | √    | √    | ×    | ×   | ×     |  ×   | ×    |   |
-| Sub                | √                      | √    | √    | ×    | ×   | ×     |  √   | ×    |   |
-| Tile               | √                      | √    | √    | ×    | ×   | √     |  √   | ×    |   |
-| TopK               | invoke vslide          | √    | √    | ×    | ×   | √     |  ×   | ×    |   |
+| --                 | --                     | --   | --   | --  | --  | --    | --   | --   | --|
+| Abs                | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Add                | √                      | √    | √    | √   | ×   | ×     |  √   | ×    |   |
+| BatchNormalization | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Clamp              | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Concat             | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| ConvInteger        | invoke segment load    | ×    | ×    | ×   | ×   | ×     |  √   | ×    |   |
+| Cos                | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Div                | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Elu                | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Erf                | √                      | √    | √    | ×   | ×   | ×     |  ×   | ×    |   |
+| Exp                | √                      | √    | √    | √   | ×   | ×     | ×    | ×    |   |
+| Flip               | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| GatherElements     | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Gelu               |                        | ×    | ×    | ×   | ×   | ×     |  ×   | ×    |   |
+| LayerNormalization | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Log                | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| MatMul             | √                      | √    | √    | √   | ×   | ×     |  √   | ×    |   |
+| Mul                | √                      | √    | √    | √   | ×   | ×     |  √   | ×    |   |
+| Negate             | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Pad                | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Pow                | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Reciprocal         | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| ReduceAll          | √                      | ×    | ×    | ×   | ×   | ×     |  ×   | ×    | √ |
+| ReduceAny          | √                      | ×    | ×    | ×   | ×   | ×     |  ×   | ×    | √ |
+| ReduceMax          | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| ReduceMin          | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| ReduceProd         | invoke vslide          | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| ReduceSum          | √                      | √    | √    | ×   | ×   | ×     |  ×   | ×    |   |
+| Relu               | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| RMSNormalization   | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Rsqrt              | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| ScatterElements    | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Silu               | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Sin                | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Slice              | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| Softmax            | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Sqrt               | √                      | √    | √    | √   | ×   | ×     |  ×   | ×    |   |
+| Sub                | √                      | √    | √    | √   | ×   | ×     |  √   | ×    |   |
+| Tile               | √                      | √    | √    | √   | ×   | √     |  √   | ×    |   |
+| TopK               | invoke vslide          | √    | √    | ×   | ×   | √     |  ×   | ×    |   |
 
 ## File Structure
 
@@ -129,6 +130,15 @@ If you want to specify `CORE` and `ARCH_EXT` to build for rv32，you can run the
 make CORE=n900f ARCH_EXT=_zfh_zvfh_zve32f all
 ```
 
+Also, nuclei bf16 (Brain Floating-Point 16) feature can be tested(for details, please refer to [nuclei_bf16](https://github.com/Nuclei-Software/nuclei-tool-guide/blob/f4295c25733f2911312f93404540c540e456fa5f/source/toolchain/gnu/nuclei_bf16.rst))
+
+~~~sh
+# Compile bf16
+make CORE=nx900fd ARCH_EXT=v_xxlvfbf all
+# Compile f16 and bf16 together
+make CORE=nx900fd ARCH_EXT=v_zfh_zvfh_xxlvfbf all
+~~~
+
 After make, the binary file `ailib_bench.elf` will be generated in the root directory of this project.
 
 ### Run Test
@@ -145,6 +155,8 @@ make CORE=n900f ARCH_EXT=_zfh_zvfh_zve32f SIMU=qemu clean all run_qemu
 ```
 
 These command will rebuild the test program with `SIMU=qemu`，and run the test program on QEMU after build. When `SIMU=qemu` is specified, QEMU will automatically terminate upon the completion of the test. In other cases, you will need to press `CTRL+C` to manually exit QEMU once the test is completed.
+
+**Note:** The bf16 feature is supported by nuclei Qemu9.0 and later versions
 
 #### Test on Hardware
 
