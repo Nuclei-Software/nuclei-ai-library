@@ -5,6 +5,8 @@
 
 #include "operators.h"
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Div_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *y = n->outputs[0];
@@ -40,6 +42,48 @@ void Div_float16_rvv(struct onnx_node_t *n)
         py += l;
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Div_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *y = n->outputs[0];
+    struct onnx_tensor_t *a = n->inputs[0];
+    struct onnx_tensor_t *b = n->inputs[1];
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pa = (bfloat16_t *)a->datas;
+    bfloat16_t *pb = (bfloat16_t *)b->datas;
+
+    for (size_t i = 0, l = y->ndata; i < l; i++) {
+        py[i] = pa[i] / pb[i];
+    }
+}
+
+void Div_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *y = n->outputs[0];
+    struct onnx_tensor_t *a = n->inputs[0];
+    struct onnx_tensor_t *b = n->inputs[1];
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pa = (bfloat16_t *)a->datas;
+    bfloat16_t *pb = (bfloat16_t *)b->datas;
+
+    size_t blkCnt = y->ndata; /* Loop counter */
+    size_t l;
+    vbfloat16m8_t vx, vy;
+    for (; (l = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= l) {
+        vx = __riscv_vle16_v_bf16m8(pa, l);
+        vy = __riscv_vle16_v_bf16m8(pb, l);
+        pa += l;
+        pb += l;
+        __riscv_vse16_v_bf16m8(py, __riscv_xl_vfdiv_vv_bf16m8(vx, vy, l), l);
+        py += l;
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Div_float32(struct onnx_node_t *n)
 {

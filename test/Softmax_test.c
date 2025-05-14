@@ -65,6 +65,8 @@ int test_softmax_f32(void)
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_softmax_f16(void)
 {
     struct onnx_node_t *node;
@@ -126,10 +128,86 @@ int test_softmax_f16(void)
     return ret;
 }
 
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_softmax_bf16(void)
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[NUM_ROWS * NUM_COLS];
+    bfloat16_t opt[NUM_ROWS * NUM_COLS];
+    int ret = 0;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->priv = NULL;
+    node->ninput = 1;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndim = 2;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = NUM_COLS;
+    node->inputs[0]->dims[1] = NUM_ROWS;
+    node->inputs[0]->ndata = NUM_COLS * NUM_ROWS;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+
+    bfloat16_t *p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int i = 0; i < node->inputs[0]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = NUM_COLS;
+    node->outputs[0]->dims[1] = NUM_ROWS;
+    node->outputs[0]->ndata = NUM_COLS * NUM_ROWS;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    BENCH_START(Softmax_bfloat16);
+    Softmax_bfloat16(node);
+    BENCH_END(Softmax_bfloat16);
+
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(Softmax_bfloat16_rvv);
+    Softmax_bfloat16_rvv(node);
+    BENCH_END(Softmax_bfloat16_rvv);
+    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
+
 int test_softmax(void)
 {
     int ret = 0;
     ret |= test_softmax_f32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_softmax_f16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_softmax_bf16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     return ret;
 }

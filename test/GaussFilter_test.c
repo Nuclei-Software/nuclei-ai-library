@@ -67,6 +67,8 @@ int test_gauss_filter_f32(void)
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_gauss_filter_f16(void)
 {
     struct onnx_node_t *node;
@@ -130,12 +132,14 @@ int test_gauss_filter_f16(void)
 
     return ret;
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
 
 int test_gauss_filter(void)
 {
     int ret = 0;
     ret |= test_gauss_filter_f32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_gauss_filter_f16();
-
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
     return ret;
 }

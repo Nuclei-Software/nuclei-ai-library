@@ -231,6 +231,8 @@ void Pad_int32_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Pad_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -329,6 +331,110 @@ void Pad_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Pad_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    size_t len;
+
+    // fill header
+    if (pdat->pads.top > 0) {
+        len = pdat->pads.top * (pdat->pads.left + pdat->pads.right + x->dims[0]);
+        for (int i = 0; i < len; i++) {
+            py[i] = pdat->value.v_bfloat16;
+        }
+        py += len;
+    }
+
+    // fill body
+    for (int i = 0; i < x->dims[1]; ++i) {
+        for (int i = 0; i < pdat->pads.left; i++) {
+            py[i] = pdat->value.v_bfloat16;
+        }
+        py += pdat->pads.left;
+        memcpy(py, px, x->dims[0] * sizeof(bfloat16_t));
+        py += x->dims[0];
+        px += x->dims[0];
+        for (int i = 0; i < pdat->pads.right; i++) {
+            py[i] = pdat->value.v_bfloat16;
+        }
+        py += pdat->pads.right;
+    }
+
+    // fill tail
+    if (pdat->pads.bottom > 0) {
+        len = pdat->pads.bottom * (pdat->pads.left + pdat->pads.right + x->dims[0]);
+        for (int i = 0; i < len; i++) {
+            py[i] = pdat->value.v_bfloat16;
+        }
+    }
+}
+
+void Pad_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    size_t maxlen, len[2], avl, vl;
+    vbfloat16m8_t vx, vx_const;
+
+    len[0] = pdat->pads.top * (pdat->pads.left + pdat->pads.right + x->dims[0]);
+    len[1] = pdat->pads.bottom * (pdat->pads.left + pdat->pads.right + x->dims[0]);
+    maxlen = len[0] > len[1] ? len[0] : len[1];
+    maxlen = maxlen > pdat->pads.left ? maxlen : pdat->pads.left;
+    maxlen = maxlen > pdat->pads.right ? maxlen : pdat->pads.right;
+
+    vl = __riscv_vsetvlmax_e16m8();
+    if (maxlen >= vl) {
+        vx_const = __riscv_xl_vfmv_v_f_bf16m8(pdat->value.v_bfloat16, vl);
+    } else {
+        vx_const = __riscv_xl_vfmv_v_f_bf16m8(pdat->value.v_bfloat16, maxlen);
+    }
+
+    // fill header
+    for (; (vl = __riscv_vsetvl_e16m8(len[0])) > 0; len[0] -= vl) {
+        __riscv_vse16_v_bf16m8(py, vx_const, vl);
+        py += vl;
+    }
+
+    // fill body
+    for (int i = 0; i < x->dims[1]; ++i) {
+        avl = pdat->pads.left;
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            __riscv_vse16_v_bf16m8(py, vx_const, vl);
+            py += vl;
+        }
+        avl = x->dims[0];
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            vx = __riscv_vle16_v_bf16m8(px, vl);
+            px += vl;
+            __riscv_vse16_v_bf16m8(py, vx, vl);
+            py += vl;
+        }
+        avl = pdat->pads.right;
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            __riscv_vse16_v_bf16m8(py, vx_const, vl);
+            py += vl;
+        }
+    }
+
+    // fill tail
+    for (; (vl = __riscv_vsetvl_e16m8(len[1])) > 0; len[1] -= vl) {
+        __riscv_vse16_v_bf16m8(py, vx_const, vl);
+        py += vl;
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Pad_float32(struct onnx_node_t *n)
 {

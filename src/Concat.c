@@ -186,6 +186,8 @@ void Concat_int32_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Concat_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x;
@@ -264,6 +266,90 @@ void Concat_float16_rvv(struct onnx_node_t *n)
         }
     }
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Concat_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x;
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px, *line_py;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    int axis = *((int *)n->priv);
+
+    if (axis == 0) {
+        // concat along axis 0
+        for (int i = 0; i < n->ninput; ++i) {
+            x = n->inputs[i];
+            px = (bfloat16_t *)x->datas;
+            memcpy(py, px, x->ndata * sizeof(bfloat16_t));
+            py += x->ndata;
+        }
+    } else {
+        // concat along axis 1
+        for (int i = 0; i < n->ninput; ++i) {
+            x = n->inputs[i];
+            px = (bfloat16_t *)x->datas;
+            line_py = py;
+            for (int j = 0; j < x->dims[1]; ++j) {
+                memcpy(line_py, px, x->dims[0] * sizeof(bfloat16_t));
+                line_py += y->dims[0];
+                px += x->dims[0];
+            }
+            py += x->dims[0];
+        }
+    }
+}
+
+void Concat_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x;
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px, *pxx, *line_py, *pyy;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    int axis = *((int *)n->priv);
+    size_t vl, avl;
+    vbfloat16m8_t vx, vy;
+
+    if (axis == 0) {
+        // concat along axis 0
+        for (int i = 0; i < n->ninput; ++i) {
+            x = n->inputs[i];
+            avl = x->ndata;
+            px = (bfloat16_t *)x->datas;
+            for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                vx = __riscv_vle16_v_bf16m8(px, vl);
+                px += vl;
+                __riscv_vse16_v_bf16m8(py, vx, vl);
+                py += vl;
+            }
+        }
+    } else {
+        // concat along axis 1
+        for (int i = 0; i < n->ninput; ++i) {
+            x = n->inputs[i];
+            px = (bfloat16_t *)x->datas;
+            line_py = py;
+            for (int j = 0; j < x->dims[1]; ++j) {
+                pxx = px;
+                pyy = line_py;
+                for (avl = x->dims[0]; avl > 0; avl -= vl) {
+                    vl = __riscv_vsetvl_e16m8(avl);
+                    vx = __riscv_vle16_v_bf16m8(pxx, vl);
+                    pxx += vl;
+                    __riscv_vse16_v_bf16m8(pyy, vx, vl);
+                    pyy += vl;
+                }
+                line_py += y->dims[0];
+                px += x->dims[0];
+            }
+            py += x->dims[0];
+        }
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Concat_float32(struct onnx_node_t *n)
 {

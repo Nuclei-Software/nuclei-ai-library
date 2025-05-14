@@ -122,6 +122,8 @@ int test_batchnormalization_f32(void)
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_batchnormalization_f16(void)
 {
     struct onnx_node_t *node;
@@ -238,10 +240,144 @@ int test_batchnormalization_f16(void)
     return ret;
 }
 
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_batchnormalization_bf16(void)
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[DIM0 * DIM1 * DIM2 * DIM3];
+    bfloat16_t opt[DIM0 * DIM1 * DIM2 * DIM3];
+    int ret = 0;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->priv = GenerateBatchNormParam(1e-05f, 0.9f);
+
+    node->ninput = 5;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndim = 4;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = DIM0;
+    node->inputs[0]->dims[1] = DIM1;
+    node->inputs[0]->dims[2] = DIM2;
+    node->inputs[0]->dims[3] = DIM3;
+    node->inputs[0]->ndata = node->inputs[0]->dims[0] * node->inputs[0]->dims[1] * node->inputs[0]->dims[2] * node->inputs[0]->dims[3];
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[1]->ndim = 1;
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims[0] = DIM1;
+    node->inputs[1]->ndata = node->inputs[1]->dims[0];
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[1]->ndata);
+
+    node->inputs[2] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[2]->ndim = 1;
+    node->inputs[2]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[2]->ndim);
+    node->inputs[2]->dims[0] = DIM1;
+    node->inputs[2]->ndata = node->inputs[2]->dims[0];
+    node->inputs[2]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[2]->ndata);
+
+    node->inputs[3] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[3]->ndim = 1;
+    node->inputs[3]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[3]->ndim);
+    node->inputs[3]->dims[0] = DIM1;
+    node->inputs[3]->ndata = node->inputs[3]->dims[0];
+    node->inputs[3]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[3]->ndata);
+
+    node->inputs[4] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[4]->ndim = 1;
+    node->inputs[4]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[4]->ndim);
+    node->inputs[4]->dims[0] = DIM1;
+    node->inputs[4]->ndata = node->inputs[4]->dims[0];
+    node->inputs[4]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[4]->ndata);
+
+    bfloat16_t *p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int i = 0; i < node->inputs[0]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+    p = (bfloat16_t *)node->inputs[1]->datas;
+    for (int i = 0; i < node->inputs[1]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+    p = (bfloat16_t *)node->inputs[2]->datas;
+    for (int i = 0; i < node->inputs[2]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+    p = (bfloat16_t *)node->inputs[3]->datas;
+    for (int i = 0; i < node->inputs[3]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+    p = (bfloat16_t *)node->inputs[4]->datas;
+    for (int i = 0; i < node->inputs[4]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = DIM0 * DIM1 * DIM2 * DIM3;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    BENCH_START(BatchNormalization_bfloat16);
+    BatchNormalization_bfloat16(node);
+    BENCH_END(BatchNormalization_bfloat16);
+
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(BatchNormalization_bfloat16_rvv);
+    BatchNormalization_bfloat16_rvv(node);
+    BENCH_END(BatchNormalization_bfloat16_rvv);
+    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[1]->datas);
+    free(node->inputs[2]->datas);
+    free(node->inputs[3]->datas);
+    free(node->inputs[4]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[1]->dims);
+    free(node->inputs[2]->dims);
+    free(node->inputs[3]->dims);
+    free(node->inputs[4]->dims);
+    free(node->inputs[0]);
+    free(node->inputs[1]);
+    free(node->inputs[2]);
+    free(node->inputs[3]);
+    free(node->inputs[4]);
+    free(node->inputs);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]);
+    free(node->outputs);
+    FreeBatchNormParam(&node->priv);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
+
 int test_batchnormalization(void)
 {
     int ret = 0;
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret = test_batchnormalization_f16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret = test_batchnormalization_bf16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
+
     ret = test_batchnormalization_f32();
     return ret;
 }

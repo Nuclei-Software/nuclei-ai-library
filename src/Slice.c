@@ -190,6 +190,8 @@ void Slice_int32_rvv(struct onnx_node_t *node)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Slice_float16(struct onnx_node_t *node)
 {
     struct onnx_tensor_t *x = node->inputs[0];
@@ -262,6 +264,85 @@ void Slice_float16_rvv(struct onnx_node_t *node)
         py += y->dims[0];
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Slice_bfloat16(struct onnx_node_t *node)
+{
+    struct onnx_tensor_t *x = node->inputs[0];
+    struct onnx_tensor_t *y = node->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)node->priv;
+    int num, den;
+
+    if (pdat->end[0] <= 0) {
+        pdat->end[0] += x->dims[1];
+    }
+    if (pdat->end[1] <= 0) {
+        pdat->end[1] += x->dims[0];
+    }
+
+    for (int row = pdat->start[0]; row < pdat->end[0]; row += pdat->step[0]) {
+        for (int col = pdat->start[1]; col < pdat->end[1]; col += pdat->step[1]) {
+            *(py++) = px[row * x->dims[0] + col];
+        }
+    }
+    num = pdat->end[1] - pdat->start[1];
+    den = pdat->step[1];
+    y->dims[0] = (num % den) == 0 ? num / den : num / den + 1;
+    num = pdat->end[0] - pdat->start[0];
+    den = pdat->step[0];
+    y->dims[1] = (num % den) == 0 ? num / den : num / den + 1;
+    y->ndata = y->dims[0] * y->dims[1];
+}
+
+void Slice_bfloat16_rvv(struct onnx_node_t *node)
+{
+    struct onnx_tensor_t *x = node->inputs[0];
+    struct onnx_tensor_t *y = node->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)node->priv;
+    int num, den;
+    bfloat16_t *pxx, *pyy;
+    size_t avl, vl;
+    vbfloat16m8_t vx;
+
+    // adjust end when end <= 0
+    if (pdat->end[0] <= 0) {
+        pdat->end[0] += x->dims[1];
+    }
+    if (pdat->end[1] <= 0) {
+        pdat->end[1] += x->dims[0];
+    }
+
+    // calculate the output tensor size
+    num = pdat->end[1] - pdat->start[1];
+    den = pdat->step[1];
+    y->dims[0] = (num % den) == 0 ? num / den : num / den + 1;
+    num = pdat->end[0] - pdat->start[0];
+    den = pdat->step[0];
+    y->dims[1] = (num % den) == 0 ? num / den : num / den + 1;
+    y->ndata = y->dims[0] * y->dims[1];
+
+    for (int row = pdat->start[0]; row < pdat->end[0]; row += pdat->step[0]) {
+        pxx = px + row * x->dims[0] + pdat->start[1];
+        pyy = py;
+        avl = y->dims[0];
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            vx = __riscv_vlse16_v_bf16m8(pxx, pdat->step[1] * sizeof(bfloat16_t), vl);
+            __riscv_vse16_v_bf16m8(pyy, vx, vl);
+            pxx += vl * pdat->step[1];
+            pyy += vl;
+        }
+        py += y->dims[0];
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Slice_float32(struct onnx_node_t *node)
 {

@@ -179,6 +179,7 @@ int test_concat_int32()
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
 int test_concat_float16()
 {
     struct onnx_node_t *node;
@@ -265,6 +266,103 @@ int test_concat_float16()
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_concat_bfloat16()
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[SIZE * SIZE * INPUT_TENSORS];
+    int axis = 0;
+    bfloat16_t *p;
+    int ret = 0;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = INPUT_TENSORS;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+
+    for (int i = 0; i < INPUT_TENSORS; ++i) {
+        node->inputs[i] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+        node->inputs[i]->ndata = SIZE * SIZE;
+        node->inputs[i]->ndim = 2;
+        node->inputs[i]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[i]->ndim);
+        node->inputs[i]->dims[0] = SIZE;
+        node->inputs[i]->dims[1] = SIZE;
+        node->inputs[i]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[i]->ndata);
+        p = (bfloat16_t *)node->inputs[i]->datas;
+        for (int j = 0; j < node->inputs[0]->ndata; j++) {
+            p[j] = rand() * 1.0f;
+        }
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = SIZE * SIZE * INPUT_TENSORS;
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = SIZE;
+    node->outputs[0]->dims[1] = SIZE * INPUT_TENSORS;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    node->priv = &axis;
+
+    // golden test with axis = 0
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(Concat_bfloat16_axis0);
+    Concat_bfloat16(node);
+    BENCH_END(Concat_bfloat16_axis0);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test with axis = 0
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(Concat_bfloat16_rvv_axis0);
+    Concat_bfloat16_rvv(node);
+    BENCH_END(Concat_bfloat16_rvv_axis0);
+
+    // verify result with axis = 0
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    // golden test with axis = 1
+    axis = 1;
+    node->outputs[0]->dims[0] = SIZE * INPUT_TENSORS;
+    node->outputs[0]->dims[1] = SIZE;
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(Concat_bfloat16_axis1);
+    Concat_bfloat16(node);
+    BENCH_END(Concat_bfloat16_axis1);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test with axis = 1
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(Concat_bfloat16_rvv_axis1);
+    Concat_bfloat16_rvv(node);
+    BENCH_END(Concat_bfloat16_rvv_axis1);
+
+    // verify result with axis = 1
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    for (int i = 0; i < node->ninput; ++i) {
+        free(node->inputs[i]->datas);
+        free(node->inputs[i]->dims);
+        free(node->inputs[i]);
+    }
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_concat_float32()
 {
@@ -358,7 +456,12 @@ int test_concat(void)
     int ret = 0;
     ret |= test_concat_int8();
     ret |= test_concat_int32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_concat_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_concat_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_concat_float32();
     return ret;
 }

@@ -81,6 +81,8 @@ int test_matmul_int8(void)
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_matmul_f16(void)
 {
     struct onnx_node_t *node;
@@ -155,6 +157,91 @@ int test_matmul_f16(void)
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_matmul_bf16(void)
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[M * N];
+    bfloat16_t opt[M * N];
+    int ret = 0;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->priv = NULL;
+    node->ninput = 2;
+
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = M * K;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->ndim = 2;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = K;
+    node->inputs[0]->dims[1] = M;
+    bfloat16_t *p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int i = 0; i < node->inputs[0]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+
+    node->inputs[1] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[1]->ndata = K * N;
+    node->inputs[1]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[1]->ndata);
+    node->inputs[1]->ndim = 2;
+    node->inputs[1]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[1]->ndim);
+    node->inputs[1]->dims[0] = N;
+    node->inputs[1]->dims[1] = K;
+    p = (bfloat16_t *)node->inputs[1]->datas;
+    for (int i = 0; i < node->inputs[1]->ndata; i++) {
+        p[i] = rand() * 1.0 / RAND_MAX;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = M * N;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = N;
+    node->outputs[0]->dims[1] = M;
+
+    BENCH_START(MatMul_bfloat16);
+    MatMul_bfloat16(node);
+    BENCH_END(MatMul_bfloat16);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(MatMul_bfloat16_rvv);
+    MatMul_bfloat16_rvv(node);
+    BENCH_END(MatMul_bfloat16_rvv);
+    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs[1]->datas);
+    free(node->inputs[1]->dims);
+    free(node->inputs[1]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_matmul_f32(void)
 {
@@ -234,7 +321,12 @@ int test_matmul(void)
 {
     int ret = 0;
     ret |= test_matmul_int8();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_matmul_f16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_matmul_bf16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_matmul_f32();
     return ret;
 }

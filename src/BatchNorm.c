@@ -11,6 +11,8 @@ struct operator_pdata_t {
     float momentum;
 };
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void BatchNormalization_float16(struct onnx_node_t *n)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
@@ -90,6 +92,92 @@ void BatchNormalization_float16_rvv(struct onnx_node_t *n)
         }
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void BatchNormalization_bfloat16(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *scale = n->inputs[1];
+    struct onnx_tensor_t *b = n->inputs[2];
+    struct onnx_tensor_t *mean = n->inputs[3];
+    struct onnx_tensor_t *var = n->inputs[4];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *pscale = (bfloat16_t *)scale->datas;
+    bfloat16_t *pb = (bfloat16_t *)b->datas;
+    bfloat16_t *pmean = (bfloat16_t *)mean->datas;
+    bfloat16_t *pvar = (bfloat16_t *)var->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    int N = x->dims[0];
+    int C = x->dims[1];
+    int NC = N * C;
+    int channel = 1;
+    int i, j, o, jc;
+
+    for (i = 2; i < x->ndim; i++)
+        channel *= x->dims[i];
+    for (j = 0; j < NC; j++) {
+        o = j * channel;
+        jc = j % C;
+        for (i = 0; i < channel; i++)
+            py[o + i] = pscale[jc] * ((px[o + i] - pmean[jc]) / sqrtf(pvar[jc] + pdat->epsilon)) + pb[jc];
+    }
+}
+
+void BatchNormalization_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *scale = n->inputs[1];
+    struct onnx_tensor_t *b = n->inputs[2];
+    struct onnx_tensor_t *mean = n->inputs[3];
+    struct onnx_tensor_t *var = n->inputs[4];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *pscale = (bfloat16_t *)scale->datas;
+    bfloat16_t *pb = (bfloat16_t *)b->datas;
+    bfloat16_t *pmean = (bfloat16_t *)mean->datas;
+    bfloat16_t *pvar = (bfloat16_t *)var->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    int N = x->dims[0];
+    int C = x->dims[1];
+    int NC = N * C;
+    int channel = 1;
+    int i, j, o, jc;
+
+    for (i = 2; i < x->ndim; i++)
+        channel *= x->dims[i];
+    for (j = 0; j < NC; j++) {
+        o = j * channel;
+        jc = j % C;
+
+        size_t blkCnt = channel;
+        size_t vl;
+        vbfloat16m8_t vx;
+        bfloat16_t *pSrc = px + o;
+        bfloat16_t *pDst = py + o;
+        bfloat16_t vscale = pscale[jc];
+        bfloat16_t vmean = pmean[jc];
+        bfloat16_t vval = sqrtf(pvar[jc] + pdat->epsilon);
+        bfloat16_t vb = pb[jc];
+        for (; (vl = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= vl) {
+            vx = __riscv_vle16_v_bf16m8(pSrc, vl);
+            pSrc += vl;
+            vx = __riscv_xl_vfsub_vf_bf16m8(vx, vmean, vl);
+            vx = __riscv_xl_vfmul_vf_bf16m8(vx, vscale, vl);
+            vx = __riscv_xl_vfdiv_vf_bf16m8(vx, vval, vl);
+            vx = __riscv_xl_vfadd_vf_bf16m8(vx, vb, vl);
+            __riscv_vse16_v_bf16m8(pDst, vx, vl);
+            pDst += vl;
+        }
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void BatchNormalization_float32(struct onnx_node_t *n)
 {

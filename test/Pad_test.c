@@ -147,6 +147,7 @@ int test_pad_int32()
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
 int test_pad_float16()
 {
     struct onnx_node_t *node;
@@ -219,6 +220,89 @@ int test_pad_float16()
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_pad_bfloat16()
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[(SIZE + PAD_TOP + PAD_BOTTOM) * (SIZE + PAD_LEFT + PAD_RIGHT)], *p;
+    const OnnxScalar pad_const = {.v_bfloat16 = 0.5f};
+    int ret = 0;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = 1;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = SIZE * SIZE;
+    node->inputs[0]->ndim = 2;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = SIZE;
+    node->inputs[0]->dims[1] = SIZE;
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides[0] = 1;
+    node->inputs[0]->strides[1] = SIZE;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int i = 0; i < SIZE * SIZE; i++) {
+        p[i] = rand() * 1.0f;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = (SIZE + PAD_TOP + PAD_BOTTOM) * (SIZE + PAD_LEFT + PAD_RIGHT);
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = SIZE + PAD_LEFT + PAD_RIGHT;
+    node->outputs[0]->dims[1] = SIZE + PAD_TOP + PAD_BOTTOM;
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides[0] = 1;
+    node->outputs[0]->strides[1] = SIZE + PAD_LEFT + PAD_RIGHT;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    node->priv = GeneratePadParam(pad_const, PAD_TOP, PAD_BOTTOM, PAD_LEFT, PAD_RIGHT);
+
+    // golden test
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(Pad_bfloat16);
+    Pad_bfloat16(node);
+    BENCH_END(Pad_bfloat16);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(Pad_bfloat16_rvv);
+    Pad_bfloat16_rvv(node);
+    BENCH_END(Pad_bfloat16_rvv);
+
+    // verify results
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]->strides);
+    free(node->inputs[0]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]->strides);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    FreePadParam(&node->priv);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_pad_float32()
 {
@@ -298,7 +382,12 @@ int test_pad(void)
     int ret = 0;
     ret |= test_pad_int8();
     ret |= test_pad_int32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_pad_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_pad_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_pad_float32();
     return ret;
 }

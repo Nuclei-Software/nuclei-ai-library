@@ -69,6 +69,8 @@ void Abs_int32_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Abs_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -99,6 +101,41 @@ void Abs_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Abs_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+
+    for (size_t i = 0, l = y->ndata; i < l; i++) {
+        py[i] = (bfloat16_t)fabsf((float32_t)px[i]);
+    }
+}
+
+void Abs_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+
+    size_t blkCnt = y->ndata; /* Loop counter */
+    size_t vl;
+    vbfloat16m8_t vx;
+    for (; (vl = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= vl) {
+        vx = __riscv_vle16_v_bf16m8(px, vl);
+        px += vl;
+        vx = __riscv_xl_vfsgnjx_vv_bf16m8(vx, vx, vl);
+        __riscv_vse16_v_bf16m8(py, vx, vl);
+        py += vl;
+    }
+}
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Abs_float32(struct onnx_node_t *n)
 {

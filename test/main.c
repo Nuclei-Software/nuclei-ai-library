@@ -89,22 +89,8 @@ int main(void)
 #ifndef __riscv_vector
 #error "Not support this cpu arch, need v ext!!"
 #endif
-    printf("\r\nvlen = %d bits\r\n\r\n", csrr_vlenb() * 8); // vlen = vlenb * 8
+    printf("\r\nvlen = %d bits\r\n\r\n", __riscv_vlenb() * 8); // vlen = vlenb * 8
 
-#ifdef CSR_BF16
-    __RV_CSR_SET(CSR_MFP16MODE, 0x1);
-    printf("BF16 csr(07E2) = 0x%x\r\n", __RV_CSR_READ(CSR_MFP16MODE));
-#endif
-
-#ifdef VLM_LATENCY
-// Note: config vlm latency, data should put in vlm
-#define MISC_BASE_ADDR 0x10012000
-#define VLM_OFFSET 0x28
-    uintptr_t latency_reg = MISC_BASE_ADDR + VLM_OFFSET; // reg addr
-    printf("vlm latency cfg before = %d\r\n", *(uintptr_t *)latency_reg);
-    *(uintptr_t *)latency_reg = 9; // 0-19
-    printf("vlm latency cfg after = %d\r\n", *(uintptr_t *)latency_reg);
-#endif
 
     for (int i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
         results[i] = tests[i].func();

@@ -378,6 +378,8 @@ void ReduceMax_int8_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void ReduceMax_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -501,6 +503,137 @@ void ReduceMax_float16_rvv(struct onnx_node_t *n)
         y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void ReduceMax_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pxx, *pyy;
+    int *paxis = n->priv;
+    bfloat16_t res = FLT_MIN;
+    int out_loop_cnt = 1;
+    int i, j, k, stride, axis_idx;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        for (i = 0; i < x->ndata; ++i) {
+            res = *px > res ? *px : res;
+            px++;
+        }
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+        py[0] = res;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                res = FLT_MIN;
+                for (k = 0; k < x->dims[axis_idx]; ++k) {
+                    res = *(pxx + k * stride) > res ? *(pxx + k * stride) : res;
+                }
+                pxx++;
+                *pyy++ = res;
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+void ReduceMax_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas, *pxx, *pxxx;
+    bfloat16_t *py = (bfloat16_t *)y->datas, *pyy;
+    int *paxis = n->priv;
+    int out_loop_cnt = 1;
+    int stride, i, j, axis_idx;
+    vbfloat16m1_t acc;
+    vbfloat16m8_t vx;
+    size_t avl, vl;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        acc = __riscv_xl_vfmv_s_f_bf16m1(FLT_MIN, 1);
+        avl = x->ndata;
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            vx = __riscv_vle16_v_bf16m8(px, vl);
+            px += vl;
+            acc = __riscv_xl_vfredmax_vs_bf16m8_bf16m1(vx, acc, vl);
+        }
+        py[0] = __riscv_xl_vfmv_f_s_bf16m1_bf16(acc);
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                avl = x->dims[axis_idx];
+                acc = __riscv_xl_vfmv_s_f_bf16m1(FLT_MIN, 1);
+                pxxx = pxx;
+                for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                    vx = __riscv_vlse16_v_bf16m8(pxxx, stride * sizeof(bfloat16_t), vl);
+                    pxxx += vl * stride;
+                    acc = __riscv_xl_vfredmax_vs_bf16m8_bf16m1(vx, acc, vl);
+                }
+                pxx++;
+                *pyy++ = __riscv_xl_vfmv_f_s_bf16m1_bf16(acc);
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void ReduceMax_int32(struct onnx_node_t *n)
 {
@@ -874,6 +1007,8 @@ void ReduceMin_int8_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void ReduceMin_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -997,6 +1132,136 @@ void ReduceMin_float16_rvv(struct onnx_node_t *n)
         y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void ReduceMin_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pxx, *pyy;
+    int *paxis = n->priv;
+    bfloat16_t res = FLT_MAX;
+    int out_loop_cnt = 1;
+    int i, j, k, stride, axis_idx;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        for (i = 0; i < x->ndata; ++i) {
+            res = *px < res ? *px : res;
+            px++;
+        }
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+        py[0] = res;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                res = FLT_MAX;
+                for (k = 0; k < x->dims[axis_idx]; ++k) {
+                    res = *(pxx + k * stride) < res ? *(pxx + k * stride) : res;
+                }
+                pxx++;
+                *pyy++ = res;
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+void ReduceMin_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas, *pxx, *pxxx;
+    bfloat16_t *py = (bfloat16_t *)y->datas, *pyy;
+    int *paxis = n->priv;
+    int out_loop_cnt = 1;
+    int stride, i, j, axis_idx;
+    vbfloat16m1_t acc;
+    vbfloat16m8_t vx;
+    size_t avl, vl;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        acc = __riscv_xl_vfmv_s_f_bf16m1(FLT_MAX, 1);
+        avl = x->ndata;
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            vx = __riscv_vle16_v_bf16m8(px, vl);
+            px += vl;
+            acc = __riscv_xl_vfredmin_vs_bf16m8_bf16m1(vx, acc, vl);
+        }
+        py[0] = __riscv_xl_vfmv_f_s_bf16m1_bf16(acc);
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                avl = x->dims[axis_idx];
+                acc = __riscv_xl_vfmv_s_f_bf16m1(FLT_MAX, 1);
+                pxxx = pxx;
+                for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                    vx = __riscv_vlse16_v_bf16m8(pxxx, stride * sizeof(bfloat16_t), vl);
+                    pxxx += vl * stride;
+                    acc = __riscv_xl_vfredmin_vs_bf16m8_bf16m1(vx, acc, vl);
+                }
+                pxx++;
+                *pyy++ = __riscv_xl_vfmv_f_s_bf16m1_bf16(acc);
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void ReduceMin_int32(struct onnx_node_t *n)
 {
@@ -1246,6 +1511,8 @@ void ReduceMin_float32_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void ReduceProd_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -1442,6 +1709,211 @@ void ReduceProd_float16_rvv(struct onnx_node_t *n)
         y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void ReduceProd_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pxx, *pyy;
+    int *paxis = n->priv;
+    bfloat16_t res = 1.0f;
+    int out_loop_cnt = 1;
+    int i, j, k, stride, axis_idx;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        for (i = 0; i < x->ndata; ++i) {
+            res *= *px++;
+        }
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+        py[0] = res;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                res = 1.0f;
+                for (k = 0; k < x->dims[axis_idx]; ++k) {
+                    res *= *(pxx + k * stride);
+                }
+                pxx++;
+                *pyy++ = res;
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+void ReduceProd_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas, *pxx, *pxxx;
+    bfloat16_t *py = (bfloat16_t *)y->datas, *pyy;
+    int *paxis = n->priv;
+    int out_loop_cnt = 1;
+    int stride, i, j, axis_idx;
+    vbfloat16m1_t acc;
+    vbfloat16m8_t vx, vxx;
+    size_t avl, vl, maxvl, offset;
+    vbfloat16m4_t a, b;
+    vbfloat16m2_t c, d;
+    vbfloat16m1_t e, f;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        maxvl = __riscv_vsetvlmax_e16m8();
+        avl = x->ndata;
+        if (avl >= maxvl) {
+            vx = __riscv_vle16_v_bf16m8(px, maxvl);
+            px += maxvl;
+            avl -= maxvl;
+            // load remained data, and multiply with vx
+            for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                if (vl < maxvl) {
+                    vxx = __riscv_xl_vfmv_v_f_bf16m8(1.0f, maxvl);
+                    vxx = __riscv_vle16_v_bf16m8_tu(vxx, px, vl);
+                } else {
+                    vxx = __riscv_vle16_v_bf16m8(px, vl);
+                }
+                vx = __riscv_xl_vfmul_vv_bf16m8(vx, vxx, vl);
+                px += vl;
+            }
+        } else {
+            // load data to vx
+            vx = __riscv_xl_vfmv_v_f_bf16m8(1.0f, maxvl);
+            vx = __riscv_vle16_v_bf16m8_tu(vx, px, avl);
+        }
+        a = __riscv_vget_v_bf16m8_bf16m4(vx, 0);
+        b = __riscv_vget_v_bf16m8_bf16m4(vx, 1);
+        vl = __riscv_vsetvlmax_e16m4();
+        a = __riscv_xl_vfmul_vv_bf16m4(a, b, vl);
+
+        c = __riscv_vget_v_bf16m4_bf16m2(a, 0);
+        d = __riscv_vget_v_bf16m4_bf16m2(a, 1);
+        vl = __riscv_vsetvlmax_e16m2();
+        c = __riscv_xl_vfmul_vv_bf16m2(c, d, vl);
+
+        e = __riscv_vget_v_bf16m2_bf16m1(c, 0);
+        f = __riscv_vget_v_bf16m2_bf16m1(c, 1);
+        vl = __riscv_vsetvlmax_e16m1();
+        e = __riscv_xl_vfmul_vv_bf16m1(e, f, vl);
+
+        vl >>= 1;
+        for (; vl >= 1; vl >>= 1) {
+            f = __riscv_xl_vslidedown_vx_bf16m1(e, vl, vl);
+            e = __riscv_xl_vfmul_vv_bf16m1(e, f, vl);
+        }
+        py[0] = __riscv_xl_vfmv_f_s_bf16m1_bf16(e);
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                avl = x->dims[axis_idx];
+                pxxx = pxx;
+                maxvl = __riscv_vsetvlmax_e16m8();
+                if (avl >= maxvl) {
+                    vx = __riscv_vlse16_v_bf16m8(pxxx, sizeof(bfloat16_t) * stride, maxvl);
+                    px += maxvl;
+                    avl -= maxvl;
+                    // load remained data, and multiply with vx
+                    for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                        if (vl < maxvl) {
+                            vxx = __riscv_xl_vfmv_v_f_bf16m8(1.0f, maxvl);
+                            vxx = __riscv_vlse16_v_bf16m8_tu(vxx, pxxx, sizeof(bfloat16_t) * stride, vl);
+                        } else {
+                            vxx = __riscv_vlse16_v_bf16m8(pxxx, sizeof(bfloat16_t) * stride, vl);
+                        }
+                        pxxx += vl * stride;
+                        vx = __riscv_xl_vfmul_vv_bf16m8(vx, vxx, vl);
+                    }
+                } else {
+                    // load data to vx
+                    vx = __riscv_xl_vfmv_v_f_bf16m8(1.0f, maxvl);
+                    vx = __riscv_vlse16_v_bf16m8_tu(vx, pxxx, sizeof(bfloat16_t) * stride, avl);
+                }
+
+                a = __riscv_vget_v_bf16m8_bf16m4(vx, 0);
+                b = __riscv_vget_v_bf16m8_bf16m4(vx, 1);
+                vl = __riscv_vsetvlmax_e16m4();
+                a = __riscv_xl_vfmul_vv_bf16m4(a, b, vl);
+
+                c = __riscv_vget_v_bf16m4_bf16m2(a, 0);
+                d = __riscv_vget_v_bf16m4_bf16m2(a, 1);
+                vl = __riscv_vsetvlmax_e16m2();
+                c = __riscv_xl_vfmul_vv_bf16m2(c, d, vl);
+
+                e = __riscv_vget_v_bf16m2_bf16m1(c, 0);
+                f = __riscv_vget_v_bf16m2_bf16m1(c, 1);
+                vl = __riscv_vsetvlmax_e16m1();
+                e = __riscv_xl_vfmul_vv_bf16m1(e, f, vl);
+
+                vl >>= 1;
+                for (; vl >= 1; vl >>= 1) {
+                    f = __riscv_xl_vslidedown_vx_bf16m1(e, vl, vl);
+                    e = __riscv_xl_vfmul_vv_bf16m1(e, f, vl);
+                }
+                pxx++;
+                *pyy++ = __riscv_xl_vfmv_f_s_bf16m1_bf16(e);
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void ReduceProd_float32(struct onnx_node_t *n)
 {
@@ -1640,6 +2112,8 @@ void ReduceProd_float32_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void ReduceSum_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -1762,6 +2236,135 @@ void ReduceSum_float16_rvv(struct onnx_node_t *n)
         y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void ReduceSum_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pxx, *pyy;
+    int *paxis = n->priv;
+    bfloat16_t res = 0.0f;
+    int out_loop_cnt = 1;
+    int i, j, k, stride, axis_idx;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        for (i = 0; i < x->ndata; ++i) {
+            res += *px++;
+        }
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+        py[0] = res;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                res = 0.0f;
+                for (k = 0; k < x->dims[axis_idx]; ++k) {
+                    res += *(pxx + k * stride);
+                }
+                pxx++;
+                *pyy++ = res;
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+void ReduceSum_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas, *pxx, *pxxx;
+    bfloat16_t *py = (bfloat16_t *)y->datas, *pyy;
+    int *paxis = n->priv;
+    int out_loop_cnt = 1;
+    int stride, i, j, axis_idx;
+    vbfloat16m1_t acc;
+    vbfloat16m8_t vx;
+    size_t avl, vl;
+
+    if (paxis == NULL) {
+        // reduce all axes
+        acc = __riscv_xl_vfmv_v_f_bf16m1(0.0f, 1);
+        avl = x->ndata;
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            vx = __riscv_vle16_v_bf16m8(px, vl);
+            px += vl;
+            acc = __riscv_xl_vfredosum_vs_bf16m8_bf16m1(vx, acc, vl);
+        }
+        py[0] = __riscv_xl_vfmv_f_s_bf16m1_bf16(acc);
+        y->ndata = 1;
+        y->ndim = 1;
+        y->dims[0] = 1;
+        y->strides[0] = 1;
+    } else {
+        // reduce specified axes
+        axis_idx = x->ndim - 1 - *paxis;
+        stride = x->strides[axis_idx];
+        for (i = axis_idx + 1; i < x->ndim; ++i) {
+            out_loop_cnt *= x->dims[i];
+        }
+        // update y data
+        for (i = 0; i < out_loop_cnt; ++i) {
+            pxx = px + i * stride * x->dims[axis_idx];
+            pyy = py + i * stride;
+            for (j = 0; j < stride; ++j) {
+                avl = x->dims[axis_idx];
+                acc = __riscv_xl_vfmv_v_f_bf16m1(0.0f, 1);
+                pxxx = pxx;
+                for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                    vx = __riscv_vlse16_v_bf16m8(pxxx, sizeof(bfloat16_t) * stride, vl);
+                    pxxx += vl * stride;
+                    acc = __riscv_xl_vfredusum_vs_bf16m8_bf16m1(vx, acc, vl);
+                }
+                pxx++;
+                *pyy++ = __riscv_xl_vfmv_f_s_bf16m1_bf16(acc);
+            }
+        }
+        // update y dims and strides
+        y->ndim = x->ndim - 1;
+        for (i = 0; i < axis_idx; ++i) {
+            y->dims[i] = x->dims[i];
+        }
+        for (i = axis_idx; i < x->ndim - 1; ++i) {
+            y->dims[i] = x->dims[i + 1];
+        }
+        for (i = 0; i < y->ndim; ++i) {
+            y->strides[i] = i > 0 ? y->strides[i - 1] * y->dims[i - 1] : 1;
+        }
+        y->ndata = y->strides[y->ndim - 1] * y->dims[y->ndim - 1];
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void ReduceSum_float32(struct onnx_node_t *n)
 {

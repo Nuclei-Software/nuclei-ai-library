@@ -98,6 +98,8 @@ void Clamp_int32_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Clamp_float16(struct onnx_node_t *n)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
@@ -141,6 +143,56 @@ void Clamp_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Clamp_bfloat16(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t max = (bfloat16_t)pdat->max.v_bfloat16;
+    bfloat16_t min = (bfloat16_t)pdat->min.v_bfloat16;
+
+    for (size_t i = 0, l = y->ndata; i < l; i++) {
+        if (px[i] < min) {
+            py[i] = min;
+        } else if (px[i] > max) {
+            py[i] = max;
+        } else {
+            py[i] = px[i];
+        }
+    }
+}
+
+void Clamp_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t max = (bfloat16_t)pdat->max.v_bfloat16;
+    bfloat16_t min = (bfloat16_t)pdat->min.v_bfloat16;
+
+    size_t blkCnt = y->ndata; /* Loop counter */
+    size_t vl;
+    vbfloat16m8_t vx, vy;
+    for (; (vl = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= vl) {
+        vx = __riscv_vle16_v_bf16m8(px, vl);
+        px += vl;
+        vx = __riscv_xl_vfmax_vf_bf16m8(vx, min, vl);
+        vx = __riscv_xl_vfmin_vf_bf16m8(vx, max, vl);
+        __riscv_vse16_v_bf16m8(py, vx, vl);
+        py += vl;
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Clamp_float32(struct onnx_node_t *n)
 {

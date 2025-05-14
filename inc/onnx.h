@@ -14,8 +14,19 @@ extern "C" {
 #include <riscv_vector.h>
 
 typedef float float32_t;
-typedef _Float16 float16_t;
 typedef double float64_t;
+
+#if (defined (__riscv_zvfh))
+  #undef RISCV_FLOAT16_RVV_SUPPORTED
+  #define RISCV_FLOAT16_RVV_SUPPORTED 1
+  typedef _Float16 float16_t;
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if (defined (__riscv_xxlvfbf))
+  #undef RISCV_BFLOAT16_RVV_SUPPORTED
+  #define RISCV_BFLOAT16_RVV_SUPPORTED 1
+  typedef __bf16 bfloat16_t;
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 #define PI (3.14159265358979f)
 

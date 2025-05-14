@@ -8,6 +8,8 @@ BENCH_DECLARE_VAR()
 #define TARGET_WIDTH 192
 #define TARGET_HEIGHT 192
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_bilinear_interpolation_f16(void)
 {
     struct onnx_node_t *node;
@@ -76,6 +78,7 @@ int test_bilinear_interpolation_f16(void)
 
     return ret;
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
 
 int test_bilinear_interpolation_f32(void)
 {
@@ -150,6 +153,8 @@ int test_bilinear_interpolation(void)
 {
     int ret = 0;
     ret |= test_bilinear_interpolation_f32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_bilinear_interpolation_f16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
     return ret;
 }

@@ -5,6 +5,8 @@
 
 #include "operators.h"
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Reciprocal_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -38,6 +40,46 @@ void Reciprocal_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Reciprocal_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+
+    for (size_t i = 0, l = y->ndata; i < l; i++) {
+        py[i] = (bfloat16_t)1.0 / px[i];
+    }
+}
+
+void Reciprocal_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+
+    size_t vblkCnt = y->ndata; /* Loop counter */
+    size_t vl;
+    vbfloat16m8_t vx, vy;
+    for (; (vl = __riscv_vsetvl_e16m8(vblkCnt)) > 0; vblkCnt -= vl) {
+        vx = __riscv_vle16_v_bf16m8(px, vl);
+        px += vl;
+        // vy = __riscv_xl_vfrec7_v_bf16m8(vx, vl);
+        vy = __riscv_xl_vfrdiv_vf_bf16m8(vx, 1, vl);
+        __riscv_vse16_v_bf16m8(py, vy, vl);
+        py += vl;
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Reciprocal_float32(struct onnx_node_t *n)
 {

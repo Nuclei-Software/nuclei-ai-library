@@ -140,6 +140,8 @@ void MatMul_int8_rvv(struct onnx_node_t *n)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void MatMul_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *y = n->outputs[0];
@@ -260,6 +262,133 @@ void MatMul_float16_rvv(struct onnx_node_t *n)
         py += numColsB;
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void MatMul_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *y = n->outputs[0];
+    struct onnx_tensor_t *a = n->inputs[0];
+    struct onnx_tensor_t *b = n->inputs[1];
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pa = (bfloat16_t *)a->datas;
+    bfloat16_t *pb = (bfloat16_t *)b->datas;
+    bfloat16_t sum;
+
+    for (int i = 0; i < a->dims[1]; ++i) {
+        for (int j = 0; j < b->dims[0]; ++j) {
+            sum = 0;
+            for (int k = 0; k < a->dims[0]; ++k) {
+                sum += pa[i * a->dims[0] + k] * pb[k * b->dims[0] + j];
+            }
+            py[i * b->dims[0] + j] = sum;
+        }
+    }
+}
+
+void MatMul_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *y = n->outputs[0];
+    struct onnx_tensor_t *a = n->inputs[0];
+    struct onnx_tensor_t *b = n->inputs[1];
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pa = (bfloat16_t *)a->datas;
+    bfloat16_t *pb = (bfloat16_t *)b->datas;
+    uint32_t numColsB = b->dims[0]; /* number of columns of input matrix B */
+    uint32_t numColsA = a->dims[0]; /* number of columns of input matrix A */
+    uint32_t numRowsA = a->dims[1]; /* number of rows of input matrix A    */
+    uint32_t numRowsB = b->dims[1]; /* Number of rows of input matrix B */
+    uint32_t colCnt;
+
+    size_t ii, jj, kk;
+    size_t l;
+    vbfloat16m4_t va0m4, vres0m4, vres1m4, vres2m4, vres3m4;
+    vbfloat16m8_t va0m8, vres0m8, vres1m8;
+
+    bfloat16_t *px = NULL;
+    bfloat16_t *pInA = pa;
+    bfloat16_t *pInB = pb;
+
+    colCnt = numRowsA;
+
+    /* ch = 4, mul = 4 */
+    for (jj = colCnt / 4; jj > 0; jj--) {
+        px = py;
+        pInB = pb;
+        for (ii = numColsB; ii > 0; ii -= l) {
+            l = __riscv_vsetvl_e16m4(ii);
+            pInA = pa;
+            vres0m4 = __riscv_xl_vfmv_v_f_bf16m4(0.0, l);
+            vres1m4 = __riscv_xl_vmv_v_v_bf16m4(vres0m4, l);
+            vres2m4 = __riscv_xl_vmv_v_v_bf16m4(vres0m4, l);
+            vres3m4 = __riscv_xl_vmv_v_v_bf16m4(vres0m4, l);
+            for (kk = 0; kk < numColsA; kk++) {
+                va0m4 = __riscv_vle16_v_bf16m4(pInB + kk * numColsB, l);
+                vres0m4 = __riscv_xl_vfmacc_vf_bf16m4(vres0m4, *(pInA), va0m4, l);
+                vres1m4 = __riscv_xl_vfmacc_vf_bf16m4(vres1m4, *(pInA + numColsA), va0m4, l);
+                vres2m4 = __riscv_xl_vfmacc_vf_bf16m4(vres2m4, *(pInA + 2 * numColsA), va0m4, l);
+                vres3m4 = __riscv_xl_vfmacc_vf_bf16m4(vres3m4, *(pInA + 3 * numColsA), va0m4, l);
+                pInA++;
+            }
+            __riscv_vse16_v_bf16m4(px, vres0m4, l);
+            __riscv_vse16_v_bf16m4(px + numColsB, vres1m4, l);
+            __riscv_vse16_v_bf16m4(px + 2 * numColsB, vres2m4, l);
+            __riscv_vse16_v_bf16m4(px + 3 * numColsB, vres3m4, l);
+            px += l;
+            pInB += l;
+        }
+        pa += 4 * numColsA;
+        py += 4 * numColsB;
+    }
+    /* ch = 2, mul = 8 */
+    colCnt = colCnt & 0x3;
+    for (jj = colCnt / 2; jj > 0; jj--) {
+        px = py;
+        pInB = pb;
+        for (ii = numColsB; ii > 0; ii -= l) {
+            l = __riscv_vsetvl_e16m8(ii);
+            pInA = pa;
+            vres0m8 = __riscv_xl_vfmv_v_f_bf16m8(0.0, l);
+            vres1m8 = __riscv_xl_vmv_v_v_bf16m8(vres0m8, l);
+            for (kk = 0; kk < numColsA; kk++) {
+                va0m8 = __riscv_vle16_v_bf16m8(pInB + kk * numColsB, l);
+                vres0m8 = __riscv_xl_vfmacc_vf_bf16m8(vres0m8, *(pInA), va0m8, l);
+                vres1m8 = __riscv_xl_vfmacc_vf_bf16m8(vres1m8, *(pInA + numColsA), va0m8, l);
+                pInA++;
+            }
+            __riscv_vse16_v_bf16m8(px, vres0m8, l);
+            __riscv_vse16_v_bf16m8(px + numColsB, vres1m8, l);
+            px += l;
+            pInB += l;
+        }
+        pa += 2 * numColsA;
+        py += 2 * numColsB;
+    }
+    /* ch = 1, mul = 8 */
+    colCnt = colCnt & 0x1;
+    for (jj = colCnt; jj > 0; jj--) {
+        px = py;
+        pInB = pb;
+        for (ii = numColsB; ii > 0; ii -= l) {
+            l = __riscv_vsetvl_e16m8(ii);
+            pInA = pa;
+            vres0m8 = __riscv_xl_vfmv_v_f_bf16m8(0.0, l);
+            for (kk = 0; kk < numColsA; kk++) {
+                va0m8 = __riscv_vle16_v_bf16m8(pInB + kk * numColsB, l);
+                vres0m8 = __riscv_xl_vfmacc_vf_bf16m8(vres0m8, *(pInA++), va0m8, l);
+            }
+            __riscv_vse16_v_bf16m8(px, vres0m8, l);
+            px += l;
+            pInB += l;
+        }
+        pa += numColsA;
+        py += numColsB;
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void MatMul_float32(struct onnx_node_t *n)
 {

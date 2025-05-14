@@ -10,6 +10,7 @@ struct operator_pdata_t {
     float sigma;
 };
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
 void Gauss_filter_float16(struct onnx_node_t *n)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
@@ -83,6 +84,7 @@ void Gauss_filter_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
 
 void Gauss_filter_float32(struct onnx_node_t *n)
 {

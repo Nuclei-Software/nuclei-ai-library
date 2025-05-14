@@ -5,6 +5,8 @@
 
 #include "operators.h"
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Sin_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -58,6 +60,66 @@ void Sin_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Sin_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+
+    for (size_t i = 0, l = y->ndata; i < l; i++) {
+        py[i] = (bfloat16_t)sinf((float32_t)px[i]);
+    }
+}
+
+void Sin_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+
+    size_t vblkCnt = y->ndata; /* Loop counter */
+    size_t vl;
+    vfloat32m8_t vx, vy, vz;
+    vint32m8_t vx_int;
+    vbool4_t mask;
+    // x - 1/6 x^3 + 1/120 x^5 - 1/5040 x^7 + 1/9! x^9...
+    for (; (vl = __riscv_vsetvl_e32m8(vblkCnt)) > 0; vblkCnt -= vl) {
+        // Note: Because of the accuracy of float16, should use float32
+        vx = __riscv_xl_vfwadd_vf_f32m8(__riscv_vle16_v_bf16m4(px, vl), 0.0, vl);
+        px += vl;
+        vx = __riscv_vfmul_vf_f32m8(vx, 1.0 / (2 * PI), vl);
+        vx_int = __riscv_vfcvt_rtz_x_f_v_i32m8(vx, vl);
+        vx = __riscv_vfsub_vv_f32m8(vx, __riscv_vfcvt_f_x_v_f32m8(vx_int, vl), vl);
+        vx = __riscv_vfmul_vf_f32m8(vx, 2 * PI, vl);
+
+        mask = __riscv_vmfgt_vf_f32m8_b4(vx, PI, vl);
+        vx = __riscv_vfadd_vf_f32m8_tumu(mask, vx, vx, -2 * PI, vl);
+
+        mask = __riscv_vmflt_vf_f32m8_b4(vx, -PI, vl);
+        vx = __riscv_vfadd_vf_f32m8_tumu(mask, vx, vx, 2 * PI, vl);
+
+        vy = __riscv_vfmul_vv_f32m8(vx, vx, vl);
+        vz = __riscv_vfmul_vf_f32m8(vy, 1.0 / 362880, vl);                                // 1/9!
+        vz = __riscv_vfmul_vv_f32m8(vy, __riscv_vfadd_vf_f32m8(vz, -1.0 / 5040, vl), vl); // 1/7!
+        vz = __riscv_vfmul_vv_f32m8(vy, __riscv_vfadd_vf_f32m8(vz, 1.0 / 120, vl), vl);   // 1/5!
+        vz = __riscv_vfmul_vv_f32m8(vy, __riscv_vfadd_vf_f32m8(vz, -1.0 / 6, vl), vl);    // 1/3!
+        vz = __riscv_vfmul_vv_f32m8(vx, __riscv_vfadd_vf_f32m8(vz, 1, vl), vl);
+
+        __riscv_vse16_v_bf16m4(py, __riscv_xl_vfncvt_f_f_w_bf16m4(vz, vl), vl);
+        py += vl;
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Sin_float32(struct onnx_node_t *n)
 {

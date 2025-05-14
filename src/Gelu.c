@@ -5,6 +5,7 @@
 
 #include "operators.h"
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
 void Gelu_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -16,6 +17,7 @@ void Gelu_float16(struct onnx_node_t *n)
         py[i] = 0.5 * px[i] * (1 + tanh(sqrt(2 / PI) * (px[i] + 0.044715 * px[i] * px[i] * px[i])));
 }
 
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
 void Gelu_float32(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];

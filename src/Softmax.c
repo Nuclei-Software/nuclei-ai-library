@@ -9,6 +9,8 @@
 // default axis = 1 in opset < 13 or axis = -1 in opset = 13
 // assert(x->ndim == 2);
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Softmax_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *x = n->inputs[0];
@@ -118,6 +120,123 @@ void Softmax_float16_rvv(struct onnx_node_t *n)
         }
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Softmax_bfloat16(struct onnx_node_t *n)
+{
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t maxv, sum, v;
+    int i, j, o;
+
+    const int D = x->dims[0];
+    const int N = x->dims[1];
+
+    for (i = 0, o = 0; i < N; i++, o += D) {
+        for (j = 0, maxv = px[o]; j < D; j++) {
+            if (px[o + j] > maxv)
+                maxv = px[o + j];
+        }
+        for (j = 0, sum = 0; j < D; j++) {
+            py[o + j] = expf(px[o + j] - maxv);
+            sum += py[o + j];
+        }
+        if (sum != 0) {
+            bfloat16_t inv = 1.0 / sum;
+            for (j = 0; j < D; j++)
+                py[o + j] *= inv;
+        }
+    }
+}
+
+void Softmax_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct operator_softmax_1_11_pdata_t *pdat = (struct operator_softmax_1_11_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t maxv, sum, v;
+    int i, j, o;
+    const int D = x->dims[0];
+    const int N = x->dims[1];
+
+    for (i = 0, o = 0; i < N; i++, o += D) {
+        size_t blkCnt = D; /* Loop counter */
+        size_t l;
+        bfloat16_t maxValue = px[o];
+        bfloat16_t *pSrc = px + o;
+        vbfloat16m8_t v_in;
+
+        l = __riscv_vsetvl_e16m1(1);
+        vbfloat16m1_t v_max = __riscv_xl_vfmv_s_f_bf16m1(maxValue, l);
+        for (; (l = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= l) {
+            v_in = __riscv_vle16_v_bf16m8(pSrc, l);
+            pSrc += l;
+            v_max = __riscv_xl_vfredmax_vs_bf16m8_bf16m1(v_in, v_max, l);
+        }
+        maxv = __riscv_xl_vfmv_f_s_bf16m1_bf16(v_max);
+
+        vbfloat16m8_t vx, vy, vz;
+        vint16m8_t vx_int;
+        blkCnt = D;
+        pSrc = px + o;
+        bfloat16_t *z = py + o;
+
+        l = __riscv_vsetvl_e16m1(1);
+        vbfloat16m1_t vsum = __riscv_xl_vfsub_vv_bf16m1(vsum, vsum, l);
+        for (; (l = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= l) {
+            vx = __riscv_vle16_v_bf16m8(pSrc, l);
+            pSrc += l;
+            vx = __riscv_xl_vfsub_vf_bf16m8(vx, maxv, l);
+
+            vx = __riscv_xl_vfmul_vf_bf16m8(vx, 1.4426950408889634f, l); // log2(e)
+
+            vx_int = __riscv_xl_vfcvt_rtz_x_f_v_i16m8(vx, l);
+            vx = __riscv_xl_vfsub_vv_bf16m8(vx, __riscv_xl_vfcvt_f_x_v_bf16m8(vx_int, l), l);
+            vx_int = __riscv_vadd_vx_i16m8(vx_int, 15, l);
+            vx_int = __riscv_vmul_vx_i16m8(vx_int, (1 << 10), l);
+            vy = __riscv_vreinterpret_v_i16m8_bf16m8(vx_int);
+            vx = __riscv_xl_vfmul_vf_bf16m8(vx, 0.693147180559945f, l);                       // ln2
+            vz = __riscv_xl_vfmul_vf_bf16m8(vx, 1.0 / 5040, l);                               // 1/7!
+            vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 720, l), l); // 1/6!
+            vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 120, l), l); // 1/5!
+            vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 24, l), l);  // 1/4!
+            vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 6, l), l);   // 1/3!
+            vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 2, l), l);   // 1/2!
+            vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0, l), l);       // 1/1!
+            vz = __riscv_xl_vfadd_vf_bf16m8(vz, 1, l);
+            vy = __riscv_xl_vfmul_vv_bf16m8(vy, vz, l);
+
+            vsum = __riscv_xl_vfredusum_vs_bf16m8_bf16m1(vy, vsum, l);
+
+            __riscv_vse16_v_bf16m8(z, vy, l);
+            z += l;
+        }
+        sum = __riscv_xl_vfmv_f_s_bf16m1_bf16(vsum);
+
+        if (sum == 0)
+            return;
+
+        bfloat16_t inv = 1.0 / sum;
+        blkCnt = D;
+        z = py + o;
+        for (; (l = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= l) {
+            vx = __riscv_vle16_v_bf16m8(z, l);
+            vy = __riscv_xl_vfmul_vf_bf16m8(vx, inv, l);
+            __riscv_vse16_v_bf16m8(z, vy, l);
+            z += l;
+        }
+    }
+}
+
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Softmax_float32(struct onnx_node_t *n)
 {

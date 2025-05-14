@@ -6,6 +6,7 @@
 #include "operators.h"
 #include "utils.h"
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
 void BilinearInterpolation_float16(struct onnx_node_t *n)
 {
     struct onnx_tensor_t *output = n->outputs[0];
@@ -118,6 +119,7 @@ void BilinearInterpolation_float16_rvv(struct onnx_node_t *n)
         }
     }
 }
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
 
 void BilinearInterpolation_float32(struct onnx_node_t *n)
 {

@@ -82,6 +82,8 @@ int test_topk_int32(void)
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_topk_float16(void)
 {
     struct onnx_node_t *node;
@@ -153,6 +155,88 @@ int test_topk_float16(void)
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_topk_bfloat16(void)
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[TEST_DATA_LEN];
+    bfloat16_t opt[TEST_DATA_LEN];
+    int ret = 0;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = 1;
+    uint32_t k = 64;
+#ifdef __riscv_vector
+    k = __riscv_vlenb() / sizeof(bfloat16_t) * 8;
+#endif
+    node->priv = GenerateTopkParam(k);
+
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = TEST_DATA_LEN;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    node->inputs[0]->ndim = 1;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = TEST_DATA_LEN;
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides[0] = 1;
+
+    bfloat16_t *p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int i = 0; i < node->inputs[0]->ndata; i++) {
+        p[i] = (rand() % 65536 - 32768) * 1.0 / 1024;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = k;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    node->outputs[0]->ndim = 1;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = k;
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides[0] = 1;
+
+    BENCH_START(Topk_bfloat16);
+    Topk_bfloat16(node);
+    BENCH_END(Topk_bfloat16);
+    HeapSort_bf16((bfloat16_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    BENCH_START(Topk_bfloat16_rvv);
+    Topk_bfloat16_rvv(node);
+    BENCH_END(Topk_bfloat16_rvv);
+    HeapSort_bf16((bfloat16_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
+    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]->strides);
+    free(node->inputs[0]);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]->strides);
+    free(node->outputs[0]);
+    free(node->inputs);
+    free(node->outputs);
+    FreeTopkParam(&node->priv);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_topk_float32(void)
 {
@@ -230,7 +314,12 @@ int test_topk(void)
 {
     int ret = 0;
     ret |= test_topk_int32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_topk_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_topk_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_topk_float32();
     return ret;
 }

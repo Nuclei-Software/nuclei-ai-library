@@ -410,6 +410,8 @@ int test_reduce_max_int8()
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_reduce_max_float16()
 {
     struct onnx_node_t *node;
@@ -529,6 +531,136 @@ int test_reduce_max_float16()
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_reduce_max_bfloat16()
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[DIMS0 * DIMS1];
+    bfloat16_t *p;
+    int ret = 0;
+    int axis;
+
+    csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = 1;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = DIMS0 * DIMS1 * DIMS2;
+    node->inputs[0]->ndim = 3;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = DIMS0;
+    node->inputs[0]->dims[1] = DIMS1;
+    node->inputs[0]->dims[2] = DIMS2;
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides[0] = 1;
+    node->inputs[0]->strides[1] = DIMS0;
+    node->inputs[0]->strides[2] = DIMS0 * DIMS1;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int j = 0; j < node->inputs[0]->ndata; j++) {
+        p[j] = rand();
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = DIMS0 * DIMS1;
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = DIMS0;
+    node->outputs[0]->dims[1] = DIMS1;
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides[0] = 1;
+    node->outputs[0]->strides[1] = DIMS0;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    // golden test with allaxes
+    node->priv = NULL;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_allaxes);
+    ReduceMax_bfloat16(node);
+    BENCH_END(ReduceMax_bfloat16_allaxes);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test with allaxes
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_rvv_allaxes);
+    ReduceMax_bfloat16_rvv(node);
+    BENCH_END(ReduceMax_bfloat16_rvv_allaxes);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    node->priv = &axis;
+    axis = 0;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_axis0);
+    ReduceMax_bfloat16(node);
+    BENCH_END(ReduceMax_bfloat16_axis0);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_rvv_axis0);
+    ReduceMax_bfloat16_rvv(node);
+    BENCH_END(ReduceMax_bfloat16_rvv_axis0);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 1;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_axis1);
+    ReduceMax_bfloat16(node);
+    BENCH_END(ReduceMax_bfloat16_axis1);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_rvv_axis1);
+    ReduceMax_bfloat16_rvv(node);
+    BENCH_END(ReduceMax_bfloat16_rvv_axis1);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 2;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_axis2);
+    ReduceMax_bfloat16(node);
+    BENCH_END(ReduceMax_bfloat16_axis2);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMax_bfloat16_rvv_axis2);
+    ReduceMax_bfloat16_rvv(node);
+    BENCH_END(ReduceMax_bfloat16_rvv_axis2);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->strides);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->strides);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_reduce_max_float32()
 {
@@ -890,6 +1022,8 @@ int test_reduce_min_int8()
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_reduce_min_float16()
 {
     struct onnx_node_t *node;
@@ -1009,6 +1143,137 @@ int test_reduce_min_float16()
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_reduce_min_bfloat16()
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[DIMS0 * DIMS1];
+    bfloat16_t *p;
+    int ret = 0;
+    int axis;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = 1;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = DIMS0 * DIMS1 * DIMS2;
+    node->inputs[0]->ndim = 3;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = DIMS0;
+    node->inputs[0]->dims[1] = DIMS1;
+    node->inputs[0]->dims[2] = DIMS2;
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides[0] = 1;
+    node->inputs[0]->strides[1] = DIMS0;
+    node->inputs[0]->strides[2] = DIMS0 * DIMS1;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int j = 0; j < node->inputs[0]->ndata; j++) {
+        p[j] = rand();
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = DIMS0 * DIMS1;
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = DIMS0;
+    node->outputs[0]->dims[1] = DIMS1;
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides[0] = 1;
+    node->outputs[0]->strides[1] = DIMS0;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    // golden test with allaxes
+    node->priv = NULL;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_allaxes);
+    ReduceMin_bfloat16(node);
+    BENCH_END(ReduceMin_bfloat16_allaxes);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test with allaxes
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_rvv_allaxes);
+    ReduceMin_bfloat16_rvv(node);
+    BENCH_END(ReduceMin_bfloat16_rvv_allaxes);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    node->priv = &axis;
+    axis = 0;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_axis0);
+    ReduceMin_bfloat16(node);
+    BENCH_END(ReduceMin_bfloat16_axis0);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_rvv_axis0);
+    ReduceMin_bfloat16_rvv(node);
+    BENCH_END(ReduceMin_bfloat16_rvv_axis0);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 1;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_axis1);
+    ReduceMin_bfloat16(node);
+    BENCH_END(ReduceMin_bfloat16_axis1);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_rvv_axis1);
+    ReduceMin_bfloat16_rvv(node);
+    BENCH_END(ReduceMin_bfloat16_rvv_axis1);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 2;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_axis2);
+    ReduceMin_bfloat16(node);
+    BENCH_END(ReduceMin_bfloat16_axis2);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceMin_bfloat16_rvv_axis2);
+    ReduceMin_bfloat16_rvv(node);
+    BENCH_END(ReduceMin_bfloat16_rvv_axis2);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->strides);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->strides);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_reduce_min_float32()
 {
@@ -1250,6 +1515,8 @@ int test_reduce_min_int32()
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_reduce_sum_float16()
 {
     struct onnx_node_t *node;
@@ -1369,6 +1636,136 @@ int test_reduce_sum_float16()
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_reduce_sum_bfloat16()
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[DIMS0 * DIMS1];
+    bfloat16_t *p;
+    int ret = 0;
+    int axis;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = 1;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = DIMS0 * DIMS1 * DIMS2;
+    node->inputs[0]->ndim = 3;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = DIMS0;
+    node->inputs[0]->dims[1] = DIMS1;
+    node->inputs[0]->dims[2] = DIMS2;
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides[0] = 1;
+    node->inputs[0]->strides[1] = DIMS0;
+    node->inputs[0]->strides[2] = DIMS0 * DIMS1;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int j = 0; j < node->inputs[0]->ndata; j++) {
+        p[j] = rand() * 1.0 / RAND_MAX;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = DIMS0 * DIMS1;
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = DIMS0;
+    node->outputs[0]->dims[1] = DIMS1;
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides[0] = 1;
+    node->outputs[0]->strides[1] = DIMS0;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    // golden test with allaxes
+    node->priv = NULL;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_allaxes);
+    ReduceSum_bfloat16(node);
+    BENCH_END(ReduceSum_bfloat16_allaxes);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test with allaxes
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_rvv_allaxes);
+    ReduceSum_bfloat16_rvv(node);
+    BENCH_END(ReduceSum_bfloat16_rvv_allaxes);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    node->priv = &axis;
+    axis = 0;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_axis0);
+    ReduceSum_bfloat16(node);
+    BENCH_END(ReduceSum_bfloat16_axis0);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_rvv_axis0);
+    ReduceSum_bfloat16_rvv(node);
+    BENCH_END(ReduceSum_bfloat16_rvv_axis0);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 1;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_axis1);
+    ReduceSum_bfloat16(node);
+    BENCH_END(ReduceSum_bfloat16_axis1);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_rvv_axis1);
+    ReduceSum_bfloat16_rvv(node);
+    BENCH_END(ReduceSum_bfloat16_rvv_axis1);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 2;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_axis2);
+    ReduceSum_bfloat16(node);
+    BENCH_END(ReduceSum_bfloat16_axis2);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceSum_bfloat16_rvv_axis2);
+    ReduceSum_bfloat16_rvv(node);
+    BENCH_END(ReduceSum_bfloat16_rvv_axis2);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->strides);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->strides);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_reduce_sum_float32()
 {
@@ -1490,6 +1887,8 @@ int test_reduce_sum_float32()
     return ret;
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 int test_reduce_prod_float16()
 {
     struct onnx_node_t *node;
@@ -1609,6 +2008,136 @@ int test_reduce_prod_float16()
 
     return ret;
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+int test_reduce_prod_bfloat16()
+{
+    struct onnx_node_t *node;
+    bfloat16_t golden[DIMS0 * DIMS1];
+    bfloat16_t *p;
+    int ret = 0;
+    int axis;
+
+	csr_set_bf16_mode();
+
+    node = (struct onnx_node_t *)MALLOC_ASSERT(sizeof(struct onnx_node_t));
+    node->ninput = 1;
+    node->inputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->ninput);
+
+    node->inputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->inputs[0]->ndata = DIMS0 * DIMS1 * DIMS2;
+    node->inputs[0]->ndim = 3;
+    node->inputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->dims[0] = DIMS0;
+    node->inputs[0]->dims[1] = DIMS1;
+    node->inputs[0]->dims[2] = DIMS2;
+    node->inputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->inputs[0]->ndim);
+    node->inputs[0]->strides[0] = 1;
+    node->inputs[0]->strides[1] = DIMS0;
+    node->inputs[0]->strides[2] = DIMS0 * DIMS1;
+    node->inputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->inputs[0]->ndata);
+    p = (bfloat16_t *)node->inputs[0]->datas;
+    for (int j = 0; j < node->inputs[0]->ndata; j++) {
+        p[j] = 1.1f;
+    }
+
+    node->noutput = 1;
+    node->outputs = (struct onnx_tensor_t **)MALLOC_ASSERT(sizeof(struct onnx_tensor_t *) * node->noutput);
+    node->outputs[0] = (struct onnx_tensor_t *)MALLOC_ASSERT(sizeof(struct onnx_tensor_t));
+    node->outputs[0]->ndata = DIMS0 * DIMS1;
+    node->outputs[0]->ndim = 2;
+    node->outputs[0]->dims = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->dims[0] = DIMS0;
+    node->outputs[0]->dims[1] = DIMS1;
+    node->outputs[0]->strides = (int *)MALLOC_ASSERT(sizeof(int) * node->outputs[0]->ndim);
+    node->outputs[0]->strides[0] = 1;
+    node->outputs[0]->strides[1] = DIMS0;
+    node->outputs[0]->datas = MALLOC_ASSERT(sizeof(bfloat16_t) * node->outputs[0]->ndata);
+
+    // golden test with allaxes
+    node->priv = NULL;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_allaxes);
+    ReduceProd_bfloat16(node);
+    BENCH_END(ReduceProd_bfloat16_allaxes);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    // rvv optimization test with allaxes
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_rvv_allaxes);
+    ReduceProd_bfloat16_rvv(node);
+    BENCH_END(ReduceProd_bfloat16_rvv_allaxes);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    node->priv = &axis;
+    axis = 0;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_axis0);
+    ReduceProd_bfloat16(node);
+    BENCH_END(ReduceProd_bfloat16_axis0);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_rvv_axis0);
+    ReduceProd_bfloat16_rvv(node);
+    BENCH_END(ReduceProd_bfloat16_rvv_axis0);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 1;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_axis1);
+    ReduceProd_bfloat16(node);
+    BENCH_END(ReduceProd_bfloat16_axis1);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_rvv_axis1);
+    ReduceProd_bfloat16_rvv(node);
+    BENCH_END(ReduceProd_bfloat16_rvv_axis1);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    axis = 2;
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_axis2);
+    ReduceProd_bfloat16(node);
+    BENCH_END(ReduceProd_bfloat16_axis2);
+    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+
+    memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
+    BENCH_START(ReduceProd_bfloat16_rvv_axis2);
+    ReduceProd_bfloat16_rvv(node);
+    BENCH_END(ReduceProd_bfloat16_rvv_axis2);
+
+    // verify result
+    ret |= verify_results_bf16(golden, node->outputs[0]->datas, node->outputs[0]->ndata);
+
+    free(node->inputs[0]->datas);
+    free(node->inputs[0]->strides);
+    free(node->inputs[0]->dims);
+    free(node->inputs[0]);
+    free(node->inputs);
+    free(node->outputs[0]->datas);
+    free(node->outputs[0]->strides);
+    free(node->outputs[0]->dims);
+    free(node->outputs[0]);
+    free(node->outputs);
+    free(node);
+
+	csr_clr_bf16_mode();
+
+    return ret;
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 int test_reduce_prod_float32()
 {
@@ -1737,15 +2266,35 @@ int test_reduce(void)
     ret |= test_reduce_any();
     ret |= test_reduce_max_int8();
     ret |= test_reduce_max_int32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_reduce_max_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_reduce_max_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_reduce_max_float32();
     ret |= test_reduce_min_int8();
     ret |= test_reduce_min_int32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_reduce_min_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_reduce_min_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_reduce_min_float32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_reduce_sum_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_reduce_sum_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_reduce_sum_float32();
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
     ret |= test_reduce_prod_float16();
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+    ret |= test_reduce_prod_bfloat16();
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
     ret |= test_reduce_prod_float32();
     return ret;
 }

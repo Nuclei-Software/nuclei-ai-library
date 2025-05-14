@@ -10,6 +10,8 @@ struct operator_pdata_t {
     float32_t alpha;
 };
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Elu_float16(struct onnx_node_t *n)
 {
     struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
@@ -71,6 +73,75 @@ void Elu_float16_rvv(struct onnx_node_t *n)
         py += vl;
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Elu_bfloat16(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t alpha = (bfloat16_t)pdat->alpha;
+
+    for (size_t i = 0, l = y->ndata; i < l; i++)
+        py[i] = (px[i] < 0) ? (expf(px[i]) - 1.) * alpha : px[i];
+}
+
+void Elu_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t alpha = (bfloat16_t)pdat->alpha;
+
+    size_t blkCnt = y->ndata; /* Loop counter */
+    size_t vl;
+    vbfloat16m8_t vx, vy, vz;
+    vint16m8_t vx_int;
+    vbool2_t mask;
+    for (; (vl = __riscv_vsetvl_e16m8(blkCnt)) > 0; blkCnt -= vl) {
+        vx = __riscv_vle16_v_bf16m8(px, vl);
+
+        vx = __riscv_xl_vfmul_vf_bf16m8(vx, 1.4426950408889634f, vl); // log2(e)
+        vx_int = __riscv_xl_vfcvt_rtz_x_f_v_i16m8(vx, vl);
+        vx = __riscv_xl_vfsub_vv_bf16m8(vx, __riscv_xl_vfcvt_f_x_v_bf16m8(vx_int, vl), vl);
+
+        vx_int = __riscv_vadd_vx_i16m8(vx_int, 15, vl);
+        vx_int = __riscv_vmul_vx_i16m8(vx_int, (1 << 10), vl);
+        vy = __riscv_vreinterpret_v_i16m8_bf16m8(vx_int);
+
+        vx = __riscv_xl_vfmul_vf_bf16m8(vx, 0.693147180559945f, vl);                            // ln2
+        vz = __riscv_xl_vfmul_vf_bf16m8(vx, 1.0 / 5040, vl);                                    // 1/7!
+        vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 720, vl), vl); // 1/6!
+        vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 120, vl), vl); // 1/5!
+        vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 24, vl), vl);  // 1/4!
+        vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 6, vl), vl);   // 1/3!
+        vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0 / 2, vl), vl);   // 1/2!
+        vz = __riscv_xl_vfmul_vv_bf16m8(vx, __riscv_xl_vfadd_vf_bf16m8(vz, 1.0, vl), vl);       // 1/1!
+        vz = __riscv_xl_vfadd_vf_bf16m8(vz, 1, vl);
+
+        vy = __riscv_xl_vfmul_vv_bf16m8(vy, vz, vl);
+
+        vy = __riscv_xl_vfsub_vf_bf16m8(vy, 1.0, vl);
+        vy = __riscv_xl_vfmul_vf_bf16m8(vy, alpha, vl);
+
+        vx = __riscv_vle16_v_bf16m8(px, vl);
+        px += vl;
+        mask = __riscv_xl_vmflt_vf_bf16m8_b2(vx, 0.0, vl);
+        vx = __riscv_xl_vmerge_vvm_bf16m8(vx, vy, mask, vl);
+        __riscv_vse16_v_bf16m8(py, vx, vl);
+        py += vl;
+    }
+}
+
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Elu_float32(struct onnx_node_t *n)
 {

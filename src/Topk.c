@@ -93,6 +93,8 @@ void Topk_int32_rvv(struct onnx_node_t *n)
     __riscv_vse32_v_i32m8(py, vx, vl);
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 static void Swap_float16(float16_t *a, float16_t *b)
 {
     float16_t tmp;
@@ -173,6 +175,93 @@ void Topk_float16(struct onnx_node_t *n)
         }
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+static void Swap_bfloat16(bfloat16_t *a, bfloat16_t *b)
+{
+    bfloat16_t tmp;
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void Heapify_bfloat16(bfloat16_t arr[], int len, int idx)
+{
+    int child = idx * 2 + 1;
+    while (child < len) {
+        if (child + 1 < len && arr[child + 1] < arr[child]) {
+            ++child;
+        }
+
+        if (arr[child] < arr[idx]) {
+            Swap_bfloat16(&arr[child], &arr[idx]);
+            idx = child;
+            child = idx * 2 + 1;
+        } else {
+            break;
+        }
+    }
+}
+
+void Topk_bfloat16_rvv(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    size_t vl;
+    vbfloat16m8_t vx;
+    vbool2_t mask;
+    unsigned long idx;
+    bfloat16_t min;
+
+    vl = pdat->k;
+    vx = __riscv_xl_vfmv_v_f_bf16m8(FLT16_MIN, vl);
+
+    for (int i = 0; i < vl; i++) {
+        mask = __riscv_xl_vmflt_vf_bf16m8_b2(vx, px[i], vl);
+        idx = __riscv_vcpop_m_b2(mask, vl);
+        vx = __riscv_xl_vfslide1down_vf_bf16m8(vx, px[i], idx);
+    }
+
+    min = __riscv_xl_vfmv_f_s_bf16m8_bf16(vx);
+
+    for (int i = pdat->k; i < x->ndata; ++i) {
+        if (px[i] > min) {
+            mask = __riscv_xl_vmflt_vf_bf16m8_b2(vx, px[i], vl);
+            idx = __riscv_vcpop_m_b2(mask, vl);
+            vx = __riscv_xl_vfslide1down_vf_bf16m8(vx, px[i], idx);
+            min = __riscv_xl_vfmv_f_s_bf16m8_bf16(vx);
+        }
+    }
+    __riscv_vse16_v_bf16m8(py, vx, vl);
+}
+
+void Topk_bfloat16(struct onnx_node_t *n)
+{
+    struct operator_pdata_t *pdat = (struct operator_pdata_t *)n->priv;
+    struct onnx_tensor_t *x = n->inputs[0];
+    struct onnx_tensor_t *y = n->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+
+    memcpy(py, px, sizeof(bfloat16_t) * pdat->k);
+    for (int i = pdat->k / 2 - 1; i >= 0; --i) {
+        Heapify_bfloat16(py, pdat->k, i);
+    }
+    for (int i = pdat->k; i < x->ndata; ++i) {
+        if (py[0] < px[i]) {
+            py[0] = px[i];
+            Heapify_bfloat16(py, pdat->k, 0);
+        }
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 static void Swap_float32(float32_t *a, float32_t *b)
 {

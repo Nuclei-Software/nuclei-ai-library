@@ -226,6 +226,8 @@ void Flip_int32_rvv(struct onnx_node_t *node)
     }
 }
 
+#if defined(RISCV_FLOAT16_RVV_SUPPORTED)
+
 void Flip_float16(struct onnx_node_t *node)
 {
     struct onnx_tensor_t *x = node->inputs[0];
@@ -323,6 +325,110 @@ void Flip_float16_rvv(struct onnx_node_t *node)
         }
     }
 }
+
+#endif /* #if defined(RISCV_FLOAT16_RVV_SUPPORTED) */
+
+#if defined(RISCV_BFLOAT16_RVV_SUPPORTED)
+
+void Flip_bfloat16(struct onnx_node_t *node)
+{
+    struct onnx_tensor_t *x = node->inputs[0];
+    struct onnx_tensor_t *y = node->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pxx, *pyy;
+    int *p = ((struct operator_pdata_t *)node->priv)->axis;
+    int cols = x->dims[0];
+    int rows = x->dims[1];
+
+    if (p[0] != 0 && p[1] != 0) {
+        // flip both
+        py = py + y->ndata - 1;
+        for (int i = 0; i < x->ndata; ++i) {
+            *py-- = *px++;
+        }
+    } else {
+        if (p[0] != 0) {
+            // flip along axis 0
+            py += cols * (rows - 1);
+            for (int i = 0; i < rows; ++i) {
+                memcpy(py, px, cols * sizeof(bfloat16_t));
+                px += cols;
+                py -= cols;
+            }
+        }
+        if (p[1] != 0) {
+            // flip along axis 1
+            for (int i = 0; i < rows; ++i) {
+                pxx = px + i * cols;
+                pyy = py + i * cols + cols - 1;
+                for (int j = 0; j < cols; ++j) {
+                    *pyy-- = *pxx++;
+                }
+            }
+        }
+    }
+}
+
+void Flip_bfloat16_rvv(struct onnx_node_t *node)
+{
+    struct onnx_tensor_t *x = node->inputs[0];
+    struct onnx_tensor_t *y = node->outputs[0];
+    bfloat16_t *px = (bfloat16_t *)x->datas;
+    bfloat16_t *py = (bfloat16_t *)y->datas;
+    bfloat16_t *pxx, *pyy;
+    int *p = ((struct operator_pdata_t *)node->priv)->axis;
+    int cols = x->dims[0];
+    int rows = x->dims[1];
+    size_t avl, vl;
+    vbfloat16m8_t vx;
+
+    if (p[0] != 0 && p[1] != 0) {
+        // flip both
+        avl = node->inputs[0]->ndata;
+        py = py + y->ndata - 1;
+        for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+            vx = __riscv_vle16_v_bf16m8(px, vl);
+            px += vl;
+            __riscv_vsse16_v_bf16m8(py, -1 * sizeof(bfloat16_t), vx, vl);
+            py -= vl;
+        }
+    } else {
+        if (p[0] != 0) {
+            // flip along axis 0
+            py += cols * (rows - 1);
+            for (int i = 0; i < rows; ++i) {
+                avl = cols;
+                pxx = px;
+                pyy = py;
+                for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                    vx = __riscv_vle16_v_bf16m8(pxx, vl);
+                    pxx += vl;
+                    __riscv_vse16_v_bf16m8(pyy, vx, vl);
+                    pyy += vl;
+                }
+                px += cols;
+                py -= cols;
+            }
+        }
+        if (p[1] != 0) {
+            // flip along axis 1
+            for (int i = 0; i < rows; ++i) {
+                avl = cols;
+                pxx = px + i * cols;
+                pyy = py + i * cols + cols - 1;
+                for (; (vl = __riscv_vsetvl_e16m8(avl)) > 0; avl -= vl) {
+                    vx = __riscv_vle16_v_bf16m8(pxx, vl);
+                    pxx += vl;
+                    __riscv_vsse16_v_bf16m8(pyy, -1 * sizeof(bfloat16_t), vx, vl);
+                    pyy -= vl;
+                }
+            }
+        }
+    }
+}
+
+#endif /* #if defined(RISCV_BFLOAT16_RVV_SUPPORTED) */
 
 void Flip_float32(struct onnx_node_t *node)
 {
