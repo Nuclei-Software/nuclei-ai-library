@@ -2,6 +2,10 @@
 #define __UTILS_H__
 
 #include "nmsis_bench.h"
+#if defined(__linux)
+#include "linux_utils.h"
+#endif
+
 #include "onnx.h"
 #include "operators.h"
 #include <stdio.h>

@@ -8,14 +8,15 @@ INCDIRS = . src inc
 
 CORE ?= nx900fd
 
+#ARCH_EXT ?= v_zfh_zvfh_xxlvfbf
 ARCH_EXT ?= v_zfh_zvfh
 
-LINKER_SCRIPT := evalsoc.ld
+LINKER_SCRIPT ?= evalsoc.ld
 
 LDLIBS ?= -lm
 
 # Disable rvv vectorization for gcc, this config works at gcc13/gcc14
-COMMON_FLAGS := -fno-tree-vectorize -O2
+COMMON_FLAGS := -fno-tree-vectorize -fno-tree-loop-vectorize -fno-tree-slp-vectorize -O3
 
 ifneq ($(wildcard $(NUCLEI_SDK_ROOT)/Build/Makefile.base),)
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

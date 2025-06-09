@@ -13,6 +13,8 @@
 *.pyc
 .vscode
 
+build_linux
+
 software/*/*.s
 
 *.dump*
