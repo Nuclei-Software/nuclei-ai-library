@@ -46,7 +46,7 @@ void Topk_int32(struct onnx_node_t *n)
     int32_t *px = (int32_t *)x->datas;
     int32_t *py = (int32_t *)y->datas;
 
-    memcpy(py, px, sizeof(int32_t) * pdat->k);
+    memmove(py, px, sizeof(int32_t) * pdat->k);
     for (int i = pdat->k / 2 - 1; i >= 0; --i) {
         Heapify_int32(py, pdat->k, i);
     }
@@ -164,7 +164,7 @@ void Topk_float16(struct onnx_node_t *n)
     float16_t *px = (float16_t *)x->datas;
     float16_t *py = (float16_t *)y->datas;
 
-    memcpy(py, px, sizeof(float16_t) * pdat->k);
+    memmove(py, px, sizeof(float16_t) * pdat->k);
     for (int i = pdat->k / 2 - 1; i >= 0; --i) {
         Heapify_float16(py, pdat->k, i);
     }
@@ -249,7 +249,7 @@ void Topk_bfloat16(struct onnx_node_t *n)
     bfloat16_t *px = (bfloat16_t *)x->datas;
     bfloat16_t *py = (bfloat16_t *)y->datas;
 
-    memcpy(py, px, sizeof(bfloat16_t) * pdat->k);
+    memmove(py, px, sizeof(bfloat16_t) * pdat->k);
     for (int i = pdat->k / 2 - 1; i >= 0; --i) {
         Heapify_bfloat16(py, pdat->k, i);
     }
@@ -332,7 +332,7 @@ void Topk_float32(struct onnx_node_t *n)
     float32_t *px = (float32_t *)x->datas;
     float32_t *py = (float32_t *)y->datas;
 
-    memcpy(py, px, sizeof(float32_t) * pdat->k);
+    memmove(py, px, sizeof(float32_t) * pdat->k);
     for (int i = pdat->k / 2 - 1; i >= 0; --i) {
         Heapify_float32(py, pdat->k, i);
     }

@@ -37,13 +37,13 @@ int test_clamp_int8(void)
     Clamp_int8(node);
     BENCH_END(Clamp_int8);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int8_t));
     BENCH_START(Clamp_int8_rvv);
     Clamp_int8_rvv(node);
     BENCH_END(Clamp_int8_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     ret |= verify_results_int8(golden, opt, node->outputs[0]->ndata);
 
@@ -94,13 +94,13 @@ int test_clamp_int32(void)
     Clamp_int32(node);
     BENCH_END(Clamp_int32);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int32_t));
     BENCH_START(Clamp_int32_rvv);
     Clamp_int32_rvv(node);
     BENCH_END(Clamp_int32_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     ret |= verify_results_int32(golden, opt, node->outputs[0]->ndata);
 
@@ -153,13 +153,13 @@ int test_clamp_f16(void)
     Clamp_float16(node);
     BENCH_END(Clamp_float16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
     BENCH_START(Clamp_float16_rvv);
     Clamp_float16_rvv(node);
     BENCH_END(Clamp_float16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     ret |= verify_results_f16(golden, opt, node->outputs[0]->ndata);
 
@@ -216,13 +216,13 @@ int test_clamp_bf16(void)
     Clamp_bfloat16(node);
     BENCH_END(Clamp_bfloat16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
     BENCH_START(Clamp_bfloat16_rvv);
     Clamp_bfloat16_rvv(node);
     BENCH_END(Clamp_bfloat16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
 
@@ -277,13 +277,13 @@ int test_clamp_f32(void)
     Clamp_float32(node);
     BENCH_END(Clamp_float32);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float32_t));
     BENCH_START(Clamp_float32_rvv);
     Clamp_float32_rvv(node);
     BENCH_END(Clamp_float32_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     ret |= verify_results_f32(golden, opt, node->outputs[0]->ndata);
 

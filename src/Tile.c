@@ -62,7 +62,7 @@ void Tile_int8(struct onnx_node_t *node)
     // update y data
     for (int row = 0; row < x->dims[1]; ++row) {
         for (int i = 0; i < pt[1]; ++i) {
-            memcpy(py + i * x->dims[0], px, x->dims[0] * sizeof(int8_t));
+            memmove(py + i * x->dims[0], px, x->dims[0] * sizeof(int8_t));
         }
         px += x->dims[0];
         py += y->dims[0];
@@ -72,7 +72,7 @@ void Tile_int8(struct onnx_node_t *node)
         px = y->datas;
         stride = y->strides[1] * x->dims[1];
         for (int i = 0; i < (pt[0] - 1); ++i) {
-            memcpy(py + i * stride, px, stride * sizeof(int8_t));
+            memmove(py + i * stride, px, stride * sizeof(int8_t));
         }
     }
 }
@@ -155,7 +155,7 @@ void Tile_int32(struct onnx_node_t *node)
     // update y data
     for (int row = 0; row < x->dims[1]; ++row) {
         for (int i = 0; i < pt[1]; ++i) {
-            memcpy(py + i * x->dims[0], px, x->dims[0] * sizeof(int32_t));
+            memmove(py + i * x->dims[0], px, x->dims[0] * sizeof(int32_t));
         }
         px += x->dims[0];
         py += y->dims[0];
@@ -165,7 +165,7 @@ void Tile_int32(struct onnx_node_t *node)
         px = y->datas;
         stride = y->strides[1] * x->dims[1];
         for (int i = 0; i < (pt[0] - 1); ++i) {
-            memcpy(py + i * stride, px, stride * sizeof(int32_t));
+            memmove(py + i * stride, px, stride * sizeof(int32_t));
         }
     }
 }
@@ -250,7 +250,7 @@ void Tile_float16(struct onnx_node_t *node)
     // update y data
     for (int row = 0; row < x->dims[1]; ++row) {
         for (int i = 0; i < pt[1]; ++i) {
-            memcpy(py + i * x->dims[0], px, x->dims[0] * sizeof(float16_t));
+            memmove(py + i * x->dims[0], px, x->dims[0] * sizeof(float16_t));
         }
         px += x->dims[0];
         py += y->dims[0];
@@ -260,7 +260,7 @@ void Tile_float16(struct onnx_node_t *node)
         px = y->datas;
         stride = y->strides[1] * x->dims[1];
         for (int i = 0; i < (pt[0] - 1); ++i) {
-            memcpy(py + i * stride, px, stride * sizeof(float16_t));
+            memmove(py + i * stride, px, stride * sizeof(float16_t));
         }
     }
 }
@@ -347,7 +347,7 @@ void Tile_bfloat16(struct onnx_node_t *node)
     // update y data
     for (int row = 0; row < x->dims[1]; ++row) {
         for (int i = 0; i < pt[1]; ++i) {
-            memcpy(py + i * x->dims[0], px, x->dims[0] * sizeof(bfloat16_t));
+            memmove(py + i * x->dims[0], px, x->dims[0] * sizeof(bfloat16_t));
         }
         px += x->dims[0];
         py += y->dims[0];
@@ -357,7 +357,7 @@ void Tile_bfloat16(struct onnx_node_t *node)
         px = y->datas;
         stride = y->strides[1] * x->dims[1];
         for (int i = 0; i < (pt[0] - 1); ++i) {
-            memcpy(py + i * stride, px, stride * sizeof(bfloat16_t));
+            memmove(py + i * stride, px, stride * sizeof(bfloat16_t));
         }
     }
 }
@@ -442,7 +442,7 @@ void Tile_float32(struct onnx_node_t *node)
     // update y data
     for (int row = 0; row < x->dims[1]; ++row) {
         for (int i = 0; i < pt[1]; ++i) {
-            memcpy(py + i * x->dims[0], px, x->dims[0] * sizeof(float32_t));
+            memmove(py + i * x->dims[0], px, x->dims[0] * sizeof(float32_t));
         }
         px += x->dims[0];
         py += y->dims[0];
@@ -452,7 +452,7 @@ void Tile_float32(struct onnx_node_t *node)
         px = y->datas;
         stride = y->strides[1] * x->dims[1];
         for (int i = 0; i < (pt[0] - 1); ++i) {
-            memcpy(py + i * stride, px, stride * sizeof(float32_t));
+            memmove(py + i * stride, px, stride * sizeof(float32_t));
         }
     }
 }

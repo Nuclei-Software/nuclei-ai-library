@@ -53,13 +53,13 @@ int test_bilinear_interpolation_f16(void)
     BilinearInterpolation_float16(node);
     BENCH_END(BilinearInterpolation_float16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(uint8_t));
     BENCH_START(BilinearInterpolation_float16_rvv);
     BilinearInterpolation_float16_rvv(node);
     BENCH_END(BilinearInterpolation_float16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
 
     ret |= verify_results_uint8(golden, opt, node->outputs[0]->ndata);
 
@@ -123,13 +123,13 @@ int test_bilinear_interpolation_f32(void)
     BilinearInterpolation_float32(node);
     BENCH_END(BilinearInterpolation_float32);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(uint8_t));
     BENCH_START(BilinearInterpolation_float32_rvv);
     BilinearInterpolation_float32_rvv(node);
     BENCH_END(BilinearInterpolation_float32_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(uint8_t));
 
     ret |= verify_results_uint8(golden, opt, node->outputs[0]->ndata);
 

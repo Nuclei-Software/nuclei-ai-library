@@ -49,7 +49,7 @@ int test_pad_int8()
     BENCH_START(Pad_int8);
     Pad_int8(node);
     BENCH_END(Pad_int8);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -120,7 +120,7 @@ int test_pad_int32()
     BENCH_START(Pad_int32);
     Pad_int32(node);
     BENCH_END(Pad_int32);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
@@ -194,7 +194,7 @@ int test_pad_float16()
     BENCH_START(Pad_float16);
     Pad_float16(node);
     BENCH_END(Pad_float16);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -273,7 +273,7 @@ int test_pad_bfloat16()
     BENCH_START(Pad_bfloat16);
     Pad_bfloat16(node);
     BENCH_END(Pad_bfloat16);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -350,7 +350,7 @@ int test_pad_float32()
     BENCH_START(Pad_float32);
     Pad_float32(node);
     BENCH_END(Pad_float32);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);

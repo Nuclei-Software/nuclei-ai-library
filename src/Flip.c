@@ -52,7 +52,7 @@ void Flip_int8(struct onnx_node_t *node)
             // flip along axis 0
             py += cols * (rows - 1);
             for (int i = 0; i < rows; ++i) {
-                memcpy(py, px, cols * sizeof(int8_t));
+                memmove(py, px, cols * sizeof(int8_t));
                 px += cols;
                 py -= cols;
             }
@@ -150,7 +150,7 @@ void Flip_int32(struct onnx_node_t *node)
             // flip along axis 0
             py += cols * (rows - 1);
             for (int i = 0; i < rows; ++i) {
-                memcpy(py, px, cols * sizeof(int32_t));
+                memmove(py, px, cols * sizeof(int32_t));
                 px += cols;
                 py -= cols;
             }
@@ -250,7 +250,7 @@ void Flip_float16(struct onnx_node_t *node)
             // flip along axis 0
             py += cols * (rows - 1);
             for (int i = 0; i < rows; ++i) {
-                memcpy(py, px, cols * sizeof(float16_t));
+                memmove(py, px, cols * sizeof(float16_t));
                 px += cols;
                 py -= cols;
             }
@@ -352,7 +352,7 @@ void Flip_bfloat16(struct onnx_node_t *node)
             // flip along axis 0
             py += cols * (rows - 1);
             for (int i = 0; i < rows; ++i) {
-                memcpy(py, px, cols * sizeof(bfloat16_t));
+                memmove(py, px, cols * sizeof(bfloat16_t));
                 px += cols;
                 py -= cols;
             }
@@ -452,7 +452,7 @@ void Flip_float32(struct onnx_node_t *node)
             // flip along axis 0
             py += cols * (rows - 1);
             for (int i = 0; i < rows; ++i) {
-                memcpy(py, px, cols * sizeof(float32_t));
+                memmove(py, px, cols * sizeof(float32_t));
                 px += cols;
                 py -= cols;
             }

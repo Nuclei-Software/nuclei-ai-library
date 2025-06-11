@@ -58,7 +58,7 @@ int test_reduce_all()
     BENCH_START(ReduceAll_boolean_allaxes_true);
     ReduceAll(node);
     BENCH_END(ReduceAll_boolean_allaxes_true);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes true
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -78,7 +78,7 @@ int test_reduce_all()
     BENCH_START(ReduceAll_boolean_allaxes_rand);
     ReduceAll(node);
     BENCH_END(ReduceAll_boolean_allaxes_rand);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes rand
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -95,7 +95,7 @@ int test_reduce_all()
     BENCH_START(ReduceAll_boolean_axis0);
     ReduceAll(node);
     BENCH_END(ReduceAll_boolean_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceAll_boolean_rvv_axis0);
@@ -110,7 +110,7 @@ int test_reduce_all()
     BENCH_START(ReduceAll_boolean_axis1);
     ReduceAll(node);
     BENCH_END(ReduceAll_boolean_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceAll_boolean_rvv_axis1);
@@ -125,7 +125,7 @@ int test_reduce_all()
     BENCH_START(ReduceAll_boolean_axis2);
     ReduceAll(node);
     BENCH_END(ReduceAll_boolean_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceAll_boolean_rvv_axis2);
@@ -198,7 +198,7 @@ int test_reduce_any()
     BENCH_START(ReduceAny_boolean_allaxes_false);
     ReduceAny(node);
     BENCH_END(ReduceAny_boolean_allaxes_false);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes false
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -218,7 +218,7 @@ int test_reduce_any()
     BENCH_START(ReduceAny_boolean_allaxes_rand);
     ReduceAny(node);
     BENCH_END(ReduceAny_boolean_allaxes_rand);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes rand
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -235,7 +235,7 @@ int test_reduce_any()
     BENCH_START(ReduceAny_boolean_axis0);
     ReduceAny(node);
     BENCH_END(ReduceAny_boolean_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceAny_boolean_rvv_axis0);
@@ -250,7 +250,7 @@ int test_reduce_any()
     BENCH_START(ReduceAny_boolean_axis1);
     ReduceAny(node);
     BENCH_END(ReduceAny_boolean_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceAny_boolean_rvv_axis1);
@@ -265,7 +265,7 @@ int test_reduce_any()
     BENCH_START(ReduceAny_boolean_axis2);
     ReduceAny(node);
     BENCH_END(ReduceAny_boolean_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceAny_boolean_rvv_axis2);
@@ -338,7 +338,7 @@ int test_reduce_max_int8()
     BENCH_START(ReduceMax_int8_allaxes);
     ReduceMax_int8(node);
     BENCH_END(ReduceMax_int8_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -355,7 +355,7 @@ int test_reduce_max_int8()
     BENCH_START(ReduceMax_int8_axis0);
     ReduceMax_int8(node);
     BENCH_END(ReduceMax_int8_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_int8_rvv_axis0);
@@ -370,7 +370,7 @@ int test_reduce_max_int8()
     BENCH_START(ReduceMax_int8_axis1);
     ReduceMax_int8(node);
     BENCH_END(ReduceMax_int8_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_int8_rvv_axis1);
@@ -385,7 +385,7 @@ int test_reduce_max_int8()
     BENCH_START(ReduceMax_int8_axis2);
     ReduceMax_int8(node);
     BENCH_END(ReduceMax_int8_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_int8_rvv_axis2);
@@ -460,7 +460,7 @@ int test_reduce_max_float16()
     BENCH_START(ReduceMax_float16_allaxes);
     ReduceMax_float16(node);
     BENCH_END(ReduceMax_float16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -477,7 +477,7 @@ int test_reduce_max_float16()
     BENCH_START(ReduceMax_float16_axis0);
     ReduceMax_float16(node);
     BENCH_END(ReduceMax_float16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_float16_rvv_axis0);
@@ -492,7 +492,7 @@ int test_reduce_max_float16()
     BENCH_START(ReduceMax_float16_axis1);
     ReduceMax_float16(node);
     BENCH_END(ReduceMax_float16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_float16_rvv_axis1);
@@ -507,7 +507,7 @@ int test_reduce_max_float16()
     BENCH_START(ReduceMax_float16_axis2);
     ReduceMax_float16(node);
     BENCH_END(ReduceMax_float16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_float16_rvv_axis2);
@@ -586,7 +586,7 @@ int test_reduce_max_bfloat16()
     BENCH_START(ReduceMax_bfloat16_allaxes);
     ReduceMax_bfloat16(node);
     BENCH_END(ReduceMax_bfloat16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -603,7 +603,7 @@ int test_reduce_max_bfloat16()
     BENCH_START(ReduceMax_bfloat16_axis0);
     ReduceMax_bfloat16(node);
     BENCH_END(ReduceMax_bfloat16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_bfloat16_rvv_axis0);
@@ -618,7 +618,7 @@ int test_reduce_max_bfloat16()
     BENCH_START(ReduceMax_bfloat16_axis1);
     ReduceMax_bfloat16(node);
     BENCH_END(ReduceMax_bfloat16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_bfloat16_rvv_axis1);
@@ -633,7 +633,7 @@ int test_reduce_max_bfloat16()
     BENCH_START(ReduceMax_bfloat16_axis2);
     ReduceMax_bfloat16(node);
     BENCH_END(ReduceMax_bfloat16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_bfloat16_rvv_axis2);
@@ -710,7 +710,7 @@ int test_reduce_max_float32()
     BENCH_START(ReduceMax_float32_allaxes);
     ReduceMax_float32(node);
     BENCH_END(ReduceMax_float32_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
@@ -727,7 +727,7 @@ int test_reduce_max_float32()
     BENCH_START(ReduceMax_float32_axis0);
     ReduceMax_float32(node);
     BENCH_END(ReduceMax_float32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_float32_rvv_axis0);
@@ -742,7 +742,7 @@ int test_reduce_max_float32()
     BENCH_START(ReduceMax_float32_axis1);
     ReduceMax_float32(node);
     BENCH_END(ReduceMax_float32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_float32_rvv_axis1);
@@ -757,7 +757,7 @@ int test_reduce_max_float32()
     BENCH_START(ReduceMax_float32_axis2);
     ReduceMax_float32(node);
     BENCH_END(ReduceMax_float32_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_float32_rvv_axis2);
@@ -830,7 +830,7 @@ int test_reduce_max_int32()
     BENCH_START(ReduceMax_int32_allaxes);
     ReduceMax_int32(node);
     BENCH_END(ReduceMax_int32_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
@@ -847,7 +847,7 @@ int test_reduce_max_int32()
     BENCH_START(ReduceMax_int32_axis0);
     ReduceMax_int32(node);
     BENCH_END(ReduceMax_int32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_int32_rvv_axis0);
@@ -862,7 +862,7 @@ int test_reduce_max_int32()
     BENCH_START(ReduceMax_int32_axis1);
     ReduceMax_int32(node);
     BENCH_END(ReduceMax_int32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_int32_rvv_axis1);
@@ -877,7 +877,7 @@ int test_reduce_max_int32()
     BENCH_START(ReduceMax_int32_axis2);
     ReduceMax_int32(node);
     BENCH_END(ReduceMax_int32_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMax_int32_rvv_axis2);
@@ -950,7 +950,7 @@ int test_reduce_min_int8()
     BENCH_START(ReduceMin_int8_allaxes);
     ReduceMin_int8(node);
     BENCH_END(ReduceMin_int8_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -967,7 +967,7 @@ int test_reduce_min_int8()
     BENCH_START(ReduceMin_int8_axis0);
     ReduceMin_int8(node);
     BENCH_END(ReduceMin_int8_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_int8_rvv_axis0);
@@ -982,7 +982,7 @@ int test_reduce_min_int8()
     BENCH_START(ReduceMin_int8_axis1);
     ReduceMin_int8(node);
     BENCH_END(ReduceMin_int8_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_int8_rvv_axis1);
@@ -997,7 +997,7 @@ int test_reduce_min_int8()
     BENCH_START(ReduceMin_int8_axis2);
     ReduceMin_int8(node);
     BENCH_END(ReduceMin_int8_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_int8_rvv_axis2);
@@ -1072,7 +1072,7 @@ int test_reduce_min_float16()
     BENCH_START(ReduceMin_float16_allaxes);
     ReduceMin_float16(node);
     BENCH_END(ReduceMin_float16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -1089,7 +1089,7 @@ int test_reduce_min_float16()
     BENCH_START(ReduceMin_float16_axis0);
     ReduceMin_float16(node);
     BENCH_END(ReduceMin_float16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_float16_rvv_axis0);
@@ -1104,7 +1104,7 @@ int test_reduce_min_float16()
     BENCH_START(ReduceMin_float16_axis1);
     ReduceMin_float16(node);
     BENCH_END(ReduceMin_float16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_float16_rvv_axis1);
@@ -1119,7 +1119,7 @@ int test_reduce_min_float16()
     BENCH_START(ReduceMin_float16_axis2);
     ReduceMin_float16(node);
     BENCH_END(ReduceMin_float16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_float16_rvv_axis2);
@@ -1198,7 +1198,7 @@ int test_reduce_min_bfloat16()
     BENCH_START(ReduceMin_bfloat16_allaxes);
     ReduceMin_bfloat16(node);
     BENCH_END(ReduceMin_bfloat16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -1215,7 +1215,7 @@ int test_reduce_min_bfloat16()
     BENCH_START(ReduceMin_bfloat16_axis0);
     ReduceMin_bfloat16(node);
     BENCH_END(ReduceMin_bfloat16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_bfloat16_rvv_axis0);
@@ -1230,7 +1230,7 @@ int test_reduce_min_bfloat16()
     BENCH_START(ReduceMin_bfloat16_axis1);
     ReduceMin_bfloat16(node);
     BENCH_END(ReduceMin_bfloat16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_bfloat16_rvv_axis1);
@@ -1245,7 +1245,7 @@ int test_reduce_min_bfloat16()
     BENCH_START(ReduceMin_bfloat16_axis2);
     ReduceMin_bfloat16(node);
     BENCH_END(ReduceMin_bfloat16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_bfloat16_rvv_axis2);
@@ -1323,7 +1323,7 @@ int test_reduce_min_float32()
     BENCH_START(ReduceMin_float32_allaxes);
     ReduceMin_float32(node);
     BENCH_END(ReduceMin_float32_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
@@ -1340,7 +1340,7 @@ int test_reduce_min_float32()
     BENCH_START(ReduceMin_float32_axis0);
     ReduceMin_float32(node);
     BENCH_END(ReduceMin_float32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_float32_rvv_axis0);
@@ -1355,7 +1355,7 @@ int test_reduce_min_float32()
     BENCH_START(ReduceMin_float32_axis1);
     ReduceMin_float32(node);
     BENCH_END(ReduceMin_float32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_float32_rvv_axis1);
@@ -1370,7 +1370,7 @@ int test_reduce_min_float32()
     BENCH_START(ReduceMin_float32_axis1);
     ReduceMin_float32(node);
     BENCH_END(ReduceMin_float32_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_float32_rvv_axis2);
@@ -1443,7 +1443,7 @@ int test_reduce_min_int32()
     BENCH_START(ReduceMin_int32_allaxes);
     ReduceMin_int32(node);
     BENCH_END(ReduceMin_int32_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
@@ -1460,7 +1460,7 @@ int test_reduce_min_int32()
     BENCH_START(ReduceMin_int32_axis0);
     ReduceMin_int32(node);
     BENCH_END(ReduceMin_int32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_int32_rvv_axis0);
@@ -1475,7 +1475,7 @@ int test_reduce_min_int32()
     BENCH_START(ReduceMin_int32_axis1);
     ReduceMin_int32(node);
     BENCH_END(ReduceMin_int32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_int32_rvv_axis1);
@@ -1490,7 +1490,7 @@ int test_reduce_min_int32()
     BENCH_START(ReduceMin_int32_axis2);
     ReduceMin_int32(node);
     BENCH_END(ReduceMin_int32_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceMin_int32_rvv_axis2);
@@ -1565,7 +1565,7 @@ int test_reduce_sum_float16()
     BENCH_START(ReduceSum_float16_allaxes);
     ReduceSum_float16(node);
     BENCH_END(ReduceSum_float16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -1582,7 +1582,7 @@ int test_reduce_sum_float16()
     BENCH_START(ReduceSum_float16_axis0);
     ReduceSum_float16(node);
     BENCH_END(ReduceSum_float16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_float16_rvv_axis0);
@@ -1597,7 +1597,7 @@ int test_reduce_sum_float16()
     BENCH_START(ReduceSum_float16_axis1);
     ReduceSum_float16(node);
     BENCH_END(ReduceSum_float16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_float16_rvv_axis1);
@@ -1612,7 +1612,7 @@ int test_reduce_sum_float16()
     BENCH_START(ReduceSum_float16_axis2);
     ReduceSum_float16(node);
     BENCH_END(ReduceSum_float16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_float16_rvv_axis2);
@@ -1691,7 +1691,7 @@ int test_reduce_sum_bfloat16()
     BENCH_START(ReduceSum_bfloat16_allaxes);
     ReduceSum_bfloat16(node);
     BENCH_END(ReduceSum_bfloat16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -1708,7 +1708,7 @@ int test_reduce_sum_bfloat16()
     BENCH_START(ReduceSum_bfloat16_axis0);
     ReduceSum_bfloat16(node);
     BENCH_END(ReduceSum_bfloat16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_bfloat16_rvv_axis0);
@@ -1723,7 +1723,7 @@ int test_reduce_sum_bfloat16()
     BENCH_START(ReduceSum_bfloat16_axis1);
     ReduceSum_bfloat16(node);
     BENCH_END(ReduceSum_bfloat16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_bfloat16_rvv_axis1);
@@ -1738,7 +1738,7 @@ int test_reduce_sum_bfloat16()
     BENCH_START(ReduceSum_bfloat16_axis2);
     ReduceSum_bfloat16(node);
     BENCH_END(ReduceSum_bfloat16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_bfloat16_rvv_axis2);
@@ -1815,7 +1815,7 @@ int test_reduce_sum_float32()
     BENCH_START(ReduceSum_float32_allaxes);
     ReduceSum_float32(node);
     BENCH_END(ReduceSum_float32_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
@@ -1832,7 +1832,7 @@ int test_reduce_sum_float32()
     BENCH_START(ReduceSum_float32_axis0);
     ReduceSum_float32(node);
     BENCH_END(ReduceSum_float32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_float32_rvv_axis0);
@@ -1847,7 +1847,7 @@ int test_reduce_sum_float32()
     BENCH_START(ReduceSum_float32_axis1);
     ReduceSum_float32(node);
     BENCH_END(ReduceSum_float32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_float32_rvv_axis1);
@@ -1862,7 +1862,7 @@ int test_reduce_sum_float32()
     BENCH_START(ReduceSum_float32_axis2);
     ReduceSum_float32(node);
     BENCH_END(ReduceSum_float32_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceSum_float32_rvv_axis2);
@@ -1937,7 +1937,7 @@ int test_reduce_prod_float16()
     BENCH_START(ReduceProd_float16_allaxes);
     ReduceProd_float16(node);
     BENCH_END(ReduceProd_float16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -1954,7 +1954,7 @@ int test_reduce_prod_float16()
     BENCH_START(ReduceProd_float16_axis0);
     ReduceProd_float16(node);
     BENCH_END(ReduceProd_float16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_float16_rvv_axis0);
@@ -1969,7 +1969,7 @@ int test_reduce_prod_float16()
     BENCH_START(ReduceProd_float16_axis1);
     ReduceProd_float16(node);
     BENCH_END(ReduceProd_float16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_float16_rvv_axis1);
@@ -1984,7 +1984,7 @@ int test_reduce_prod_float16()
     BENCH_START(ReduceProd_float16_axis2);
     ReduceProd_float16(node);
     BENCH_END(ReduceProd_float16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_float16_rvv_axis2);
@@ -2063,7 +2063,7 @@ int test_reduce_prod_bfloat16()
     BENCH_START(ReduceProd_bfloat16_allaxes);
     ReduceProd_bfloat16(node);
     BENCH_END(ReduceProd_bfloat16_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -2080,7 +2080,7 @@ int test_reduce_prod_bfloat16()
     BENCH_START(ReduceProd_bfloat16_axis0);
     ReduceProd_bfloat16(node);
     BENCH_END(ReduceProd_bfloat16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_bfloat16_rvv_axis0);
@@ -2095,7 +2095,7 @@ int test_reduce_prod_bfloat16()
     BENCH_START(ReduceProd_bfloat16_axis1);
     ReduceProd_bfloat16(node);
     BENCH_END(ReduceProd_bfloat16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_bfloat16_rvv_axis1);
@@ -2110,7 +2110,7 @@ int test_reduce_prod_bfloat16()
     BENCH_START(ReduceProd_bfloat16_axis2);
     ReduceProd_bfloat16(node);
     BENCH_END(ReduceProd_bfloat16_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_bfloat16_rvv_axis2);
@@ -2187,7 +2187,7 @@ int test_reduce_prod_float32()
     BENCH_START(ReduceProd_float32_allaxes);
     ReduceProd_float32(node);
     BENCH_END(ReduceProd_float32_allaxes);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with allaxes
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
@@ -2204,7 +2204,7 @@ int test_reduce_prod_float32()
     BENCH_START(ReduceProd_float32_axis0);
     ReduceProd_float32(node);
     BENCH_END(ReduceProd_float32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_float32_rvv_axis0);
@@ -2219,7 +2219,7 @@ int test_reduce_prod_float32()
     BENCH_START(ReduceProd_float32_axis1);
     ReduceProd_float32(node);
     BENCH_END(ReduceProd_float32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_float32_rvv_axis1);
@@ -2234,7 +2234,7 @@ int test_reduce_prod_float32()
     BENCH_START(ReduceProd_float32_axis2);
     ReduceProd_float32(node);
     BENCH_END(ReduceProd_float32_axis2);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
     BENCH_START(ReduceProd_float32_rvv_axis2);

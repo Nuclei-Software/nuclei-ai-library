@@ -41,7 +41,7 @@ void Concat_int8(struct onnx_node_t *n)
         for (int i = 0; i < n->ninput; ++i) {
             x = n->inputs[i];
             px = (int8_t *)x->datas;
-            memcpy(py, px, x->ndata * sizeof(int8_t));
+            memmove(py, px, x->ndata * sizeof(int8_t));
             py += x->ndata;
         }
     } else {
@@ -51,7 +51,7 @@ void Concat_int8(struct onnx_node_t *n)
             px = (int8_t *)x->datas;
             line_py = py;
             for (int j = 0; j < x->dims[1]; ++j) {
-                memcpy(line_py, px, x->dims[0] * sizeof(int8_t));
+                memmove(line_py, px, x->dims[0] * sizeof(int8_t));
                 line_py += y->dims[0];
                 px += x->dims[0];
             }
@@ -120,7 +120,7 @@ void Concat_int32(struct onnx_node_t *n)
         for (int i = 0; i < n->ninput; ++i) {
             x = n->inputs[i];
             px = (int32_t *)x->datas;
-            memcpy(py, px, x->ndata * sizeof(int32_t));
+            memmove(py, px, x->ndata * sizeof(int32_t));
             py += x->ndata;
         }
     } else {
@@ -130,7 +130,7 @@ void Concat_int32(struct onnx_node_t *n)
             px = (int32_t *)x->datas;
             line_py = py;
             for (int j = 0; j < x->dims[1]; ++j) {
-                memcpy(line_py, px, x->dims[0] * sizeof(int32_t));
+                memmove(line_py, px, x->dims[0] * sizeof(int32_t));
                 line_py += y->dims[0];
                 px += x->dims[0];
             }
@@ -201,7 +201,7 @@ void Concat_float16(struct onnx_node_t *n)
         for (int i = 0; i < n->ninput; ++i) {
             x = n->inputs[i];
             px = (float16_t *)x->datas;
-            memcpy(py, px, x->ndata * sizeof(float16_t));
+            memmove(py, px, x->ndata * sizeof(float16_t));
             py += x->ndata;
         }
     } else {
@@ -211,7 +211,7 @@ void Concat_float16(struct onnx_node_t *n)
             px = (float16_t *)x->datas;
             line_py = py;
             for (int j = 0; j < x->dims[1]; ++j) {
-                memcpy(line_py, px, x->dims[0] * sizeof(float16_t));
+                memmove(line_py, px, x->dims[0] * sizeof(float16_t));
                 line_py += y->dims[0];
                 px += x->dims[0];
             }
@@ -283,7 +283,7 @@ void Concat_bfloat16(struct onnx_node_t *n)
         for (int i = 0; i < n->ninput; ++i) {
             x = n->inputs[i];
             px = (bfloat16_t *)x->datas;
-            memcpy(py, px, x->ndata * sizeof(bfloat16_t));
+            memmove(py, px, x->ndata * sizeof(bfloat16_t));
             py += x->ndata;
         }
     } else {
@@ -293,7 +293,7 @@ void Concat_bfloat16(struct onnx_node_t *n)
             px = (bfloat16_t *)x->datas;
             line_py = py;
             for (int j = 0; j < x->dims[1]; ++j) {
-                memcpy(line_py, px, x->dims[0] * sizeof(bfloat16_t));
+                memmove(line_py, px, x->dims[0] * sizeof(bfloat16_t));
                 line_py += y->dims[0];
                 px += x->dims[0];
             }
@@ -364,7 +364,7 @@ void Concat_float32(struct onnx_node_t *n)
         for (int i = 0; i < n->ninput; ++i) {
             x = n->inputs[i];
             px = (float32_t *)x->datas;
-            memcpy(py, px, x->ndata * sizeof(float32_t));
+            memmove(py, px, x->ndata * sizeof(float32_t));
             py += x->ndata;
         }
     } else {
@@ -374,7 +374,7 @@ void Concat_float32(struct onnx_node_t *n)
             px = (float32_t *)x->datas;
             line_py = py;
             for (int j = 0; j < x->dims[1]; ++j) {
-                memcpy(line_py, px, x->dims[0] * sizeof(float32_t));
+                memmove(line_py, px, x->dims[0] * sizeof(float32_t));
                 line_py += y->dims[0];
                 px += x->dims[0];
             }

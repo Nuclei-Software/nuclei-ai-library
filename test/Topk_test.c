@@ -51,7 +51,7 @@ int test_topk_int32(void)
     Topk_int32(node);
     BENCH_END(Topk_int32);
     HeapSort_int32((int32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // show_tensor_int32(node->outputs[0], "Topk_int32");
 
@@ -60,7 +60,7 @@ int test_topk_int32(void)
     Topk_int32_rvv(node);
     BENCH_END(Topk_int32_rvv);
     HeapSort_int32((int32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // show_tensor_int32(node->outputs[0], "Topk_int32_rvv");
 
@@ -129,14 +129,14 @@ int test_topk_float16(void)
     Topk_float16(node);
     BENCH_END(Topk_float16);
     HeapSort_f16((float16_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
     BENCH_START(Topk_float16_rvv);
     Topk_float16_rvv(node);
     BENCH_END(Topk_float16_rvv);
     HeapSort_f16((float16_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     ret |= verify_results_f16(golden, opt, node->outputs[0]->ndata);
 
@@ -207,14 +207,14 @@ int test_topk_bfloat16(void)
     Topk_bfloat16(node);
     BENCH_END(Topk_bfloat16);
     HeapSort_bf16((bfloat16_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
     BENCH_START(Topk_bfloat16_rvv);
     Topk_bfloat16_rvv(node);
     BENCH_END(Topk_bfloat16_rvv);
     HeapSort_bf16((bfloat16_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
 
@@ -283,14 +283,14 @@ int test_topk_float32(void)
     Topk_float32(node);
     BENCH_END(Topk_float32);
     HeapSort_f32((float32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float32_t));
     BENCH_START(Topk_float32_rvv);
     Topk_float32_rvv(node);
     BENCH_END(Topk_float32_rvv);
     HeapSort_f32((float32_t *)node->outputs[0]->datas, node->outputs[0]->ndata);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     ret |= verify_results_f32(golden, opt, node->outputs[0]->ndata);
 

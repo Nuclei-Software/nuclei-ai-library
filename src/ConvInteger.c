@@ -412,7 +412,7 @@ int ConvInteger(struct onnx_node_t *n)
                             if (k_y < 0 || k_y >= input_y || k_x < 0 || k_x >= input_x) {
                                 memset(im2col_buf, (int8_t)-input_offset, sizeof(int8_t) * kernel_ch);
                             } else {
-                                memcpy(im2col_buf, input_data + (k_y * input_x + k_x) * input_ch + i_group * kernel_ch, sizeof(int8_t) * kernel_ch);
+                                memmove(im2col_buf, input_data + (k_y * input_x + k_x) * input_ch + i_group * kernel_ch, sizeof(int8_t) * kernel_ch);
                             }
                             im2col_buf += kernel_ch;
                         }

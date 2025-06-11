@@ -61,7 +61,7 @@ int test_gatherelements_int8(void)
     BENCH_START(GatherElements_int8_axis0);
     GatherElements_int8(node);
     BENCH_END(GatherElements_int8_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with axis = 0
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -78,7 +78,7 @@ int test_gatherelements_int8(void)
     BENCH_START(GatherElements_int8_axis1);
     GatherElements_int8(node);
     BENCH_END(GatherElements_int8_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     // rvv optimization test with axis = 1
     memset(node->outputs[0]->datas, 0, sizeof(int8_t) * node->outputs[0]->ndata);
@@ -160,7 +160,7 @@ int test_gatherelements_int32(void)
     BENCH_START(GatherElements_int32_axis0);
     GatherElements_int32(node);
     BENCH_END(GatherElements_int32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // rvv optimization test with axis = 0
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
@@ -177,7 +177,7 @@ int test_gatherelements_int32(void)
     BENCH_START(GatherElements_int32_axis1);
     GatherElements_int32(node);
     BENCH_END(GatherElements_int32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int32_t));
 
     // rvv optimization test with axis = 1
     memset(node->outputs[0]->datas, 0, sizeof(int32_t) * node->outputs[0]->ndata);
@@ -261,7 +261,7 @@ int test_gatherelements_float16(void)
     BENCH_START(GatherElements_float16_axis0);
     GatherElements_float16(node);
     BENCH_END(GatherElements_float16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with axis = 0
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -278,7 +278,7 @@ int test_gatherelements_float16(void)
     BENCH_START(GatherElements_float16_axis1);
     GatherElements_float16(node);
     BENCH_END(GatherElements_float16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     // rvv optimization test with axis = 1
     memset(node->outputs[0]->datas, 0, sizeof(float16_t) * node->outputs[0]->ndata);
@@ -366,7 +366,7 @@ int test_gatherelements_bfloat16(void)
     BENCH_START(GatherElements_bfloat16_axis0);
     GatherElements_bfloat16(node);
     BENCH_END(GatherElements_bfloat16_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test with axis = 0
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -383,7 +383,7 @@ int test_gatherelements_bfloat16(void)
     BENCH_START(GatherElements_bfloat16_axis1);
     GatherElements_bfloat16(node);
     BENCH_END(GatherElements_bfloat16_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     // rvv optimization test with axis = 1
     memset(node->outputs[0]->datas, 0, sizeof(bfloat16_t) * node->outputs[0]->ndata);
@@ -469,7 +469,7 @@ int test_gatherelements_float32(void)
     BENCH_START(GatherElements_float32_axis0);
     GatherElements_float32(node);
     BENCH_END(GatherElements_float32_axis0);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with axis = 0
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);
@@ -486,7 +486,7 @@ int test_gatherelements_float32(void)
     BENCH_START(GatherElements_float32_axis1);
     GatherElements_float32(node);
     BENCH_END(GatherElements_float32_axis1);
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     // rvv optimization test with axis = 1
     memset(node->outputs[0]->datas, 0, sizeof(float32_t) * node->outputs[0]->ndata);

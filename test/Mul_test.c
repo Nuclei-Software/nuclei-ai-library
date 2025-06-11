@@ -40,13 +40,13 @@ int test_mul_int8(void)
     Mul_int8(node);
     BENCH_END(Mul_int8);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(int8_t));
     BENCH_START(Mul_int8_rvv);
     Mul_int8_rvv(node);
     BENCH_END(Mul_int8_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(int8_t));
 
     ret |= verify_results_int8(golden, opt, node->outputs[0]->ndata);
 
@@ -101,13 +101,13 @@ int test_mul_f16(void)
     Mul_float16(node);
     BENCH_END(Mul_float16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
     BENCH_START(Mul_float16_rvv);
     Mul_float16_rvv(node);
     BENCH_END(Mul_float16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     ret |= verify_results_f16(golden, opt, node->outputs[0]->ndata);
 
@@ -167,13 +167,13 @@ int test_mul_bf16(void)
     Mul_bfloat16(node);
     BENCH_END(Mul_bfloat16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
     BENCH_START(Mul_bfloat16_rvv);
     Mul_bfloat16_rvv(node);
     BENCH_END(Mul_bfloat16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
 
@@ -231,13 +231,13 @@ int test_mul_f32(void)
     Mul_float32(node);
     BENCH_END(Mul_float32);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float32_t));
     BENCH_START(Mul_float32_rvv);
     Mul_float32_rvv(node);
     BENCH_END(Mul_float32_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     ret |= verify_results_f32(golden, opt, node->outputs[0]->ndata);
 

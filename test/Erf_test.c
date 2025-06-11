@@ -33,13 +33,13 @@ int test_erf_f32(void)
     Erf_float32(node);
     BENCH_END(Erf_float32);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 7, node->outputs[0]->ndata * sizeof(float32_t));
     BENCH_START(Erf_float32_rvv);
     Erf_float32_rvv(node);
     BENCH_END(Erf_float32_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     ret |= verify_results_f32(golden, opt, node->outputs[0]->ndata);
 
@@ -85,13 +85,13 @@ int test_erf_f16(void)
     Erf_float16(node);
     BENCH_END(Erf_float16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
     BENCH_START(Erf_float16_rvv);
     Erf_float16_rvv(node);
     BENCH_END(Erf_float16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     ret |= verify_results_f16(golden, opt, node->outputs[0]->ndata);
 

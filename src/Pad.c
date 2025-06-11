@@ -61,7 +61,7 @@ void Pad_int8(struct onnx_node_t *n)
     for (int i = 0; i < x->dims[1]; ++i) {
         memset(py, pdat->value.v_int8, pdat->pads.left);
         py += pdat->pads.left;
-        memcpy(py, px, x->dims[0]);
+        memmove(py, px, x->dims[0]);
         py += x->dims[0];
         px += x->dims[0];
         memset(py, pdat->value.v_int8, pdat->pads.right);
@@ -156,7 +156,7 @@ void Pad_int32(struct onnx_node_t *n)
             py[i] = pdat->value.v_int32;
         }
         py += pdat->pads.left;
-        memcpy(py, px, x->dims[0] * sizeof(int32_t));
+        memmove(py, px, x->dims[0] * sizeof(int32_t));
         py += x->dims[0];
         px += x->dims[0];
         for (int i = 0; i < pdat->pads.right; i++) {
@@ -257,7 +257,7 @@ void Pad_float16(struct onnx_node_t *n)
             py[i] = pdat->value.v_float16;
         }
         py += pdat->pads.left;
-        memcpy(py, px, x->dims[0] * sizeof(float16_t));
+        memmove(py, px, x->dims[0] * sizeof(float16_t));
         py += x->dims[0];
         px += x->dims[0];
         for (int i = 0; i < pdat->pads.right; i++) {
@@ -359,7 +359,7 @@ void Pad_bfloat16(struct onnx_node_t *n)
             py[i] = pdat->value.v_bfloat16;
         }
         py += pdat->pads.left;
-        memcpy(py, px, x->dims[0] * sizeof(bfloat16_t));
+        memmove(py, px, x->dims[0] * sizeof(bfloat16_t));
         py += x->dims[0];
         px += x->dims[0];
         for (int i = 0; i < pdat->pads.right; i++) {
@@ -460,7 +460,7 @@ void Pad_float32(struct onnx_node_t *n)
             py[i] = pdat->value.v_float32;
         }
         py += pdat->pads.left;
-        memcpy(py, px, x->dims[0] * sizeof(float32_t));
+        memmove(py, px, x->dims[0] * sizeof(float32_t));
         py += x->dims[0];
         px += x->dims[0];
         for (int i = 0; i < pdat->pads.right; i++) {

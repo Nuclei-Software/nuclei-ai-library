@@ -33,13 +33,13 @@ int test_log_f32(void)
     Log_float32(node);
     BENCH_END(Log_float32);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float32_t));
     BENCH_START(Log_float32_rvv);
     Log_float32_rvv(node);
     BENCH_END(Log_float32_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float32_t));
 
     ret |= verify_results_f32(golden, opt, node->outputs[0]->ndata);
 
@@ -86,13 +86,13 @@ int test_log_f16(void)
     Log_float16(node);
     BENCH_END(Log_float16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(float16_t));
     BENCH_START(Log_float16_rvv);
     Log_float16_rvv(node);
     BENCH_END(Log_float16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(float16_t));
 
     ret |= verify_results_f16(golden, opt, node->outputs[0]->ndata);
 
@@ -143,13 +143,13 @@ int test_log_bf16(void)
     Log_bfloat16(node);
     BENCH_END(Log_bfloat16);
 
-    memcpy(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(golden, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     memset(node->outputs[0]->datas, 0, node->outputs[0]->ndata * sizeof(bfloat16_t));
     BENCH_START(Log_bfloat16_rvv);
     Log_bfloat16_rvv(node);
     BENCH_END(Log_bfloat16_rvv);
-    memcpy(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
+    memmove(opt, node->outputs[0]->datas, node->outputs[0]->ndata * sizeof(bfloat16_t));
 
     ret |= verify_results_bf16(golden, opt, node->outputs[0]->ndata);
 
