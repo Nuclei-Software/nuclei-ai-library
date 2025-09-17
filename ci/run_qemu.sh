@@ -37,7 +37,7 @@ if [ -f /home/share/devtools/env.sh ] ; then
 fi
 
 echo "INFO: Start to run case examples on qemu for rv32 and rv64 cores!"
-runcmd="python3 ${NSDK_BENCH_CLI} --appcfg ci/app.json --hwcfg ci/qemu.json --logdir ${LOGDIR} --run_target qemu --run --parallel=\"-j\""
+runcmd="python3 ${NSDK_BENCH_CLI} --appcfg ci/app.json --hwcfg ci/qemu.json --logdir ${LOGDIR} --run_target qemu --run --parallel=-j"
 echo "INFO: run command: $runcmd"
 $runcmd
 ret=$?
