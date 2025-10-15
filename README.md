@@ -75,8 +75,8 @@ In the chart below, `VPU Lite Compatibility` illustrates the degree to which eac
 
 We recommend utilizing the latest version of the Nuclei SDK and associated toolchain for optimal performance and compatibility. For this project we use the following versions:
 
-- [Nuclei SDK version 0.6.0](https://github.com/Nuclei-Software/nuclei-sdk/releases/tag/0.6.0)
-- [Nuclei Studio IDE for Linux version 2024.06](https://download.nucleisys.com/upload/files/nucleistudio/NucleiStudio_IDE_202406-lin64.tgz)
+- [Nuclei SDK version 0.8.1](https://github.com/Nuclei-Software/nuclei-sdk/releases/tag/0.8.1)
+- [Nuclei Studio IDE for Linux version 2025.02](https://download.nucleisys.com/upload/files/nucleistudio/NucleiStudio_IDE_202502-lin64.tgz)
 
 Please adhere to the instructions outlined in the [Setup Tools and Environment](https://doc.nucleisys.com/nuclei_sdk/quickstart.html#get-and-setup-nuclei-sdk) section to properly prepare your Nuclei SDK and toolchain for use. Both Linux and Windows operating systems are supported, for the purpose of example, we will demonstrate the process using the Ubuntu 20.04 Linux operating system.
 
@@ -130,7 +130,7 @@ If you want to specify `CORE` and `ARCH_EXT` to build for rv32，you can run the
 make CORE=n900f ARCH_EXT=_zfh_zvfh_zve32f all
 ```
 
-Also, nuclei bf16 (Brain Floating-Point 16) feature can be tested(for details, please refer to [nuclei_bf16](https://github.com/Nuclei-Software/nuclei-tool-guide/blob/f4295c25733f2911312f93404540c540e456fa5f/source/toolchain/gnu/nuclei_bf16.rst))
+Also, nuclei bf16 (Brain Floating-Point 16) feature can be tested(for details, please refer to [nuclei_bf16](https://doc.nucleisys.com/nuclei_tools/toolchain/gnu/nuclei_bf16.html))
 
 ~~~sh
 # Compile bf16
@@ -164,10 +164,10 @@ These command will rebuild the test program with `SIMU=qemu`，and run the test 
 
 **Check Hardware**. The hardware should meet the following requirements:
 
-- 1024kB ilm and 1024kB dlm
-- support v extension (rv64) or _zve32f extension (rv32)
-- support _zfh extension
-- support _zvfh extension
+- **MUST**: **1024KB ILM** and **1024KB DLM**
+- support ``v`` extension (rv64) or ``_zve32f`` extension (rv32)
+- support ``_zfh`` extension
+- support ``_zvfh`` extension
 
 When the hardware has connected to your host locally, you can run the following command:
 
