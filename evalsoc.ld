@@ -56,9 +56,6 @@ SECTIONS
   {
     *(.text.unlikely .text.unlikely.*)
     *(.text.startup .text.startup.*)
-    . = ALIGN(8);
-    PROVIDE( __jvt_base$ = . );
-    *(.text.tbljal .text.tbljal.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
     /* .fini */
@@ -84,11 +81,13 @@ SECTIONS
     PROVIDE_HIDDEN (__fini_array_end = .);
     /* .ctors */
     . = ALIGN(8);
+    PROVIDE(__ctors_start__ = .);
     KEEP (*crtbegin.o(.ctors))
     KEEP (*crtbegin?.o(.ctors))
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
+    PROVIDE(__ctors_end__ = .);
     /* .dtors */
     . = ALIGN(8);
     KEEP (*crtbegin.o(.dtors))
@@ -96,6 +95,13 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
+  } >ROM AT>ROM
+
+  .riscv.jvt  :
+  {
+    /* https://github.com/riscv-non-isa/riscv-elf-psabi-doc/pull/349 */
+    PROVIDE( __jvt_base$ = ALIGN(64) );
+    *(.riscv.jvt .riscv.jvt.*)
   } >ROM AT>ROM
 
   PROVIDE( _ilm_lma = LOADADDR(.text) );
@@ -133,6 +139,7 @@ SECTIONS
     PROVIDE_HIDDEN (__eh_frame_start = .);
     *(.eh_frame)
     PROVIDE_HIDDEN (__eh_frame_end = .);
+    *(.gcc_except_table .gcc_except_table.*)
     /* below sections are used for rt-thread */
     . = ALIGN(8);
     __rt_init_start = .;
@@ -146,6 +153,11 @@ SECTIONS
     __vsymtab_start = .;
     KEEP(*(VSymTab))
     __vsymtab_end = .;
+    . = ALIGN(8);
+    /* section information for utest */
+    __rt_utest_tc_tab_start = .;
+    KEEP(*(UtestTcTab))
+    __rt_utest_tc_tab_end = .;
     . = ALIGN(8);
   } >RAM AT>DATA_LMA
 
@@ -207,11 +219,13 @@ SECTIONS
     . = ALIGN(16);
     PROVIDE( _heap_end = . );
     PROVIDE( __heap_end = . );
+    PROVIDE( __stack_start__ = . );
     PROVIDE( __StackLimit = . );
     PROVIDE( __StackBottom = . );
     . += __TOT_STACK_SIZE;
     . = ALIGN(16);
     PROVIDE( __StackTop = . );
     PROVIDE( _sp = . );
+    PROVIDE( __rt_rvstack = . );
   } >RAM AT>RAM
 }
