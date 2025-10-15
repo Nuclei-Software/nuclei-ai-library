@@ -1,10 +1,3 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-
-#define __STDC_WANT_IEC_60559_TYPES_EXT__
-#include <float.h>
-
 #include "operators.h"
 #include "utils.h"
 

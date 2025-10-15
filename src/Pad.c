@@ -3,8 +3,6 @@
  * https://pytorch.org/docs/stable/generated/torch.nn.functional.pad.html
  */
 
-#include <string.h>
-
 #include "operators.h"
 #include "utils.h"
 

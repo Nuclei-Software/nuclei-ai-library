@@ -2,10 +2,6 @@
  * https://www.tensorflow.org/api_docs/python/tf/math
  */
 
-#include <float.h>
-#include <stdbool.h>
-#include <stdio.h>
-
 #include "operators.h"
 
 void ReduceAll(struct onnx_node_t *n)

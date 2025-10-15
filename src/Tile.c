@@ -2,9 +2,6 @@
  * https://onnx.ai/onnx/operators/onnx__Tile.html
  * https://numpy.org/doc/stable/reference/generated/numpy.tile.html#numpy.tile
  */
-
-#include <string.h>
-
 #include "operators.h"
 
 /**

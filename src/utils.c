@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #include "utils.h"
 
 #define DELTAF32 (0.1f)

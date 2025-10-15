@@ -5,11 +5,20 @@
 extern "C" {
 #endif
 
+// Enable support for optional IEC 60559 decimal floating-point types.
+// Must be defined before any #include to tell standard headers to declare them.
+// Required by float16
+#define __STDC_WANT_IEC_60559_TYPES_EXT__ 1
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include <stdio.h>
 #include <math.h>
+
+#include <float.h>
 
 #include <riscv_vector.h>
 

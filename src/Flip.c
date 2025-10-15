@@ -2,8 +2,6 @@
  * https://pytorch.org/docs/stable/generated/torch.flip.html
  */
 
-#include <string.h>
-
 #include "operators.h"
 #include "utils.h"
 
